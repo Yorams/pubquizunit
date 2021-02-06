@@ -1,0 +1,29 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle #{quizTitle}
+        div.headerSubTitle
+
+block content
+    
+    div.container-fluid
+        div.row
+            div.col-lg-6
+                include stream.pug
+            div.col-lg-6
+                div.subTitle
+                div.row
+                    div.col.currentQuestion
+                    div.col.currentRound
+                    
+                div.questionMain
+       
+    include question_templates.pug
+
+    script.
+        var glob_data = JSON.parse('!{data}');
+
+block scripts
+    script(src='/javascripts/common_public.js')
+    script(src='/javascripts/quiz_public.js')

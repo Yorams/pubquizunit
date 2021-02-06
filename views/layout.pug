@@ -1,0 +1,33 @@
+doctype html
+html
+    head
+        title Quizunit
+        link(rel='stylesheet', href='/scripts/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/scripts/icons/css/materialdesignicons.min.css')
+        link(rel='stylesheet', href='/stylesheets/font-pacifico.css')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+
+        // Meta Tags
+        meta(name='description', content=title)
+        meta(name='author', content='Yoram Scheer')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no')
+        meta(name='apple-mobile-web-app-capable', content='yes')
+
+
+    body
+        div.headerMain
+
+            block header
+
+        block content
+
+
+    script(src='/scripts/jquery/jquery.min.js')
+    script(src='/scripts/popper/popper.min.js')
+    script(src='/scripts/bootstrap/js/bootstrap.min.js')
+    //script(src='/scripts/moment/moment-with-locales.min.js')
+    script(src='/scripts/handlebars/handlebars.min.js')
+    script(src='/scripts/reconnecting-websocket/reconnecting-websocket-iife.js')
+    //script(src='/javascripts/index.js') // Main functions
+
+    block scripts

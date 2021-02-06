@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+var app = require('../app');
+var debug = require('debug')('pubquizunit:server');
+var http = require('http');
+var https = require('https');
+const fs = require('fs');
+const common = require("../common_functions");
+
+// Get settings
+common.getJsonFile("/settings")
+    .then(function (appSettings) {
+        app.set('appSettings', appSettings);
+
+        var privateKey = fs.readFileSync(appSettings.certificate.key, 'utf8');
+        var certificate = fs.readFileSync(appSettings.certificate.cert, 'utf8');
+        const ca = fs.readFileSync(appSettings.certificate.chain, 'utf8');
+
+        const credentials = {
+            key: privateKey,
+            cert: certificate,
+            ca: ca
+        };
+
+        // Get port from settings and store in Express.
+        app.set('port', appSettings.app.port);
+        var port = appSettings.app.port;
+
+        // Create HTTP server.
+        var server = http.createServer(app);
+        var serverHttps = https.createServer(credentials, app);
+
+        //* Listen on provided port, on all network interfaces. 
+        // HTTP
+        server.listen(appSettings.app.port);
+        server.on('error', onError);
+        server.on('listening', onListening);
+
+        // HTTPS
+        serverHttps.listen(appSettings.app.sslPort);
+        serverHttps.on('error', onError);
+        serverHttps.on('listening', onListeningHttps);
+
+
+        // Event listener for HTTP server "error" event.
+        function onError (error) {
+            if (error.syscall !== 'listen') {
+                throw error;
+            }
+
+            var bind = typeof port === 'string'
+                ? 'Pipe ' + port
+                : 'Port ' + port;
+
+            // handle specific listen errors with friendly messages
+            switch (error.code) {
+                case 'EACCES':
+                    console.error(bind + ' requires elevated privileges');
+                    process.exit(1);
+                case 'EADDRINUSE':
+                    console.error(bind + ' is already in use');
+                    process.exit(1);
+                default:
+                    throw error;
+            }
+        }
+
+        //* Event listener for HTTP server "listening" event.
+        function onListening () {
+            var addr = server.address();
+            var bind = typeof addr === 'string'
+                ? 'pipe ' + addr
+                : 'port ' + addr.port;
+            debug('Listening on ' + bind);
+        }
+
+        function onListeningHttps () {
+            var addr = serverHttps.address();
+            var bind = typeof addr === 'string'
+                ? 'pipe ' + addr
+                : 'port ' + addr.port;
+            debug('Listening on ' + bind);
+        }
+    })
+    .catch((err) => { console.log(`www: cannot load settings file (${err})`) })

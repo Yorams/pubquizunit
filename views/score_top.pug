@@ -1,0 +1,47 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Score
+        
+block content
+    div.container.my-5
+        //div.scoreViewMain.mb-3.text-center
+            button.btn.btn-primary.scoreView.mx-1(data-view="Overall") Overall
+        div.scoreMain.top
+        
+
+    script#scoreBoard(type="text/x-handlebars-template")
+        div.row.h5
+            div.col.text-right Plaats
+            div.col Team
+            div.col Score
+        // Top 3
+        | {{#each scoreStage}}
+        div.row.topRow(class="{{topStyle @index}}")
+            div.col.text-right {{inc @index 0}}
+            div.col {{{this.name}}}
+            div.col {{round this.totalScore}}
+        | {{/each}}
+
+        // De rest
+        ul.scoreOthers
+            | {{#each scoreOthers}}
+            li
+                div.row.topRow
+                    div.col-2.text-right
+                        b {{inc @index 3}}
+                    div.col-6 {{{this.name}}}
+                    div.col-4 {{round this.totalScore}}
+            | {{/each}}
+
+    script#scoreViewBtn(type="text/x-handlebars-template")
+        | {{#each this}}
+        button.btn.btn-primary.scoreView.mx-1(data-view="round_{{@index}}") Ronde {{inc @index}}
+        | {{/each}}
+
+block scripts
+    script(src='/javascripts/score_public.js')
+    script.
+        // Load score
+        loadScore("top");

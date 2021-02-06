@@ -1,0 +1,65 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Score
+        
+block content
+    div.container-fluid.my-5
+        div.scoreMain
+        
+
+    script#scoreBoard(type="text/x-handlebars-template")
+        //Teams
+        div.row.teamNames
+            div.col
+            | {{#each this.teams}}
+            div.col {{this.name}}
+            | {{/each}}
+        div.row.teamNamesConnector
+            div.col
+            | {{#each this.teams}}
+            div.col *
+            | {{/each}}
+        div.row.teamTotalScore
+            div.col.h5
+            | {{#each this.teams}}
+            div.col {{round this.totalScore}}
+            | {{/each}}
+            
+        //Rondes
+        | {{#each this.answers}}
+        div.rondeMain
+            div.scoreRound Ronde {{inc @index 0}}
+            // Vragen
+            | {{#each this}}
+            div.questionMain.scoreRowContainer 
+                div.row.scoreRow
+                    div.col.scoreQuestion {{inc @index 0}}
+                    // Teams
+                    | {{#each this}}
+                    div.col.scoreNumber(data-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.type}}") {{showScore this.score}}
+                    | {{/each}}
+            | {{/each}}
+            div.row.scoreRow
+                div.col.scoreQuestion Totaal
+                | {{#each ../this.teams}}
+                
+                div.col.scoreNumber 
+                    b {{getRoundScore this.roundScore @../index}}
+                | {{/each}}
+        | {{/each}}
+        div.row.teamTotalScore.totalScoreBottom
+            div.col.h5
+            | {{#each this.teams}}
+            div.col {{round this.totalScore}}
+            | {{/each}}
+
+
+block scripts
+    script(src='/javascripts/score_public.js')
+    
+    script.
+        // Load score
+        loadScore("overview");
+        

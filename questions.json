@@ -1,0 +1,863 @@
+{
+	"rounds": [
+		{
+			"name": "Fladder trivia algemeen.",
+			"details": "Vragen in en om het fladderen.",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "intro",
+					"name": "We zijn nog niet begonnen",
+					"details": "Een moment de quiz word zo dadelijk gestart",
+					"answers": [],
+					"correct": {}
+				},
+				{
+					"type": "one",
+					"name": "De hoofdsponsor van Fladderen is Albert Heijn. Daarvoor was Ouwehands Dierenpark de belangrijkste sponsor. Wie was het daarvoor?",
+					"answers": [
+						"Albert Heijn",
+						"SNS Bank",
+						"Rabobank",
+						"Fortis Bank"
+					],
+					"correct": {
+						"default": "SNS Bank"
+					}
+				},
+				{
+					"type": "one",
+					"name": "In 2016 was er voor het laatst een algemeen thema. Hoe heette dit thema?",
+					"answers": [
+						"Onderwaterwereld",
+						"Ontdekkingsreizen",
+						"Sprookjesfiguren",
+						"De magische verhalentuin",
+						"Niet nader te noemen blauwe figuurtjes"
+					],
+					"correct": {
+						"default": "De magische verhalentuin"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Fladderen wordt georganiseerd in samenwerking met de Stichting Kinderactiviteiten. Deze stichting organiseert zelf ook drie activiteiten, te weten Plein van de Peuter, de Sinterklaasintocht en…",
+					"answers": [
+						"Koningsdag",
+						"Winter ijsbaan",
+						"Pompoenendag",
+						"Stadsstrand",
+						"Nieuwjaarsduik",
+						"Activiteitenmarkt",
+						"Santa run"
+					],
+					"correct": {
+						"default": "Pompoenendag"
+					}
+				},
+				{
+					"type": "multi",
+					"name": "Fladderen heeft twee vertrouwenspersonen. Wie zijn dat?",
+					"answers": [
+						"Nelleke Samwel",
+						"Wilma van Geresteijn",
+						"Monique Boere",
+						"Lysanne Scheer",
+						"Trea"
+					],
+					"correct": {
+						"default": [
+							"Nelleke Samwel",
+							"Wilma van Geresteijn"
+						]
+					}
+				},
+				{
+					"type": "one",
+					"name": "Op welke dag eindigt Fladderen in 2021",
+					"answers": [
+						"Donderdag 28 augustus",
+						"Donderdag 27 augustus",
+						"Donderdag 26 augustus",
+						"Donderdag 19 augustus"
+					],
+					"correct": {
+						"default": "Donderdag 26 augustus"
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Uit hoeveel Vlinders bestond de ambtsketen van Fladderburgemeester Tim?",
+					"answers": [],
+					"correct": {
+						"default": 1
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Wat is dit jaar de meest verrassende transfer binnen Fladderen?",
+					"answers": [],
+					"correct": {
+						"default": "Christian Willemse"
+					}
+				},
+				{
+					"type": "one",
+					"name": "In 2018 kwam tijdens de opening van iedere locatie iemand uit de Beestenbus. Wie kwam er namens Klavertje 4 uit de bus gestormd?",
+					"answers": [
+						"Nourian Hofman",
+						"Thomas van Vliet (Die van Yorick)",
+						"Sofie Bresser",
+						"Danny Jansen"
+					],
+					"correct": {
+						"default": "Danny Jansen"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Locatie de Vlinder ligt op een kruispunt van meerdere wijken in Houten. Jarenlang was het zoeken via welke bouwweg de locatie dat jaar weer bereikbaar was. Maar in welke wijk ligt de locatie eigenlijk?",
+					"answers": [
+						"De Meren",
+						"Het Gras",
+						"De Tuinen",
+						"Het Mos"
+					],
+					"correct": {
+						"default": "De Tuinen"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Locaties wisselen nog wel eens van plek. Zo was Het Echte Kamp ooit op Vechten, Vikingenpoort was Nieuwoord en komt de Plantage bij Victum vandaan. Welke van de huidige locaties is het laatst van plek gewisseld?",
+					"answers": [],
+					"correct": {
+						"default": "12Plus"
+					}
+				},
+				{
+					"type": "intro",
+					"name": "Eind van de ronde",
+					"details": "",
+					"answers": [],
+					"correct": {}
+				}
+			]
+		},
+		{
+			"name": "Muziek algemeen.",
+			"details": "Feiten over muziek!",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "open-numeric",
+					"name": "Hoe vaak heeft Bohemian Rhapsody niet op nummer 1 gestaan in de top 2000",
+					"answers": [],
+					"correct": {
+						"default": "5"
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wat is de oorsprong van het dansje dat tijdens het fladderen wordt gedanst op het nummer Cotton Eye Joe. Vul eerst het jaartal in en dan de locatie",
+					"answers": [],
+					"correct": {
+						"name": "12 plus",
+						"year": 2006
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Hoe vaak komt het woord “flap” voor in het nummer Pilfingerdansen",
+					"answers": [],
+					"correct": {
+						"default": "12"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wie heeft het Fladderlied bedacht en geschreven?",
+					"answers": [
+						"Frans Zwart",
+						"Petra van de Kieboom",
+						"Jurriaan Leunissen",
+						"John Ewbank",
+						"Hans de Brouwer",
+						"Herman Berkien",
+						"Jacob Heemskerk"
+					],
+					"correct": {
+						"default": "Hans de Brouwer"
+					}
+				},
+				{
+					"type": "multi",
+					"name": "Noem de karakters van de groep The Village People",
+					"answers": [
+						"Ingenieur",
+						"Bouwvakker",
+						"Soldaat",
+						"Indiaan",
+						"Loonwerker",
+						"Politieman",
+						"Matroos",
+						"Stratenmaken",
+						"Boer",
+						"Motorrijder",
+						"Cowboy",
+						"Vuilnisman"
+					],
+					"correct": {
+						"default": [
+							"Bouwvakker",
+							"Soldaat",
+							"Indiaan",
+							"Politieman",
+							"Matroos",
+							"Motorrijder",
+							"Cowboy"
+						]
+					}
+				},
+				{
+					"type": "music",
+					"name": "Wat is het nummer, naast de 7 sprong, waarmee vrijwel elk fladderfeest op donderdagavond akoestisch mee word afgesloten?",
+					"answers": [],
+					"correct": {
+						"artist": "Liquido",
+						"title": "Narcotic"
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Hoeveel verschillende handelingen zitten er in het nummer “Superman”",
+					"answers": [],
+					"correct": {
+						"default": 16
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat is de kleur van het pak van de artiest die het nummer “Ruitenwisser” uitvoerde op het fladderfeest een aantal jaar geleden.",
+					"answers": [
+						"Pimpelpaars",
+						"Smaragdgroen",
+						"Glittergoud",
+						"Cognac",
+						"Frambozenrood",
+						"Hemelblauw",
+						"Botergeel",
+						"Knalroze"
+					],
+					"correct": {
+						"default": "Hemelblauw"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Wat is het 11e en 12e pasje van het nummer “Macarena” van Los Del rio.",
+					"answers": [],
+					"correct": {
+						"default": "Rechterhand op je heup, linkerhand op je heup"
+					}
+				},
+				{
+					"type": "intro",
+					"name": "Eind van de ronde",
+					"details": "",
+					"answers": [],
+					"correct": {}
+				}
+			]
+		},
+		{
+			"name": "De merknamen ronde.",
+			"details": "Welke volledige naam hoort bij de afkorting.",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de merknaam Andrélon?",
+					"answers": [],
+					"correct": {
+						"default": "Andre’s Kapsalon"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de merknaam HARIBO?",
+					"answers": [],
+					"correct": {
+						"default": "Hans Riegel uit Bonn"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de merknaam Page?",
+					"answers": [],
+					"correct": {
+						"default": "Papierfabriek Genemuiden"
+					}
+				},
+				{
+					"type": "multi",
+					"name": "Welke merknamen (2) zijn ontwikkeld door de gebroeders Dassler?",
+					"answers": [
+						"Nike",
+						"Puma",
+						"Reebok",
+						"Adidas"
+					],
+					"correct": {
+						"default": [
+							"Adidas",
+							"Puma"
+						]
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de naam van schoonmaakbedrijf ASITO?",
+					"answers": [],
+					"correct": {
+						"default": "Alles Schoon In Twente en Omstreken"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de merknaam AVIKO",
+					"answers": [],
+					"correct": {
+						"default": "Aardappel Verwerkings Industrie uit Keppel en Omstreken"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de naam van de Salades gigant Johma?",
+					"answers": [],
+					"correct": {
+						"default": "Johan en Martin"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de afkorting HEMA?",
+					"answers": [],
+					"correct": {
+						"default": "Hollandse Eenheidsprijzen Magazijn Amsterdam"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staan de 3 Mmm’s…. Van Mora?",
+					"answers": [],
+					"correct": {
+						"default": "Marcel Mourmans Maastricht"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Waarvoor staat de afkorting AVRO TROS",
+					"answers": [],
+					"correct": {
+						"default": "Algemene Vereniging Radio Omroep Televisie Radio Omroep Stichting"
+					}
+				}
+			]
+		},
+		{
+			"name": "Raad de locatie plaat.",
+			"details": "Raad de titel en artiest van het nummer en de locatie die daarbij hoort.",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Marco Borsato",
+						"title": "Vlinder",
+						"locatie": "De Vlinder"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Tears for Fears",
+						"title": "Sowing The Seeds Of Love",
+						"locatie": "De Stek"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Daft Punk",
+						"title": "Get Lucky",
+						"locatie": "Klavertje 4"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Scissor Sisters",
+						"title": "I don’t Feel Like Dancin’",
+						"locatie": "Crea"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Dj Paul Elstak",
+						"title": "Rainbow In The Sky",
+						"locatie": "De Boog"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Gareth Gates",
+						"title": "Anyone Of Us (Stupid Mistake)",
+						"locatie": "Vikingenpoort"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "The Gipsy Kings",
+						"title": "Bamboleo",
+						"locatie": "De Grund"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "UB40",
+						"title": "Food for Thought",
+						"locatie": "Food & Beverage"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "The Buggles",
+						"title": "Video Killed A Radiostar",
+						"locatie": "Communicatie"
+					}
+				},
+				{
+					"type": "music-locatie",
+					"name": "Raad het nummer",
+					"answers": [],
+					"correct": {
+						"artist": "Kinderen voor Kinderen",
+						"title": "Gruwelijk Eng",
+						"locatie": "Het Kamp"
+					}
+				},
+				{
+					"type": "intro",
+					"name": "Eind van de ronde",
+					"details": "",
+					"answers": [],
+					"correct": {}
+				}
+			]
+		},
+		{
+			"name": "Super algemene ronde.",
+			"details": "Algemener dan dit kan het niet.",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "multi",
+					"name": "Welke drie snaarinstrumenten zijn dit?",
+					"answers": [
+						"Cello ",
+						"Gitaar",
+						"Ukelele",
+						"Banjo",
+						"Citer",
+						"Viool",
+						"Klavecimbel",
+						"Mandoline",
+						"Balalaika"
+					],
+					"correct": {
+						"default": [
+							"Balalaika",
+							"Banjo",
+							"Cello "
+						]
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Wat is de afstand op een voetbalveld tussen de middenstip en de cirkel om die middenstip? Vul je antwoord in centimeters",
+					"answers": [],
+					"correct": {
+						"default": 915
+					}
+				},
+				{
+					"type": "one",
+					"name": "In welke taal is deze cover gezongen?",
+					"answers": [
+						"Spaans",
+						"Mexicaans",
+						"Mongools",
+						"Portugees",
+						"Servisch"
+					],
+					"correct": {
+						"default": "Portugees"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat is de overeenkomst tussen corona en batman",
+					"answers": [
+						"Ziekte",
+						"De 'bad-guy'",
+						"Vleermuis",
+						"Superheld"
+					],
+					"correct": {
+						"default": "Vleermuis"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Hoe heet het Chateau van de Familie Meiland?",
+					"answers": [
+						"Château Marillaux",
+						"Château Meiland",
+						"Wijnen wijnen wijnen",
+						"Château Martien",
+						"Château Hengeleau"
+					],
+					"correct": {
+						"default": "Château Marillaux"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Op welk guldenbiljet stond de Zonnebloem afgebeeld?",
+					"answers": [
+						"5 Gulden",
+						"10 Gulden",
+						"50 Gulden",
+						"100 Gulden"
+					],
+					"correct": {
+						"default": "50 Gulden"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Waar staan alle bruggen die op de euro te vinden zijn?",
+					"answers": [
+						"Brussel",
+						"Spijkernisse",
+						"Stockholm",
+						"Venetie",
+						"brugge"
+					],
+					"correct": {
+						"default": "Spijkernisse"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Wat is de hoofdstad van Overijssel?",
+					"answers": [],
+					"correct": {
+						"default": "Zwolle"
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Sinds welk jaar ging Nederland massaal pinnen?",
+					"answers": [],
+					"correct": {
+						"default": 1991
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat gebeurt er met een goudvis als je hem opsluit in een donkere kamer?",
+					"answers": [
+						"Hij gaat dood",
+						"Gaat op zijn kop zwemmen",
+						"Wordt wit",
+						"Krijgt superkrachten"
+					],
+					"correct": {
+						"default": "Word wit"
+					}
+				},
+				{
+					"type": "open-text",
+					"name": "Hoe heet het harde uiteinde van je veter?",
+					"answers": [],
+					"correct": {
+						"default": "Nestel"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Waardoor ontstaat het verschil tussen bruine en witte eieren?",
+					"answers": [
+						"Door het type voeding",
+						"Door de oorlel van een kip",
+						"Het geslacht",
+						"Het leefgebied"
+					],
+					"correct": {
+						"default": "Door de oorlel van een kip"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat is Nomofobie?",
+					"answers": [
+						"Angst voor dode dingen",
+						"Angst dat je geen bereik hebt met je telefoon",
+						"Angst voor hoogte's",
+						"Angst voor spinnen"
+					],
+					"correct": {
+						"default": "Angst dat je geen bereik hebt met je telefoon"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Hoe heet het vogeltje van Twitter?",
+					"answers": [
+						"Tweetie",
+						"Birdie",
+						"Henk",
+						"Larry"
+					],
+					"correct": {
+						"default": "Angst dat je geen bereik hebt met je telefoon"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Naar wie is de maand juli vernoemd?",
+					"answers": [
+						"Julius ceacar",
+						"Paus Julius III",
+						"Julius Civilis",
+						"Julius Aghahowa"
+					],
+					"correct": {
+						"default": "Julius ceacar"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat is de hoogste berg in Europa?",
+					"answers": [
+						"Elbrus",
+						"Mont Blanc",
+						"Mount Everest",
+						"Mont Blanc de Courmayeur"
+					],
+					"correct": {
+						"default": "Elbrus"
+					}
+				},
+				{
+					"type": "open-numeric",
+					"name": "Welk nummer had de apollo die het maanoppervlak voor het eerst bereikte?",
+					"answers": [],
+					"correct": {
+						"default": 11
+					}
+				},
+				{
+					"type": "one",
+					"name": "Koekoek is er een voorbeeld van. Maar wat is een onomatopee?",
+					"answers": [
+						"Een bepaald type klok wat zich indentificeert met het geluid wat het maakt",
+						"Een woord dat fonetisch het geluid dat het beschrijft nabootst of suggereert",
+						"Een koelbloedig zoogdier wat vooral leeft in de grond.",
+						"Een enkeldelig haarstuk voor vroeg kalende mannen."
+					],
+					"correct": {
+						"default": "Een woord dat fonetisch het geluid dat het beschrijft nabootst of suggereert"
+					}
+				},
+				{
+					"type": "one",
+					"name": "wat is de oorspronkelijke betekenis van Trivia?",
+					"answers": [
+						"Een van de eerste spelprogramma's op de nederlande televisie had deze naam.",
+						"De scheiding van controlerende, uitvoerende en rechtsprekende macht",
+						"Officiele europese quiz regels bestaan uit 3 rondes, Trivia is een verbastering van drie.",
+						"Het is een afgeleide van het spel Triviant, waarbij je taartpuntjes moet scoren met het beantwoorden van goede vragen.",
+						"komt van 'tri via', drie wegen - romeinse vrouwen kwamen bij de kruising van 3 wegen samen om te roddelen."
+					],
+					"correct": {
+						"default": "komt van 'tri via', drie wegen - romeinse vrouwen kwamen bij de kruising van 3 wegen samen om te roddelen."
+					}
+				},
+				{
+					"type": "one",
+					"name": "Freek Vonk is gepromoveerd op?",
+					"answers": [
+						"Lucky TV",
+						"Haaientanden",
+						"Jungle wetenschappen",
+						"Slangengif",
+						"Eva Jinek"
+					],
+					"correct": {
+						"default": "Slangengif"
+					}
+				},
+				{
+					"type": "one",
+					"name": "Wat was de oorspronkelijke kleur van de wortel?",
+					"answers": [
+						"Groen",
+						"Wit",
+						"Geel",
+						"Paars"
+					],
+					"correct": {
+						"default": "Paars"
+					}
+				},
+				{
+					"type": "intro",
+					"name": "Eind van de ronde",
+					"details": "",
+					"answers": [],
+					"correct": {}
+				}
+			]
+		},
+		{
+			"name": "Fladder foto ronde",
+			"details": "Raad de plaat",
+			"type": "questions",
+			"vragen": [
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Danny van Stam",
+						"year": 2017
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Loes Vaartjes",
+						"year": 2018
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Yorick van Vliet",
+						"year": 2018
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Mousha van Wijk",
+						"year": 2015
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Jos Minnaar",
+						"year": 2019
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Joyce Hennevanger",
+						"year": 2018
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Ludo Knollema",
+						"year": 2013
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Tessa Terstegen",
+						"year": 2018
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Alouette Hanegraaf",
+						"year": 2017
+					}
+				},
+				{
+					"type": "name-year",
+					"name": "Wie is dit op op de foto? Vul het jaartal in voor bonuspunten.",
+					"answers": [],
+					"correct": {
+						"name": "Kees Vringer",
+						"year": 2016
+					}
+				},
+				{
+					"type": "intro",
+					"name": "Eind van de ronde",
+					"details": "",
+					"answers": [],
+					"correct": {}
+				}
+			]
+		}
+	]
+}
