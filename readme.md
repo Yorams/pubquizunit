@@ -4,7 +4,7 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 # This repo is work in progress and far from done.
 **Right now the database is working with CouchDB. But this is not ideal for me. So i'm migrating to SQLite3. Thats not in this version. I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use**
 
-## How to install
+# How to install
 - Clone the git repository or download and extract all the files to a folder on your disk. Go to the folder and run:	
 
 	    npm install
@@ -12,6 +12,7 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
 
+# Other info
 ## Things to edit on question templates:
 	question_templates.pug
 	quiz_public.js
@@ -37,7 +38,7 @@ Once installed everything rename the "settings_empty.json" to "settings.json" an
 	WantedBy=multi-user.target
 
 
-# Log
+## Shortcuts
 journalctl -u pubquizunit.service
 
 sudo systemctl start pubquizunit.service
