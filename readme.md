@@ -39,10 +39,9 @@ Once installed everything rename the "settings_empty.json" to "settings.json" an
 
 
 ## Shortcuts
-journalctl -u pubquizunit.service
-
-sudo systemctl start pubquizunit.service
-sudo systemctl restart pubquizunit.service
+	journalctl -u pubquizunit.service
+	sudo systemctl start pubquizunit.service
+	sudo systemctl restart pubquizunit.service
 
 # TODO
 - ALLOT!
