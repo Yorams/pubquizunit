@@ -9,7 +9,6 @@ websocket.js
 # database gegevens:
 localhost
 admin
-vgopdFY2XM5k
 
 # Service file
 [Unit]
