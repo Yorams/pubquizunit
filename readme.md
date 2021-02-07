@@ -11,9 +11,24 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
 
+# How to use
+
 Teams have there own personal link, defined in teams.json. The teamlink is:
 	
 	https://<IP or HOST>/quiz/<GUID>
+
+To control the quiz you can go to(not very save, i know. There is coming a legit login system soon):
+
+	https://<IP or HOST>/control/ditisechtheelgeheimditmagniemandweten
+
+The answer overview is here:
+	
+	https://<IP or HOST>/score/
+
+And the scoreboard here:
+	
+	https://<IP or HOST>/score/top
+	
 
 Questions are defined in questions.json. Right now this is a bit of a mess and maybe hard to understand. I will try to explain.
 
