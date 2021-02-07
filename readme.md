@@ -2,7 +2,7 @@
 Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his cue. Teams can only answer once. There is a live scoreboard and an answer overview to see the given answers for each team.
 
 # This repo is work in progress and far from done.
-**I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use**
+**I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use. Some variables and comments are in Dutch...**
 
 # How to install
 - Clone the git repository or download and extract all the files to a folder on your disk. Go to the folder and run:	
@@ -10,6 +10,16 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 	    npm install
 
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
+
+Teams have there own personal link, defined in teams.json. The teamlink is:
+	
+	https://<IP or HOST>/quiz/<GUID>
+
+Questions are defined in questions.json. Right now this is a bit of a mess and maybe hard to understand. I will try to explain.
+
+The first object is an array with quiz rounds. Every round have a name, details, type and another array with questions ("vragen" in Dutch).
+
+Every question has a type, name, details, answers array and a correct answers array. The answers en correct array is different per type of question. If you want to know wat to fill in here, check public/javascript/quiz_public.js. There is some info there.
 
 # Other info
 ## Things to edit on question templates:
