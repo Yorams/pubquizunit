@@ -2,13 +2,12 @@
 Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his cue. Teams can only answer once. There is a live scoreboard and an answer overview to see the given answers for each team.
 
 # This repo is work in progress and far from done.
-**Right now the database is working with CouchDB. But this is not ideal for me. So i'm migrating to SQLite3. Thats not in this version. I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use**
+**I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use**
 
 # How to install
 - Clone the git repository or download and extract all the files to a folder on your disk. Go to the folder and run:	
 
 	    npm install
-- Install CouchDB: https://docs.couchdb.org/en/stable/install/index.html
 
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
 
@@ -48,3 +47,7 @@ Once installed everything rename the "settings_empty.json" to "settings.json" an
 - iets verzinnen voor current question and round systeem
 - Question/round tel systeem herzien zodat er intro's en einde's in kunnen.
     Evt aan en uit te kunnen zetten in de round settings.
+
+
+### Handige dingen
+https://gist.github.com/NigelEarle/70db130cc040cc2868555b29a0278261

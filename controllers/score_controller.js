@@ -1,6 +1,4 @@
-const common = require("../common_functions");
-
-const util = require('util')
+//const common = require("../common_functions");
 
 exports.getPageContent = function (req, res) {
     res.render('score');
@@ -15,101 +13,85 @@ exports.getTopVideoPageContent = function (req, res) {
 }
 
 exports.getScore = function (req, res) {
-    const quizData = common.initDatabase('quizunit_data');
-    const quizAnswers = common.initDatabase('quizunit_answers');
+    var questionData = req.app.get('questionData');
     var answersChecked = [];
     var teamData = req.app.get('teamData');
+    var knex = req.app.get('knex');
 
-    // Get all questionss
-    quizData.get("vragen").then((questionData) => {
+    // Generate empty array. Multidimensional: [Rounds][questions][teams]
+    for (rkey in questionData.rounds) {
+        var questions = [];
+        for (qkey in questionData.rounds[rkey].vragen) {
+            var teams = [];
+            var teamsLookup = {};
+            var tI = 0;
+            for (tKey in teamData) {
 
-        // Generate empty array. Multidimensional: [Rounds][questions][teams]
-        for (rkey in questionData.rounds) {
-            var questions = [];
-            for (qkey in questionData.rounds[rkey].vragen) {
-                var teams = [];
-                var teamsLookup = {};
-                var tI = 0;
-                for (tKey in teamData) {
+                teams.push({
+                    guid: teamData[tKey].guid,
+                    answer: "",
+                    score: 0
+                })
 
-                    teams.push({
-                        guid: teamData[tKey].guid,
-                        answer: "",
-                        score: 0
-                    })
-
-                    // Create team lookup table
-                    teamsLookup[teamData[tKey].guid] = {
-                        index: tI,
-                        name: teamData[tKey].name,
-                        totalScore: 0,
-                        roundScore: Array(questionData.rounds.length).fill(0)
-                    }
-                    tI++;
+                // Create team lookup table
+                teamsLookup[teamData[tKey].guid] = {
+                    index: tI,
+                    name: teamData[tKey].name,
+                    totalScore: 0,
+                    roundScore: Array(questionData.rounds.length).fill(0)
                 }
-
-                questions[qkey] = teams
+                tI++;
             }
-            answersChecked[rkey] = questions
+
+            questions[qkey] = teams
         }
+        answersChecked[rkey] = questions
+    }
 
-        // Get all answers from database and put them in answer array
-        quizAnswers.list({ include_docs: true }).then((body) => {
 
-            // Check if there are answers, if not. just send a empty score list.
-            if (body.rows.length == 0) {
+    knex('answers')
+        .then((rows) => {
+            if (rows.length == 0) {
                 return res.send({
                     teams: teamsLookup,
                     answers: answersChecked
                 });
             } else {
+                for (key in rows) {
+                    if (typeof (questionData.rounds[rows[key].round].vragen[rows[key].question]) !== "undefined") {
 
-                var i = 0;
-                body.rows.forEach(function (doc) {
-                    var docId = doc.id.split(":");
-                    if (typeof (questionData.rounds[doc.doc.round].vragen[doc.doc.question]) !== "undefined") {
-                        var currRightAnswer = questionData.rounds[doc.doc.round].vragen[doc.doc.question].correct;
-                        var currQuestionType = questionData.rounds[doc.doc.round].vragen[doc.doc.question].type;
+
+                        var currRightAnswer = questionData.rounds[rows[key].round].vragen[rows[key].question].correct;
+                        var currQuestionType = questionData.rounds[rows[key].round].vragen[rows[key].question].type;
 
                         // Check answer and get score
-                        var score = checkAnswer(currQuestionType, doc.doc.answer, currRightAnswer);
+                        var score = checkAnswer(currQuestionType, JSON.parse(rows[key].answer), currRightAnswer);
 
                         // Round score
                         score = Math.round((score + Number.EPSILON) * 100) / 100
 
                         // Add score to total
-                        teamsLookup[docId[0]].totalScore = teamsLookup[docId[0]].totalScore + score
+                        teamsLookup[rows[key].guid].totalScore = teamsLookup[rows[key].guid].totalScore + score
 
                         // Add score to each round total
-                        teamsLookup[docId[0]].roundScore[doc.doc.round] = teamsLookup[docId[0]].roundScore[doc.doc.round] + score
+                        teamsLookup[rows[key].guid].roundScore[rows[key].round] = teamsLookup[rows[key].guid].roundScore[rows[key].round] + score
 
                         // Add answer, question score and type to team object
-                        answersChecked[doc.doc.round][doc.doc.question][teamsLookup[docId[0]].index].answer = doc.doc.answer;
-                        answersChecked[doc.doc.round][doc.doc.question][teamsLookup[docId[0]].index].type = currQuestionType;
-                        answersChecked[doc.doc.round][doc.doc.question][teamsLookup[docId[0]].index].score = score;
+                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].answer = JSON.parse(rows[key].answer);
+                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].type = currQuestionType;
+                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].score = score;
                     } else {
-                        console.log(`Error: Score controller: cannot find question with given answer(Round ${doc.doc.round}, Question ${doc.doc.question}) this occours when questions are edited. Delete all answers to resolve this.`)
+                        console.log(`Error: Score controller: cannot find question with given answer(Round ${rows[key].round}, Question ${rows[key].question}) this occours when questions are edited. Delete all answers to resolve this.`)
                     }
-                    // If al answers has been checked, send response
-                    if (body.rows.length - 1 == i) {
-
-                        return res.send({
-                            teams: teamsLookup,
-                            answers: answersChecked
-                        });
-                    }
-
-                    i++;
-
-                })
+                }
             }
-
         })
-
-    }).catch((error) => {
-        console.log(`Score_controller: Cannot get questions: ${error}`);
-    })
-
+        .finally(() => {
+            return res.send({
+                teams: teamsLookup,
+                answers: answersChecked
+            });
+        })
 }
 
 function checkAnswer (type, teamAnswer, correctAnswer) {
@@ -214,12 +196,6 @@ function checkAnswer (type, teamAnswer, correctAnswer) {
 
 
 //functions to check simalarity
-function checkSimilarity () {
-    var str1 = document.getElementById("lhsInput").value;
-    var str2 = document.getElementById("rhsInput").value;
-    document.getElementById("output").innerHTML = similarity(str1, str2);
-}
-
 function similarity (s1, s2) {
     var longer = s1;
     var shorter = s2;

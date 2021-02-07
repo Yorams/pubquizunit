@@ -1,8 +1,7 @@
 var glob_currStatus;
 
-
 // -- WEBSOCKET --
-var socket = new ReconnectingWebSocket('wss://' + window.location.hostname + ':8080');
+var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}:8080?guid=${glob_data.team.guid}`);
 
 socket.onerror = function (m) {
     console.log(m)
@@ -23,25 +22,25 @@ socket.onmessage = function (m) {
     }
 }
 jQuery(function () {
-    if (!glob_data.success){
+    if (!glob_data.success) {
         $(".questionMain").html("<h1 class='text-center my-5'>Geen of onjuist ID</h3>");
     }
 
     // Submit answer
     $(".questionMain").on("click", ".submitAnswerBtn", function (e) {
-        
-        if ($("form.answers")[0].reportValidity()){
+
+        if ($("form.answers")[0].reportValidity()) {
             $(".submitAnswerBtn").prop('disabled', true);
             var answer;
 
             switch (glob_currStatus.question.type) {
                 case "one":
-                    answer = {"default":$("input[name=\"answer\"]:checked").val()};
+                    answer = { "default": $("input[name=\"answer\"]:checked").val() };
                     break;
                 case "multi":
                     // Get all checked boxes
                     var checked = [];
-                    $("input[name=\"answer\"]:checked").each(function(){
+                    $("input[name=\"answer\"]:checked").each(function () {
                         checked.push($(this).val());
                     })
                     answer = { "default": checked };
@@ -71,16 +70,17 @@ jQuery(function () {
                         "year": $("input[name=\"year\"]").val()
                     };
             }
-            
+
             var sendData = {
                 guid: glob_data.team.guid,
                 answer: JSON.stringify(answer),
                 round: glob_currStatus.round.current,
                 question: glob_currStatus.question.current,
+                type: glob_currStatus.question.type
             }
 
-            $.post("submitanswer", sendData, function(data){
-                if (data.result == "success"){
+            $.post("submitanswer", sendData, function (data) {
+                if (data.result == "success") {
                     $(".answersInput").prop('disabled', true);
                     $(".questionMain").append(qAlertTemplate({ alertType: "success", alertMessage: "Je antwoord is opgeslagen" }));
                 } else if (data.result == "error") {
@@ -88,18 +88,18 @@ jQuery(function () {
                     $(".questionMain").append(qAlertTemplate({ alertType: "danger", alertMessage: "Er ging iets fout, vernieuw evt de pagina. Meer info in de console" }));
                     console.log(data.errorMsg);
                 }
-            }).fail(function (xhr, status, error){
+            }).fail(function (xhr, status, error) {
                 $(".questionMain").append(qAlertTemplate({ alertType: "danger", alertMessage: `Er ging iets fout, contact de quizmaster (${error})` }));
             })
         }
     });
 
-    $(".questionMain").on("submit", ".answers", function(e){
+    $(".questionMain").on("submit", ".answers", function (e) {
         e.preventDefault();
     })
 });
 
-function loadQuestion(data){
+function loadQuestion (data) {
     // Clear countdown timer
     clearInterval(countdownTimer);
 
@@ -107,23 +107,12 @@ function loadQuestion(data){
     $(".headerSubTitle").html(`Team: ${glob_data.team.name}`);
     $(".subTitle").html(data.round.name)
 
-    $(".currentQuestion").html(` Ronde ${data.round.current+1}/${data.round.total} | Vraag ${data.question.current+1}/${data.question.total}`)
-    
+    $(".currentQuestion").html(` Ronde ${data.round.current + 1}/${data.round.total} | Vraag ${data.question.current + 1}/${data.question.total}`)
 
-    // Check if question already answered
-    // Dit heeft 2 bronnen, als een pagina opnieuw laad kan er per client een lookup worden gedaan in de db of de vraag al beantwoord is.
-    // Met een broadcast websocket msg kan dit niet, daarom word dan de volledige lijst meegestuurd met spelers die de desbetreffende vraag al beantwoord hebben.
-    if (typeof (data.question.answeredTotal) != "undefined"){
-        for (i in data.question.answeredTotal){
-            data.question.answered = (data.question.answeredTotal[i] == glob_data.team.guid)
-            break;
-        }
-    }
-
-    data.question["isDisabled"] = (data.question.answered) ? "disabled" : ""  ;
+    data.question["isDisabled"] = (data.question.answered) ? "disabled" : "";
 
     var questionContent = {};
-    if(data.question.type == "one"){
+    if (data.question.type == "one") {
         questionContent = qOneTemplate(data.question);
     } else if (data.question.type == "multi") {
         questionContent = qMultiTemplate(data.question);

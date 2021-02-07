@@ -40,6 +40,7 @@ common.getJsonFile("/settings")
         serverHttps.on('error', onError);
         serverHttps.on('listening', onListeningHttps);
 
+        console.log(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
 
         // Event listener for HTTP server "error" event.
         function onError (error) {

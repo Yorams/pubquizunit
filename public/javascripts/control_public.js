@@ -1,5 +1,5 @@
 // -- WEBSOCKET --
-var socket = new ReconnectingWebSocket('wss://' + window.location.hostname + ':8080');
+var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}:8080?guid=${glob_data.team.guid}`);
 
 socket.onerror = function (m) {
     console.log(m)
@@ -24,11 +24,11 @@ jQuery(function () {
     if (!glob_data.success) {
         $(".questionMain").html("<h1 class='text-center my-5'>Geen of onjuist ID</h3>");
     }
-    
+
     //// Actions ////
 
     // quiz controls
-    $(".controlBtn").on("click", function(){
+    $(".controlBtn").on("click", function () {
 
         var currentAction = $(this).data("action");
 
@@ -41,11 +41,11 @@ jQuery(function () {
     })
 });
 
-function loadQuestion(data) {
+function loadQuestion (data) {
     clearInterval(countdownTimer);
     $(".headerSubTitle").html(`Team: ${glob_data.team.name}`);
     $(".subTitle").html(data.round.name);
-    
+
     $(".currentRound").html(`Ronde ${data.round.current} van ${data.round.total}`)
     $(".currentQuestion").html(`Vraag ${data.question.current} van ${data.question.total}`)
 

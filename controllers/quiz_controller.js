@@ -1,10 +1,5 @@
 const common = require("../common_functions");
 
-const quizData = common.initDatabase('quizunit_data');
-const quizAnswers = common.initDatabase('quizunit_answers');
-
-
-
 exports.getPageContent = function (req, res) {
     var guidIn = req.params.guid
     var teamData = req.app.get('teamData');
@@ -21,33 +16,37 @@ exports.submitAnswer = function (req, res) {
     var answer = JSON.parse(req.body.answer);
     var roundIn = req.body.round;
     var questionIn = req.body.question;
+    var typeIn = req.body.type;
+    var knex = req.app.get('knex');
 
-    if (typeof (answer) !== "undefined") {
+    if (typeof (answer) !== "undefined" && typeof (typeIn) !== "undefined") {
         // Get team data
         var teamData = req.app.get('teamData');
 
+        // Check if current team exists
         common.getTeam(guidIn, teamData, function (currentTeam) {
             if (currentTeam.success) {
                 // Get current round and question ID from db
-                quizData.get("current").then((currentData) => {
+                common.getCurrent(knex).then(currentData => {
 
                     // Check if answer is from current round & question
                     if (roundIn == currentData.round) {
                         if (questionIn == currentData.question) {
-                            // HIER VERDER
 
                             var dbData = {
-                                _id: `${guidIn}:${currentData.round}-${currentData.question}`,
+                                guid: guidIn,
+                                type: typeIn,
                                 round: currentData.round,
                                 question: currentData.question,
-                                answer: answer
+                                answer: JSON.stringify(answer)
                             }
 
-                            quizAnswers.insert(dbData).then((body) => {
-                                return res.send({ result: "success" });
-                            }).catch((error) => {
-                                return res.send({ result: "error", errorMsg: `Insert schema item: ${error.error} - ${error.reason}` })
-                            });
+                            // Save answer to database
+                            knex('answers')
+                                .insert(dbData)
+                                .then(() => res.send({ result: "success" }))
+                                .catch((error) => res.send({ result: "error", errorMsg: `Cannot save answer: ${error}` }))
+
                         } else {
                             return res.send({ result: "error", errorMsg: `current question id mismatch` })
                         }

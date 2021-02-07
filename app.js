@@ -6,13 +6,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var websocket = require("./websocket");
 const common = require("./common_functions");
+const database = require("./knexfile");
+const knex = require('knex')(database.development);
 
 var app = express();
-console.log("Pubquiz Unit server is running")
 
 // Set instance to app
 app.set('websocket', websocket);
-
+app.set('knex', knex);
 
 // Load Quiz teams
 common.getJsonFile("/teams")

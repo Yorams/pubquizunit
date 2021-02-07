@@ -2,6 +2,9 @@ const fs = require('fs');
 const https = require('https');
 const WebSocket = require('ws');
 const common = require("./common_functions");
+const database = require("./knexfile");
+const knex = require('knex')(database.development);
+var url = require('url');
 
 // Get settings
 common.getJsonFile("/settings")
@@ -14,22 +17,21 @@ common.getJsonFile("/settings")
                 // Get Quiz questions
                 common.getJsonFile("/questions")
                     .then(function (questionData) {
+                        var countdownTimer;
 
+                        // Init websocket
                         const server = https.createServer({
                             cert: fs.readFileSync(appSettings.certificate.cert),
                             key: fs.readFileSync(appSettings.certificate.key)
                         });
-
-                        const quizData = common.initDatabase('quizunit_data');
-                        const quizAnswers = common.initDatabase('quizunit_answers');
-
-                        // Init websocket
                         const wss = new WebSocket.Server({ server });
-
-                        var countdownTimer;
 
                         // Websocket handler
                         wss.on('connection', function connection (ws, req) {
+                            const urlParams = new URLSearchParams(url.parse(req.url, true).search)
+                            clientGuid = urlParams.get("guid");
+                            ws.guid = clientGuid
+
                             // Websocket client connected
                             const ip = req.connection.remoteAddress;
                             console.log("Websocket: Client connected.", ip)
@@ -50,17 +52,36 @@ common.getJsonFile("/settings")
                             });
                         });
 
+                        // Broadcast to all clients
+                        var broadcastMsg = function (data) {
+
+                            wss.clients.forEach(function each (client) {
+
+                                if (client.readyState === WebSocket.OPEN) {
+                                    client.send(data);
+                                }
+                            });
+                        }
+
+                        exports.send = broadcastMsg;
+
+                        // Start websocket server
                         server.listen(appSettings.app.websocketPort);
+
                         function parseCommands (data, ws, req) {
                             const ip = req.connection.remoteAddress;
 
                             if (data.msgType == "getStatus") {
+                                /**
+                                 * Returns current question data to team. When they are requesting it.
+                                 */
 
                                 // Get team data
                                 common.getTeam(data.guid, teamData, function (currentTeam) {
                                     if (currentTeam.success) {
+
                                         // Get current round and question ID from db
-                                        quizData.get("current").then((currentData) => {
+                                        common.getCurrent(knex).then(currentData => {
 
                                             // Check if current round exists in all questions
                                             var currentRound = questionData.rounds[currentData.round];
@@ -75,38 +96,41 @@ common.getJsonFile("/settings")
                                                     var answered = false;
 
                                                     // Check of vraag al beantwoord is.
-                                                    quizAnswers.get(`${data.guid}:${currentData.round}-${currentData.question}`).then((body) => {
-                                                        // Vraag is beantwoord
-                                                        answered = true;
-                                                    }).catch((error) => {
-                                                        // Vraag is niet beantwoord
-                                                        if (error.error == "not_found") {
-                                                            answered = false;
-                                                        } else {
-                                                            console.log(`Websocket: Onbekende error: ${error.error}: ${error.reason}`)
-                                                        }
-
-                                                    }).finally((e) => {
-                                                        // Send question with stripped answers to client
-                                                        ws.send(JSON.stringify({
-                                                            msgType: "question",
-                                                            round: {
-                                                                name: currentRound.name,
-                                                                details: currentRound.details,
-                                                                current: currentData.round,
-                                                                total: roundCount
-                                                            },
-                                                            question: {
-                                                                name: currentQuestion.name,
-                                                                type: currentQuestion.type,
-                                                                answers: currentQuestion.answers,
-                                                                current: currentData.question,
-                                                                total: currQuestionCount,
-                                                                answered: answered
+                                                    knex('answers')
+                                                        .where({ guid: data.guid, round: currentData.round, question: currentData.question })
+                                                        .then(() => {
+                                                            answered = true;
+                                                        })
+                                                        .catch((error) => {
+                                                            // Vraag is niet beantwoord
+                                                            if (error.error == "not_found") {
+                                                                answered = false;
+                                                            } else {
+                                                                console.log(`Websocket: Onbekende error: ${error.error}: ${error.reason}`)
                                                             }
-                                                        }));
 
-                                                    });
+                                                        })
+                                                        .finally((e) => {
+                                                            // Send question with stripped answers to client
+                                                            ws.send(JSON.stringify({
+                                                                msgType: "question",
+                                                                round: {
+                                                                    name: currentRound.name,
+                                                                    details: currentRound.details,
+                                                                    current: currentData.round,
+                                                                    total: roundCount
+                                                                },
+                                                                question: {
+                                                                    name: currentQuestion.name,
+                                                                    type: currentQuestion.type,
+                                                                    answers: currentQuestion.answers,
+                                                                    current: currentData.question,
+                                                                    total: currQuestionCount,
+                                                                    answered: answered
+                                                                }
+                                                            }));
+
+                                                        });
 
 
                                                 } else {
@@ -124,6 +148,10 @@ common.getJsonFile("/settings")
                                     }
                                 });
                             } else if (data.msgType == "controlQuiz") {
+                                /**
+                                 * Controls the the quiz
+                                 */
+
                                 if (data.action == "next" || data.action == "prev") {
                                     // Get team data to check if it is a admin
                                     common.getTeam(data.guid, teamData, function (currentTeam) {
@@ -138,7 +166,7 @@ common.getJsonFile("/settings")
                                                 clearTimeout(countdownTimer);
 
                                             } else {
-                                                ws.send("He boef, hier kan je niks vinden.")
+                                                ws.send("Nothing to find here.")
                                             }
                                         }
                                     });
@@ -183,20 +211,11 @@ common.getJsonFile("/settings")
 
                         }
 
-                        // Broadcast to all clients
-                        var broadcastMsg = function (data) {
-                            wss.clients.forEach(function each (client) {
-                                if (client.readyState === WebSocket.OPEN) {
-                                    client.send(data);
-                                }
-                            });
-                        }
 
-                        exports.send = broadcastMsg;
 
                         function publishQuestion (action) {
                             // Get current round and question ID from db
-                            quizData.get("current").then((currentData) => {
+                            common.getCurrent(knex).then(currentData => {
 
                                 var currQuestionCount = questionData.rounds[parseInt(currentData.round)].vragen.length
 
@@ -205,7 +224,10 @@ common.getJsonFile("/settings")
                                 switch (action) {
                                     case "next":
 
-                                        // Next     question
+                                        /** 
+                                         * Next question
+                                         */
+
                                         // Check if end of round is reached
                                         if (currentData.question < currQuestionCount - 1) {
                                             currentData.question = parseInt(currentData.question) + 1
@@ -222,7 +244,10 @@ common.getJsonFile("/settings")
                                         break;
 
                                     case "prev":
-                                        // Previous question
+                                        /**
+                                         * Previous question
+                                         */
+
                                         // Check if begin of round is reached
                                         if (currentData.question > 0) {
                                             currentData.question = parseInt(currentData.question) - 1
@@ -243,54 +268,52 @@ common.getJsonFile("/settings")
                                         break;
                                 }
 
-                                // Save to DB
-                                quizData.insert(currentData).then((body) => {
-                                    //console.log(currentData.round, currentData.question)
+                                // Save current round and question to DB
+                                common.updateCurrent(knex, currentData).then(() => {
 
                                     var currentRound = questionData.rounds[currentData.round];
                                     var currentQuestion = currentRound.vragen[currentData.question];
-                                    var answeredTotal = [];
+                                    var answeredList = [];
 
-                                    quizAnswers.list(function (err, body) {
-                                        if (!err) {
+                                    knex('answers')
+                                        .where({ round: currentData.round, question: currentData.question })
+                                        .then((rows) => {
+                                            // Push all guid of team with an answer to array
+                                            for (key in rows) {
+                                                answeredList.push(rows[key].guid);
+                                            }
 
-                                            body.rows.forEach(function (doc) {
-                                                var docId = doc.id.split(":");
-                                                var guid = docId[0];
-
-                                                var answerR = docId[1].split("-")[0];
-                                                var answerD = docId[1].split("-")[1];
-
-                                                if (answerR == currentData.round && answerD == currentData.question) {
-                                                    answeredTotal.push(guid);
+                                            var sendData = {
+                                                msgType: "question",
+                                                round: {
+                                                    name: currentRound.name,
+                                                    details: currentRound.details,
+                                                    current: currentData.round,
+                                                    total: roundCount
+                                                },
+                                                question: {
+                                                    name: currentQuestion.name,
+                                                    type: currentQuestion.type,
+                                                    answers: currentQuestion.answers,
+                                                    current: currentData.question,
+                                                    total: currQuestionCount,
                                                 }
+                                            }
 
+                                            // Send data to all clients
+                                            wss.clients.forEach(function each (client) {
+                                                // Check if current client/team has answered
+                                                sendData.question.answered = answeredList.includes(client.guid)
+
+                                                if (client.readyState === WebSocket.OPEN) {
+                                                    client.send(JSON.stringify(sendData));
+                                                }
                                             });
 
-                                        }
-
-                                        // Send broadcast to players
-                                        broadcastMsg(JSON.stringify({
-                                            msgType: "question",
-                                            round: {
-                                                name: currentRound.name,
-                                                details: currentRound.details,
-                                                current: currentData.round,
-                                                total: roundCount
-                                            },
-                                            question: {
-                                                name: currentQuestion.name,
-                                                type: currentQuestion.type,
-                                                answers: currentQuestion.answers,
-                                                current: currentData.question,
-                                                total: currQuestionCount,
-                                                answeredTotal: answeredTotal
-                                            }
-                                        }));
-                                    });
+                                        })
 
                                 }).catch((error) => {
-                                    console.log(`Websocket: error: cannot update document (${error.error} - ${error.reason})`);
+                                    console.log(`Websocket: error: cannot update (${error})`);
                                 });
 
                             });
@@ -303,7 +326,3 @@ common.getJsonFile("/settings")
 
     })
     .catch((err) => { console.log(`websocket: cannot load settings file (${err})`) })
-
-
-
-
