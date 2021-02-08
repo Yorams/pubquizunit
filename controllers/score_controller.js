@@ -84,13 +84,11 @@ exports.getScore = function (req, res) {
                         console.log(`Error: Score controller: cannot find question with given answer(Round ${rows[key].round}, Question ${rows[key].question}) this occours when questions are edited. Delete all answers to resolve this.`)
                     }
                 }
+                return res.send({
+                    teams: teamsLookup,
+                    answers: answersChecked
+                });
             }
-        })
-        .finally(() => {
-            return res.send({
-                teams: teamsLookup,
-                answers: answersChecked
-            });
         })
 }
 

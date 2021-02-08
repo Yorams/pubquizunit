@@ -1,0 +1,26 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Inloggen
+        
+block content
+    div.container.my-5
+        div.card.loginMain
+            div.card-body
+                div.card-title.h2 Login
+                div.card-text
+                    form.loginForm
+                        div.form-group
+                            label(for="username") Username
+                            input.form-control.userInput#username(type="text", name="username")
+                        div.form-group
+                            label(for="password") Password
+                            input.form-control.userInput#password(type="password", name="password")
+                        div.form-group
+                            div.loginErrorMsg.text-danger 
+                        div.form-group
+                            input.form-control.btn.btn-primary(type="submit", value="Log In")
+
+block scripts
+    script(src='/javascripts/login_public.js')

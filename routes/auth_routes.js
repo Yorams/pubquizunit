@@ -2,12 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 // Controllers
-var controller = require('../controllers/control_controller');
+var controller = require('../controllers/auth_controller');
 
 // Index
 router.get('/', controller.getPageContent);
 
-
-router.post('/get_questions', controller.getQuestions);
+router.post('/', controller.login);
 
 module.exports = router;

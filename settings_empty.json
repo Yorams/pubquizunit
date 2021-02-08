@@ -9,11 +9,6 @@
         "key": "/etc/letsencrypt/live/FILL_IN_HOST/privkey.pem",
         "chain": "/etc/letsencrypt/live/FILL_IN_HOST/chain.pem"
     },
-    "database": {
-        "host": "localhost:5984",
-        "user": "",
-        "password": ""
-    },
     "quiz": {
         "title": "Pubquiz Unit"
     }
