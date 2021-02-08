@@ -1,15 +1,15 @@
 //const common = require("../common_functions");
 
 exports.getPageContent = function (req, res) {
-    res.render('score');
+    res.render('score', { username: req.user.username });
 }
 
 exports.getTopPageContent = function (req, res) {
-    res.render('score_top');
+    res.render('score_top', { username: req.user.username });
 }
 
 exports.getTopVideoPageContent = function (req, res) {
-    res.render('score_top_video');
+    res.render('score_top_video', { username: req.user.username });
 }
 
 exports.getScore = function (req, res) {

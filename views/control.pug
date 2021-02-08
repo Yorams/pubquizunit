@@ -3,16 +3,17 @@ extends layout
 block header
     div.container
         div.headerTitle Quiz Control
-        
+
+    include admin_menu.pug
+
 block content
-    div.container
+    div.container.my-3
         div.controlsContainer
-            div.h3 Quiz bediening
             div.controlsMain
                 button.btn.btn-lg.btn-secondary.controlBtn.mx-2(data-action="prev") 
                     i.mdi.mdi-skip-backward
                     br
-                    span.btnText Vorige
+                    span.btnText Previous
                 button.btn.btn-lg.btn-warning.controlBtn.mx-2(data-action="countdown_cancel")
                     i.mdi.mdi-timer-outline
                     i.mdi.mdi-stop
@@ -22,17 +23,18 @@ block content
                     i.mdi.mdi-timer-outline
                     i.mdi.mdi-skip-next
                     br
-                    span.btnText Volgende
+                    span.btnText Next
                 button.btn.btn-lg.btn-secondary.controlBtn.mx-2(data-action="next")
                     i.mdi.mdi-skip-forward
                     br
-                    span.btnText Direct
+                    span.btnText Skip
                 div.timeInputMain
+                    label(for="timerInput") Timer duration
                     div.input-group
                         div.input-group-prepend
                             div.input-group-text
                                 i.mdi.mdi-timer-outline
-                        input.form-control.countdownTimeInput(type="number", min="0", max="9999", value="30")
+                        input.form-control.countdownTimeInput#timerInput(type="number", min="0", max="9999", value="30")
                         
         div.subTitle
         div.row

@@ -17,9 +17,9 @@ Teams have there own personal link, defined in teams.json. The teamlink is:
 	
 	https://<IP or HOST>/quiz/<GUID>
 
-To control the quiz you can go to(not very save, i know. There is coming a legit login system soon):
+To control the quiz you can go to the following url. Default is: admin & test123:
 
-	https://<IP or HOST>/control/ditisechtheelgeheimditmagniemandweten
+	https://<IP or HOST>/control/
 
 The answer overview is here:
 	

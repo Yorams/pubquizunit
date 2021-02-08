@@ -7,7 +7,7 @@ exports.getPageContent = function (req, res) {
     var teamData = req.app.get('teamData');
 
     common.getTeam(guidIn, teamData, function (currentTeam) {
-        return res.render('control', { data: JSON.stringify(currentTeam) });
+        return res.render('control', { username: req.user.username, data: JSON.stringify(currentTeam) });
     });
 }
 

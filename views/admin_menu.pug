@@ -1,0 +1,19 @@
+nav.navbar.navbar-expand-lg.navbar-light.bg-light
+    div.container
+        span.navbar-brand.mb-0.h1 Pubquiz Unit
+        div.collapse.navbar-collapse
+            ul.navbar-nav.mr-auto
+                li.nav-item
+                    a.nav-link(href="/control") Control
+                li.nav-item
+                    a.nav-link(href="/score/") Answers
+                li.nav-item
+                    a.nav-link(href="/score/top") Scoreboard
+            div.my-2.my-lg-0
+                ul.navbar-nav.mr-auto
+                    li.nav-item.dropdown
+                        a.nav-link.dropdown-toggle(href="#", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                            i.mdi.mdi-account
+                            | #{username}
+                        div.dropdown-menu
+                            a.dropdown-item(href="/logout") Logout

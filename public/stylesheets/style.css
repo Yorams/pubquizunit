@@ -75,9 +75,10 @@ div.subTitle{
     margin-top: 15px;
 }
 
-
-
 /**** Control ****/
+.controlsMain {
+    text-align: center;
+}
 .controlsMain button{
     font-size: 28px;
     padding: 0.8rem 1rem 0.5rem 1rem;
@@ -86,8 +87,13 @@ div.subTitle{
 .controlsMain .btnText{
     font-size: 14px;
 }
+
 .timeInputMain{
     display: inline-block;
+    vertical-align: bottom;
+}
+.timeInputMain .input-group-text{
+    padding: 5px 12px;
 }
 /**** Score ****/
 

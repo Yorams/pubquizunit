@@ -3,9 +3,11 @@ extends layout
 block header
     div.container
         div.headerTitle Score
+    
+    include admin_menu.pug
         
 block content
-    div.container.my-5
+    div.container.my-3
         //div.scoreViewMain.mb-3.text-center
             button.btn.btn-primary.scoreView.mx-1(data-view="Overall") Overall
         div.scoreMain.top

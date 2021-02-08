@@ -20,7 +20,6 @@ function hashPassword (password, salt) {
     return hash.digest('hex');
 }
 
-
 var app = express();
 
 // Set instance to app
@@ -75,7 +74,6 @@ passport.use(new LocalStrategy(
                 }
                 console.log(`User ${username} logged in`);
                 return done(null, user);
-
 
             })
             .catch(error => {
@@ -132,8 +130,14 @@ app.use('/scripts/icons', express.static(__dirname + '/node_modules/@mdi/font'))
 app.use('/scripts/popper', express.static(__dirname + '/node_modules/popper.js/dist/umd'));
 app.use('/scripts/handlebars', express.static(__dirname + '/node_modules/handlebars/dist'));
 
-// Main route defenitions
+
 app.use('/login', authRouter);
+app.use('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/');
+});
+
+// Main route defenitions
 app.use('/', isAuthed, indexRouter);
 app.use('/quiz', quizRouter);
 app.use('/control', isAuthed, controlRouter);
