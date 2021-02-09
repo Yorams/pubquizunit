@@ -11,14 +11,7 @@ const database = require("./knexfile");
 const knex = require('knex')(database.development);
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
-var crypto = require('crypto');
 
-function hashPassword (password, salt) {
-    var hash = crypto.createHash('sha256');
-    hash.update(password);
-    hash.update(salt);
-    return hash.digest('hex');
-}
 
 var app = express();
 
@@ -59,7 +52,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//console.log(hashPassword("test123", "f14cf1eb19dc3e635c6dd7914ca55df2"))
+
 passport.use(new LocalStrategy(
     function (username, password, done) {
 
@@ -67,14 +60,13 @@ passport.use(new LocalStrategy(
             .where({ username: username }).first()
             .then(user => {
 
-                var hash = hashPassword(password, user.salt);
+                var hash = common.hashPassword(password, user.salt);
                 // Found user, check password
                 if (hash != user.password) {
                     return done(null, false, { message: 'Incorrect password.' });
                 }
                 console.log(`User ${username} logged in`);
                 return done(null, user);
-
             })
             .catch(error => {
                 return done(null, false, { message: `Incorrect username.` });
@@ -97,14 +89,6 @@ passport.deserializeUser(function (id, done) {
         })
 });
 
-// Middleware to check of user is logged in.
-var isAuthed = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        next();
-    } else {
-        res.redirect('/login')
-    }
-}
 
 //app.use(logger('dev'));
 app.use(express.json());
@@ -116,6 +100,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var authRouter = require('./routes/auth_routes');
+var userRouter = require('./routes/user_routes');
 var indexRouter = require('./routes/index_routes');
 var quizRouter = require('./routes/quiz_routes');
 var controlRouter = require('./routes/control_routes');
@@ -138,10 +123,12 @@ app.use('/logout', function (req, res) {
 });
 
 // Main route defenitions
-app.use('/', isAuthed, indexRouter);
 app.use('/quiz', quizRouter);
-app.use('/control', isAuthed, controlRouter);
-app.use('/score', isAuthed, scoreRouter);
+
+app.use('/', common.isAuthed, indexRouter);
+app.use('/user', common.isAuthed, userRouter);
+app.use('/control', common.isAuthed, controlRouter);
+app.use('/score', common.isAuthed, scoreRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -1,0 +1,87 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Score
+    
+    include admin_menu.pug
+        
+block content
+    div.container
+        div.userListTools.my-3
+            button.btn.btn-success.btnCreateUser(data-toggle="modal", data-target=".editUserModal")
+                i.mdi.mdi-plus-thick
+                |  Create User
+                
+        div.userListMain
+
+    // Edit/Create user modal
+    div.modal.editUserModal(tabindex='-1')
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Create User
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        i.mdi.mdi-close
+
+                div.modal-body
+                    form.userForm
+                        input.userInput(type="hidden", name="id")
+                        div.form-group
+                            label(for="username") Username
+                            input.form-control.userInput#username(type="text", name="username", required)
+                            
+                        div.form-group
+                            label(for="password") Password
+                            input.form-control.userInput#password(type="password", name="password")
+                        div.form-group
+                            label(for="passwordConfirm") Repeat password
+                            input.form-control.userInput#passwordConfirm(type="password", name="passwordConfirm")
+                            small.form-text.text-muted Leave passwords blank to only edit username.
+                        div.form-group
+                            div.errorMsg.text-danger 
+                div.modal-footer
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
+                    button.btn.btn-success.saveUserBtn(type='button') Save
+
+    // Confirm modal
+    div.modal.confirmModal(tabindex='-1')
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Delete User
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        i.mdi.mdi-close
+
+                div.modal-body
+                   | Are you sure you want to delete this user?
+                   
+                div.modal-footer
+                    div.errorMsg.text-danger 
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                    button.btn.btn-success.btnDelUser(type='button') Yes
+
+    // Templates
+    script#userListTemplate(type="text/x-handlebars-template")
+        table.table.table-hover
+            thead
+                tr 
+                    th(scope="col") ID
+                    th(scope="col") Username
+                    th(scope="col") Role
+                    th.text-right(scope="col") Tools
+            tbody
+                | {{#each this}}
+                tr.userRow(data-id="{{this.id}}", data-toggle="modal", data-target=".editUserModal")
+                    td {{this.id}}
+                    th(scope="row") {{this.username}}
+                    td {{this.role}}
+                    td.text-right(style="padding: 0.25rem;")
+                        | {{#if (isNotAdmin this.role)}}
+                        button.btn.btn-sm.btn-danger(data-id="{{this.id}}", data-toggle="modal", data-target=".confirmModal")
+                            i.mdi.mdi-delete
+                        | {{/if}}
+                | {{/each}}
+
+block scripts
+    script(src='/javascripts/user_public.js')

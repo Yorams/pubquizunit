@@ -1,6 +1,7 @@
 var fs = require('fs');
 const { resolve } = require('path');
 var path = require('path');
+var crypto = require('crypto');
 
 exports.getJsonFile = function (fileName) {
     return new Promise(function (resolve, reject) {
@@ -63,4 +64,21 @@ exports.updateCurrent = function (knex, data) {
             .then(resolve())
             .catch(error => reject(error))
     })
+}
+
+
+exports.hashPassword = function (password, salt) {
+    var hash = crypto.createHash('sha256');
+    hash.update(password);
+    hash.update(salt);
+    return hash.digest('hex');
+}
+
+// Middleware to check of user is logged in.
+exports.isAuthed = function (req, res, next) {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        res.redirect('/login')
+    }
 }

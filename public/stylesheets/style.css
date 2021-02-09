@@ -20,7 +20,7 @@ div.loginMain{
     margin: auto;
 }
 
-div.loginErrorMsg{
+div.loginErrorMsg, div.errorMsg{
     height: 16px;
 }
 /*** Header ***/

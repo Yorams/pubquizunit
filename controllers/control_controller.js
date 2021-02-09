@@ -1,5 +1,5 @@
 const common = require("../common_functions");
-//
+
 exports.getPageContent = function (req, res) {
 
     var guidIn = "3b8795dc-c4ed-4201-9b76-ab2a36ceb988";
