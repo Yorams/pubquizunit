@@ -7,6 +7,16 @@ block header
     include admin_menu.pug
         
 block content
+    div.container
+        div.toolBar.form-inline.my-3
+
+            div.input-group.btnAutoRefresh
+                div.input-group-prepend
+                    span.input-group-text Auto Refresh
+                div.input-group-append
+                    button.btn.btn-success.editUser
+                        i.mdi.mdi-power-on
+            div.mx-3 Hover over a score to view the given answer
     div.container-fluid.my-3
         div.scoreMain
         

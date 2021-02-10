@@ -149,6 +149,9 @@ div.subTitle{
     text-align: left;
     padding: 2px 5px;
 }
+.hasAnswer{
+    background-color: rgb(90 252 0 / 23%);
+}
 .scoreRowContainer:nth-child(2n){
     background-color: #efefef;
     
