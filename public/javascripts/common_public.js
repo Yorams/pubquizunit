@@ -42,7 +42,7 @@ Handlebars.registerHelper('questionType', function (type) {
     return returnValue;
 })
 
-function countdown(sec, action) {
+function countdown (sec, action) {
     clearInterval(countdownTimer);
     countdownTime = 0;
 

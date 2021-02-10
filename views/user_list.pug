@@ -8,8 +8,8 @@ block header
         
 block content
     div.container
-        div.userListTools.my-3
-            button.btn.btn-success.btnCreateUser(data-toggle="modal", data-target=".editUserModal")
+        div.toolBar.my-3
+            button.btn.btn-success.editUser
                 i.mdi.mdi-plus-thick
                 |  Create User
                 
@@ -37,7 +37,7 @@ block content
                         div.form-group
                             label(for="passwordConfirm") Repeat password
                             input.form-control.userInput#passwordConfirm(type="password", name="passwordConfirm")
-                            small.form-text.text-muted Leave passwords blank to only edit username.
+                            small.form-text.text-muted.passwordEditInfo Leave passwords blank to only edit username.
                         div.form-group
                             div.errorMsg.text-danger 
                 div.modal-footer
@@ -59,7 +59,7 @@ block content
                 div.modal-footer
                     div.errorMsg.text-danger 
                     button.btn.btn-secondary(type='button' data-dismiss='modal') No
-                    button.btn.btn-success.btnDelUser(type='button') Yes
+                    button.btn.btn-success.btnConfirmDelUser(type='button') Yes
 
     // Templates
     script#userListTemplate(type="text/x-handlebars-template")
@@ -72,13 +72,13 @@ block content
                     th.text-right(scope="col") Tools
             tbody
                 | {{#each this}}
-                tr.userRow(data-id="{{this.id}}", data-toggle="modal", data-target=".editUserModal")
+                tr.editUser(data-id="{{this.id}}")
                     td {{this.id}}
                     th(scope="row") {{this.username}}
                     td {{this.role}}
                     td.text-right(style="padding: 0.25rem;")
                         | {{#if (isNotAdmin this.role)}}
-                        button.btn.btn-sm.btn-danger(data-id="{{this.id}}", data-toggle="modal", data-target=".confirmModal")
+                        button.btn.btn-sm.btn-danger.btnDelUser(data-id="{{this.id}}")
                             i.mdi.mdi-delete
                         | {{/if}}
                 | {{/each}}

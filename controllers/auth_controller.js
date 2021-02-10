@@ -59,7 +59,15 @@ exports.editUser = function (req, res) {
             .where({ username: username })
             .first()
             .then((row) => {
-                if (typeof (row) === "undefined") {
+
+                // Ok, a bit hacky but it works. 
+                //This here is to check if the user is editing itself. If so, it is allowed to edit the password.
+                var isSameUser = false
+                if (typeof (row) !== "undefined") {
+                    isSameUser = id == row.id
+                }
+
+                if (typeof (row) === "undefined" || isSameUser) {
                     // Username doesn't exist
 
                     // Checks if there's an id given. Then add or update the user
@@ -79,19 +87,19 @@ exports.editUser = function (req, res) {
                                 .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot create user: ${error}` }))
 
                         } else {
-                            res.send({ result: "error", errorCode: "password_unvalid", errorMsg: `${passValidation.msg}` })
+                            res.send({ result: "error", errorCode: "password_invalid", errorMsg: `${passValidation.msg}` })
                         }
 
                     } else {
                         // Edit user
 
                         // Do not set password if it is empty
-                        if (typeof (input) !== "undefined" || input != "") {
+                        if (typeof (password) !== "undefined" && password != "") {
                             if (passValidation.valid) {
                                 dbData.password = common.hashPassword(password, salt);
                                 dbData.salt = salt;
                             } else {
-                                res.send({ result: "error", errorCode: "password_unvalid", errorMsg: `${passValidation.msg}` })
+                                res.send({ result: "error", errorCode: "password_invalid", errorMsg: `${passValidation.msg}` })
                             }
                         }
 
@@ -99,7 +107,7 @@ exports.editUser = function (req, res) {
                             .where({ id: id })
                             .update(dbData)
                             .then(() => res.send({ result: "success" }))
-                            .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot create user: ${error}` }))
+                            .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot edit user: ${error}` }))
 
                     }
                 } else {

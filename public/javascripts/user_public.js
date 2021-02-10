@@ -8,7 +8,8 @@ Handlebars.registerHelper('isNotAdmin', function (role) {
 
 getUserList()
 
-$('.editUserModal').on('show.bs.modal', function (e) {
+$("body").on("click", ".editUser", function (e) {
+
     // Clear errors
     $(".errorMsg").html("");
     $(".userInput").removeClass("is-valid")
@@ -21,17 +22,19 @@ $('.editUserModal').on('show.bs.modal', function (e) {
     $(".userInput[name='passwordConfirm']").val("")
 
     // Get ID
-    var id = $(e.relatedTarget).data('id');
+    var id = $(this).data('id');
 
     // Empty error message
     $(this).find(".errorMsg").html("");
 
     if (typeof (id) === "undefined") {
         // Create user
-        $(this).find(".modal-title").html("Create User")
+        $(".editUserModal").find(".modal-title").html("Create User")
+        $(".passwordEditInfo").hide();
     } else {
         // Edit user
-        $(this).find(".modal-title").html("Edit User")
+        $(".editUserModal").find(".modal-title").html("Edit User")
+        $(".passwordEditInfo").show();
 
         // Get user details
         var currentUser = glob_userList.find(function (obj) {
@@ -42,7 +45,9 @@ $('.editUserModal').on('show.bs.modal', function (e) {
     }
 
     // Copy user id from delete button to "yes" button
-    $(this).find('.btnDelUser').data('id', $(e.relatedTarget).data('id'));
+    $(this).find('.btnDelUser').data('id', id);
+
+    $(".editUserModal").modal("show")
 });
 
 $(".saveUserBtn").on("click", function () {
@@ -61,7 +66,7 @@ $(".saveUserBtn").on("click", function () {
         }
 
         // Post to backend
-        $.post("edit", sendData, function (responseData) {
+        sendPost("edit", sendData, function (responseData) {
             if (responseData.result == "success") {
                 // Create user was is successfull
                 getUserList();
@@ -86,22 +91,27 @@ $(".saveUserBtn").on("click", function () {
 })
 
 // Delete user btn
-$('.confirmModal').on('show.bs.modal', function (e) {
+$(".userListMain").on("click", ".btnDelUser", function (e) {
+    //$('.confirmModal').on('show.bs.modal', function (e) {
+    e.stopPropagation();
+
     // Empty error message
     $(".confirmModal .errorMsg").html("");
 
     // Copy user id from delete button to "yes" button
-    $(this).find('.btnDelUser').data('id', $(e.relatedTarget).data('id'));
+    $(".btnConfirmDelUser").attr('data-id', $(this).data('id'));
+
+    $(".confirmModal").modal("show")
 });
 
 // Confirm delete user
-$(".btnDelUser").on("click", function () {
+$(".btnConfirmDelUser").on("click", function () {
     var sendData = {
-        id: $(this).data("id"),
+        id: $(this).attr("data-id"),
     }
 
     // Post to backend
-    $.post("delete", sendData, function (responseData) {
+    sendPost("delete", sendData, function (responseData) {
         if (responseData.result == "success") {
             // Delete was succesfull
             getUserList();
@@ -117,7 +127,7 @@ $(".btnDelUser").on("click", function () {
 });
 
 function getUserList () {
-    $.post("list", function (responseData) {
+    sendPost("list", function (responseData) {
         glob_userList = responseData.data;
 
         $(".userListMain").html(userListTemplate(responseData.data));

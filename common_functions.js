@@ -79,6 +79,10 @@ exports.isAuthed = function (req, res, next) {
     if (req.isAuthenticated()) {
         next();
     } else {
-        res.redirect('/login')
+        if (req.method == "GET") {
+            res.redirect('/login')
+        } else if (req.method == "POST") {
+            res.send({ result: "error", errorCode: "logged_out", errorMsg: "Login to continue." })
+        }
     }
 }
