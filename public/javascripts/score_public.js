@@ -1,7 +1,5 @@
 var scoreBoard = Handlebars.compile($('#scoreBoard').html());
 
-
-
 Handlebars.registerHelper('debug', function (data) {
     console.log(data);
 })
@@ -97,15 +95,16 @@ jQuery(function () {
 
 
 function startRefreshTimer () {
-    refreshTimer = setInterval(function () {
+    /*refreshTimer = setInterval(function () {
         loadScore("overview");
-    }, 5000)
+    }, 5000)*/
 }
 
 function loadScore (view) {
-    $.post("getScore", function (data) {
+    sendPost("getScore", function (data) {
         if (view == "overview") {
             $(".scoreMain").html(scoreBoard(data));
+            $(".scoreNumber").popover('hide')
 
             clearInterval(refreshTimer);
             startRefreshTimer();

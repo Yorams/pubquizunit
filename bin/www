@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 var app = require('../app');
 var debug = require('debug')('pubquizunit:server');
-var http = require('http');
+//var http = require('http');
 var https = require('https');
 const fs = require('fs');
 const common = require("../common_functions");
+const WebSocket = require('ws');
+var sessionParser = require('../session');
+var websocketHandler = require("../websocket");
+var url = require('url');
 
 // Get settings
 common.getJsonFile("/settings")
@@ -26,21 +30,65 @@ common.getJsonFile("/settings")
         var port = appSettings.app.port;
 
         // Create HTTP server.
-        var server = http.createServer(app);
+        //var server = http.createServer(app);
         var serverHttps = https.createServer(credentials, app);
+
+        //
+        // Create a WebSocket server completely detached from the HTTP server.
+        //
+        const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
+
+        serverHttps.on('upgrade', function (req, socket, head) {
+
+            sessionParser.handler(req, {}, () => {
+
+                wss.handleUpgrade(req, socket, head, function (ws) {
+                    wss.emit('connection', ws, req);
+                });
+            });
+        });
+
+        wss.on('connection', function (ws, req) {
+            const urlParams = new URLSearchParams(url.parse(req.url, true).search)
+            clientGuid = urlParams.get("guid");
+            ws.guid = clientGuid
+
+            // Websocket client connected
+            const ip = req.connection.remoteAddress;
+            console.log("Websocket: Client connected.", ip)
+
+            ws.on('message', function (data) {
+                // Check parsed Data
+                var parsedData;
+                try {
+                    parsedData = JSON.parse(data);
+                } catch (e) {
+                    console.log("Websocket: incoming parse error:", e)
+                }
+
+                if (typeof (parsedData) !== "undefined") {
+                    websocketHandler.parseCommands(parsedData, ws, req, app, wss);
+                }
+            });
+
+            ws.on('close', function () {
+
+            });
+        });
 
         //* Listen on provided port, on all network interfaces. 
         // HTTP
-        server.listen(appSettings.app.port);
+        /*server.listen(appSettings.app.port);
         server.on('error', onError);
-        server.on('listening', onListening);
+        server.on('listening', onListening);*/
 
         // HTTPS
         serverHttps.listen(appSettings.app.sslPort);
         serverHttps.on('error', onError);
         serverHttps.on('listening', onListeningHttps);
 
-        console.log(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
+        //console.log(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
+        console.log(`Pubquiz Unit server is running on port ${appSettings.app.sslPort}`)
 
         // Event listener for HTTP server "error" event.
         function onError (error) {
@@ -66,13 +114,14 @@ common.getJsonFile("/settings")
         }
 
         //* Event listener for HTTP server "listening" event.
+        /*
         function onListening () {
             var addr = server.address();
             var bind = typeof addr === 'string'
                 ? 'pipe ' + addr
                 : 'port ' + addr.port;
             debug('Listening on ' + bind);
-        }
+        }*/
 
         function onListeningHttps () {
             var addr = serverHttps.address();

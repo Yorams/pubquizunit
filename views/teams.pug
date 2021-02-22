@@ -1,0 +1,87 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Teams
+
+    include admin_menu.pug
+
+block content
+    div.container
+        div.toolBar.my-3
+            button.btn.btn-success.editItem
+                i.mdi.mdi-plus-thick
+                |  Create Team
+                
+        div.listMain
+
+    // Edit/Create modal
+    div.modal.editModal(tabindex='-1')
+        div.modal-dialog.modal-lg
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Create Team
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        i.mdi.mdi-close
+
+                form.editForm
+                    div.modal-body
+                        
+                            input.editInput(type="hidden", name="id")
+                            div.form-group
+                                label(for="name") Name
+                                input.form-control.editInput#name(type="text", name="name", required)
+
+                            div.form-group
+                                label(for="name") GUID
+                                input.form-control.editInput#name(type="text", name="guid", placeholder="Is automatically filled in")
+
+                            div.form-group
+                                div.errorMsg.text-danger 
+
+                    div.modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
+                        input.btn.btn-success.saveItemBtn(type='submit', value="Save") 
+
+    // Confirm modal
+    div.modal.confirmModal(tabindex='-1')
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Delete Team
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        i.mdi.mdi-close
+
+                div.modal-body
+                   | Are you sure you want to delete this team?
+                   
+                div.modal-footer
+                    div.errorMsg.text-danger 
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                    button.btn.btn-success.btnConfirmDelItem(type='button') Yes
+
+    // Templates
+    script#listTemplate(type="text/x-handlebars-template")
+        table.table.table-hover
+            thead
+                tr 
+                    th(scope="col") ID
+                    th(scope="col") Name
+                    th(scope="col") GUID
+                    th.text-right(scope="col") Tools
+            tbody
+                | {{#each listData}}
+                tr.editItem(data-id="{{this.id}}")
+                    td {{this.id}}
+                    th(scope="row") {{this.name}}
+                    td 
+                        a.noEdit(href="{{../baseUrl}}/quiz/{{this.guid}}", target="_blank")
+                            | {{../baseUrl}}/quiz/{{this.guid}}
+                            
+                    td.text-right(style="padding: 0.25rem;")
+                        button.btn.btn-sm.btn-danger.btnDelItem(data-id="{{this.id}}")
+                            i.mdi.mdi-delete
+                | {{/each}}
+
+block scripts
+    script(src='/javascripts/teams_public.js')

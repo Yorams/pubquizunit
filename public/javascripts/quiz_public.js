@@ -1,29 +1,32 @@
 var glob_currStatus;
 
-// -- WEBSOCKET --
-var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}:8080?guid=${glob_data.team.guid}`);
-
-socket.onerror = function (m) {
-    console.log(m)
-}
-socket.onopen = function (m) {
-    console.log("websocket Connected");
-    socket.send(JSON.stringify({
-        msgType: "getStatus",
-        guid: glob_data.team.guid
-    }));
-}
-socket.onmessage = function (m) {
-    recvData = JSON.parse(m.data);
-    if (recvData.msgType == "question") {
-        loadQuestion(recvData);
-    } else if (recvData.msgType == "countdown") {
-        countdown(recvData.seconds, recvData.action);
-    }
-}
 jQuery(function () {
+
     if (!glob_data.success) {
         $(".questionMain").html("<h1 class='text-center my-5'>Geen of onjuist ID</h3>");
+    } else {
+
+        // -- WEBSOCKET --
+        var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}?guid=${glob_data.guid}`);
+
+        socket.onerror = function (m) {
+            console.log(m)
+        }
+        socket.onopen = function (m) {
+            console.log("websocket Connected");
+            socket.send(JSON.stringify({
+                msgType: "getStatus",
+                guid: glob_data.guid
+            }));
+        }
+        socket.onmessage = function (m) {
+            recvData = JSON.parse(m.data);
+            if (recvData.msgType == "question") {
+                loadQuestion(recvData);
+            } else if (recvData.msgType == "countdown") {
+                countdown(recvData.seconds, recvData.action);
+            }
+        }
     }
 
     // Submit answer
@@ -72,7 +75,7 @@ jQuery(function () {
             }
 
             var sendData = {
-                guid: glob_data.team.guid,
+                guid: glob_data.guid,
                 answer: JSON.stringify(answer),
                 round: glob_currStatus.round.current,
                 question: glob_currStatus.question.current,
@@ -104,7 +107,7 @@ function loadQuestion (data) {
     clearInterval(countdownTimer);
 
     glob_currStatus = data;
-    $(".headerSubTitle").html(`Team: ${glob_data.team.name}`);
+    $(".headerSubTitle").html(`Team: ${glob_data.name}`);
     $(".subTitle").html(data.round.name)
 
     $(".currentQuestion").html(` Ronde ${data.round.current + 1}/${data.round.total} | Vraag ${data.question.current + 1}/${data.question.total}`)

@@ -25,7 +25,6 @@ exports.login = function (req, res, next) {
         if (err) { return next(err); }
 
         if (!user) {
-            console.log(info)
             return res.send(JSON.stringify({
                 status: "failed",
                 message: info.message

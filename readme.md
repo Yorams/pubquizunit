@@ -12,23 +12,17 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
 
 # How to use
+To control the quiz or create teams you must login. Default is: admin & pubquizunit:
 
-Teams have there own personal link, defined in teams.json. The teamlink is:
+	https://<IP or HOST>
+
+Teams have there own personal link. The teamlink is:
 	
 	https://<IP or HOST>/quiz/<GUID>
 
-To control the quiz you can go to the following url. Default is: admin & pubquizunit:
-
-	https://<IP or HOST>/control/
-
-The answer overview is here:
+To delete all answers and reset the quiz progress run the following:
 	
-	https://<IP or HOST>/score/
-
-And the scoreboard here:
-	
-	https://<IP or HOST>/score/top
-	
+	npm run reset_quiz
 
 Questions are defined in questions.json. Right now this is a bit of a mess and maybe hard to understand. I will try to explain.
 

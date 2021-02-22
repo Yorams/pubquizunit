@@ -24,17 +24,17 @@ block content
     script#scoreBoard(type="text/x-handlebars-template")
         //Teams
         div.row.teamNames
-            div.col
+            div.col.hidefirst
             | {{#each this.teams}}
             div.col {{this.name}}
             | {{/each}}
         div.row.teamNamesConnector
-            div.col
+            div.col.hidefirst
             | {{#each this.teams}}
             div.col *
             | {{/each}}
         div.row.teamTotalScore
-            div.col.h5
+            div.col.hidefirst
             | {{#each this.teams}}
             div.col {{round this.totalScore}}
             | {{/each}}

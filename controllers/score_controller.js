@@ -15,80 +15,104 @@ exports.getTopVideoPageContent = function (req, res) {
 exports.getScore = function (req, res) {
     var questionData = req.app.get('questionData');
     var answersChecked = [];
-    var teamData = req.app.get('teamData');
     var knex = req.app.get('knex');
 
-    // Generate empty array. Multidimensional: [Rounds][questions][teams]
-    for (rkey in questionData.rounds) {
-        var questions = [];
-        for (qkey in questionData.rounds[rkey].vragen) {
-            var teams = [];
-            var teamsLookup = {};
-            var tI = 0;
-            for (tKey in teamData) {
+    // Get team data
+    knex('teams')
+        .then((teamData) => {
+            if (typeof (teamData) !== "undefined") {
+                // Team found
+                // Generate empty array. Multidimensional: [Rounds][questions][teams]
+                for (rkey in questionData.rounds) {
+                    var questions = [];
+                    for (qkey in questionData.rounds[rkey].vragen) {
+                        var teams = [];
+                        var teamsLookup = {};
+                        var tI = 0;
+                        for (tKey in teamData) {
 
-                teams.push({
-                    guid: teamData[tKey].guid,
-                    answer: "",
-                    score: 0
-                })
+                            teams.push({
+                                guid: teamData[tKey].guid,
+                                answer: "",
+                                score: 0
+                            })
 
-                // Create team lookup table
-                teamsLookup[teamData[tKey].guid] = {
-                    index: tI,
-                    name: teamData[tKey].name,
-                    totalScore: 0,
-                    roundScore: Array(questionData.rounds.length).fill(0)
-                }
-                tI++;
-            }
+                            // Create team lookup table
+                            teamsLookup[teamData[tKey].guid] = {
+                                index: tI,
+                                name: teamData[tKey].name,
+                                totalScore: 0,
+                                roundScore: Array(questionData.rounds.length).fill(0)
+                            }
+                            tI++;
+                        }
 
-            questions[qkey] = teams
-        }
-        answersChecked[rkey] = questions
-    }
-
-
-    knex('answers')
-        .then((rows) => {
-            if (rows.length == 0) {
-                return res.send({
-                    teams: teamsLookup,
-                    answers: answersChecked
-                });
-            } else {
-                for (key in rows) {
-                    if (typeof (questionData.rounds[rows[key].round].vragen[rows[key].question]) !== "undefined") {
-
-
-                        var currRightAnswer = questionData.rounds[rows[key].round].vragen[rows[key].question].correct;
-                        var currQuestionType = questionData.rounds[rows[key].round].vragen[rows[key].question].type;
-
-                        // Check answer and get score
-                        var score = checkAnswer(currQuestionType, JSON.parse(rows[key].answer), currRightAnswer);
-
-                        // Round score
-                        score = Math.round((score + Number.EPSILON) * 100) / 100
-
-                        // Add score to total
-                        teamsLookup[rows[key].guid].totalScore = teamsLookup[rows[key].guid].totalScore + score
-
-                        // Add score to each round total
-                        teamsLookup[rows[key].guid].roundScore[rows[key].round] = teamsLookup[rows[key].guid].roundScore[rows[key].round] + score
-
-                        // Add answer, question score and type to team object
-                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].answer = JSON.parse(rows[key].answer);
-                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].type = currQuestionType;
-                        answersChecked[rows[key].round][rows[key].question][teamsLookup[rows[key].guid].index].score = score;
-                    } else {
-                        console.log(`Error: Score controller: cannot find question with given answer(Round ${rows[key].round}, Question ${rows[key].question}) this occours when questions are edited. Delete all answers to resolve this.`)
+                        questions[qkey] = teams
                     }
+                    answersChecked[rkey] = questions
                 }
-                return res.send({
-                    teams: teamsLookup,
-                    answers: answersChecked
-                });
+
+                knex('answers')
+                    .then((rows) => {
+                        if (rows.length == 0) {
+                            return res.send({
+                                teams: teamsLookup,
+                                answers: answersChecked
+                            });
+                        } else {
+
+                            for (key in rows) {
+
+                                // TODO. Multi vragen worden niet goed geteld.
+
+                                if (typeof (questionData.rounds[rows[key].round].vragen[rows[key].question]) !== "undefined") {
+                                    try {
+                                        var currGuid = rows[key].guid;
+                                        var currRound = rows[key].round;
+                                        var currQuestion = rows[key].question;
+                                        var currTeamAnswer = JSON.parse(rows[key].answer);
+
+                                        var currRightAnswer = questionData.rounds[currRound].vragen[currQuestion].correct;
+                                        var currQuestionType = rows[key].type;
+
+                                        // Check answer and get score
+                                        var score = checkAnswer(currQuestionType, currTeamAnswer, currRightAnswer);
+
+                                        // Round score
+                                        score = Math.round((score + Number.EPSILON) * 100) / 100
+
+                                        // Add score to total
+                                        teamsLookup[currGuid].totalScore = teamsLookup[currGuid].totalScore + score
+
+                                        // Add score to each round total
+                                        teamsLookup[currGuid].roundScore[currRound] = teamsLookup[currGuid].roundScore[currRound] + score
+
+                                        // Add answer, question score and type to team object
+                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].answer = currTeamAnswer;
+                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].type = currQuestionType;
+                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].score = score;
+
+                                    } catch (error) {
+                                        console.log("Error:", error)
+                                    }
+                                } else {
+                                    console.log(`Error: Score controller: cannot find question with given answer(Round ${rows[key].round}, Question ${rows[key].question}) this occours when questions are edited. Delete all answers to resolve this.`)
+                                }
+                            }
+                            return res.send({
+                                teams: teamsLookup,
+                                answers: answersChecked
+                            });
+                        }
+                    })
             }
+
+        }).catch((error) => {
+            if (error.stack) { console.log(error.stack) }
+            ws.send(JSON.stringify({
+                msgType: "error",
+                msg: `team_not_found (${error})`
+            }))
         })
 }
 
@@ -98,16 +122,19 @@ function checkAnswer (type, teamAnswer, correctAnswer) {
         case "one":
             returnScore = (teamAnswer.default == correctAnswer.default) ? 1 : 0;
             break;
+
         case "multi":
             var totalScore = 0;
-            // Loop trough correct answers
-            for (key in correctAnswer.default) {
 
-                // If an corret answer is found in the team answers, add a point
-                if (teamAnswer.default.includes(correctAnswer.default[key])) {
-                    totalScore++;
+            // Loop trough correct answers
+            for (key in teamAnswer.default) {
+
+                // If an correct answer is found in the team answers, add a point
+                if (correctAnswer.default.includes(teamAnswer.default[key])) {
+                    totalScore = totalScore + 1;
                 }
             }
+            // TODO: substract point if a incorrect option is given. 
 
             // Average out all points to a float
             returnScore = totalScore / correctAnswer.default.length
