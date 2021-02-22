@@ -1,11 +1,10 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var session = require('express-session');
+var sessionParser = require('./session');
 var cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 var logger = require('morgan');
-var websocket = require("./websocket");
 const common = require("./common_functions");
 const database = require("./knexfile");
 const knex = require('knex')(database.development);
@@ -16,16 +15,7 @@ const LocalStrategy = require("passport-local").Strategy;
 var app = express();
 
 // Set instance to app
-app.set('websocket', websocket);
 app.set('knex', knex);
-
-// Load Quiz teams
-common.getJsonFile("/teams")
-    .then(function (teamData) {
-        app.set('teamData', teamData);
-    })
-    .catch((err) => { console.log(`app: cannot load teams file (${err})`) })
-
 
 // Load Quiz questions
 common.getJsonFile("/questions")
@@ -34,24 +24,15 @@ common.getJsonFile("/questions")
     })
     .catch((err) => { console.log(`app: cannot load questions file (${err})`) })
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(session({
-    key: 'user_sid',
-    secret: "blaaaaat",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        expires: 99999999999
-    }
-}));
+app.use(sessionParser.handler);
+
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 passport.use(new LocalStrategy(
     function (username, password, done) {
@@ -104,6 +85,7 @@ var indexRouter = require('./routes/index_routes');
 var quizRouter = require('./routes/quiz_routes');
 var controlRouter = require('./routes/control_routes');
 var scoreRouter = require('./routes/score_routes');
+var teamsRouter = require('./routes/teams_routes');
 
 // Make specific modules public
 app.use('/scripts/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -128,6 +110,7 @@ app.use('/', common.isAuthed, indexRouter);
 app.use('/user', common.isAuthed, userRouter);
 app.use('/control', common.isAuthed, controlRouter);
 app.use('/score', common.isAuthed, scoreRouter);
+app.use('/teams', common.isAuthed, teamsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
