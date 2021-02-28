@@ -39,11 +39,11 @@ block content
             div.col {{round this.totalScore}}
             | {{/each}}
             
-        //Rondes
+        // Rounds
         | {{#each this.answers}}
         div.rondeMain
-            div.scoreRound Ronde {{inc @index 0}}
-            // Vragen
+            div.scoreRound Round {{inc @index 0}}
+            // Questions
             | {{#each this}}
             div.questionMain.scoreRowContainer 
                 div.row.scoreRow
@@ -53,14 +53,17 @@ block content
                     div.col.scoreNumber(data-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.type}}") {{showScore this.score}}
                     | {{/each}}
             | {{/each}}
+
+            // Round total score
             div.row.scoreRow
-                div.col.scoreQuestion Totaal
+                div.col.scoreQuestion Total
                 | {{#each ../this.teams}}
-                
                 div.col.scoreNumber 
                     b {{getRoundScore this.roundScore @../index}}
                 | {{/each}}
         | {{/each}}
+
+        // Bottom total score
         div.row.teamTotalScore.totalScoreBottom
             div.col.h5
             | {{#each this.teams}}

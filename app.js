@@ -4,7 +4,7 @@ var path = require('path');
 var sessionParser = require('./session');
 var cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-var logger = require('morgan');
+//var logger = require('morgan');
 const common = require("./common_functions");
 const database = require("./knexfile");
 const knex = require('knex')(database.development);
@@ -31,8 +31,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(sessionParser.handler);
-
-//console.log()
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -89,6 +87,7 @@ var quizRouter = require('./routes/quiz_routes');
 var controlRouter = require('./routes/control_routes');
 var scoreRouter = require('./routes/score_routes');
 var teamsRouter = require('./routes/teams_routes');
+var questionsRouter = require('./routes/questions_routes');
 
 // Make specific modules public
 app.use('/scripts/jquery', express.static(__dirname + '/node_modules/jquery/dist/'));
@@ -114,6 +113,7 @@ app.use('/user', common.isAuthed, userRouter);
 app.use('/control', common.isAuthed, controlRouter);
 app.use('/score', common.isAuthed, scoreRouter);
 app.use('/teams', common.isAuthed, teamsRouter);
+app.use('/questions', common.isAuthed, questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -116,6 +116,7 @@ div.subTitle{
     margin: 0px 15px 0px 15px;
     z-index: 2;
     width: 30px;
+    min-height: 235px;
     flex-grow: initial;
     flex-basis: initial;
     border-radius: 0px 0px 5px 5px;

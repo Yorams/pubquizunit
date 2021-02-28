@@ -60,7 +60,7 @@ exports.editUser = function (req, res) {
             .then((row) => {
 
                 // Ok, a bit hacky but it works. 
-                //This here is to check if the user is editing itself. If so, it is allowed to edit the password.
+                // This here is to check if the user is editing itself. If so, it is allowed to edit the password.
                 var isSameUser = false
                 if (typeof (row) !== "undefined") {
                     isSameUser = id == row.id

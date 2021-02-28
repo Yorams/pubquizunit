@@ -80,7 +80,8 @@ exports.isAuthed = function (req, res, next) {
         next();
     } else {
         if (req.method == "GET") {
-            res.redirect('/login')
+            // Send previous page with redirect
+            res.redirect(`/login?r=${encodeURI(req.url)}`)
         } else if (req.method == "POST") {
             res.send({ result: "error", errorCode: "logged_out", errorMsg: "Login to continue." })
         }

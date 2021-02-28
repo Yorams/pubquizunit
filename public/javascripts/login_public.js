@@ -18,7 +18,10 @@ $(".loginForm").on("submit", function (e) {
 
         if (responseData.status == "success") {
             $(".userInput").addClass("is-valid");
-            window.location.href = "/control"
+
+            // Redirect to previous page
+            var searchParams = new URLSearchParams(window.location.search);
+            window.location.href = searchParams.get("r")
 
         } else if (responseData.status == "failed") {
             $(".loginErrorMsg").html(responseData.message)
