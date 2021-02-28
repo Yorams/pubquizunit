@@ -14,6 +14,8 @@ const LocalStrategy = require("passport-local").Strategy;
 
 var app = express();
 
+app.locals.env = "production"
+
 // Set instance to app
 app.set('knex', knex);
 
@@ -30,6 +32,7 @@ app.set('view engine', 'pug');
 
 app.use(sessionParser.handler);
 
+//console.log()
 
 app.use(passport.initialize());
 app.use(passport.session());
