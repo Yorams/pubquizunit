@@ -2,7 +2,7 @@
 Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his cue. Teams can only answer once. There is a live scoreboard and an answer overview to see the given answers for each team.
 
 # This repo is work in progress and far from done.
-**I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use. Some variables and comments are in Dutch...**
+** The work in this brance is halted. I'm continuing the development in the V2 branch: https://github.com/Yorams/pubquizunit/tree/v2**
 
 # How to install
 - Clone the git repository or download and extract all the files to a folder on your disk. Go to the folder and run:	
