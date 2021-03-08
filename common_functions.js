@@ -87,3 +87,7 @@ exports.isAuthed = function (req, res, next) {
         }
     }
 }
+exports.errorHandler = function (action, error, req, res) {
+    console.log(`Error: ${action}: ${error}`)
+    res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot  ${action}` })
+}
