@@ -51,7 +51,6 @@ $("body").on("click", ".editItem", function (e) {
 
 $("body").on("click", ".noEdit", function (e) {
     e.stopPropagation();
-    console.log("asdsad")
 });
 
 $(".editForm").on("submit", function (e) {
