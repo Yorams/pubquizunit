@@ -13,19 +13,36 @@ html
         meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no')
         meta(name='apple-mobile-web-app-capable', content='yes')
 
-
     body
+
+        div.errorContainer(style='position: fixed; top: 15px; right: 15px; z-index:9999;')
+            
         div.headerMain
 
             block header
 
         block content
 
+        
+        // Error templates
+        script#errorTemplate(type="text/x-handlebars-template")
+            .toast(class="alert-{{id}}")
+                .toast-header
+                    span.text-warning
+                        i.mdi.mdi-alert
+                    strong.mr-auto {{title}}
+                    button.ml-2.mb-1.close(type='button' data-dismiss='toast' aria-label='Close')
+                        span(aria-hidden='true') ×
+                .toast-body {{message}}
+
     script(src='/scripts/jquery/jquery.min.js')
     script(src='/scripts/bootstrap/js/bootstrap.bundle.min.js')
     //script(src='/scripts/moment/moment-with-locales.min.js')
     script(src='/scripts/handlebars/handlebars.min.js')
     script(src='/scripts/reconnecting-websocket/reconnecting-websocket-iife.js')
+    script(src='/scripts/sortable/Sortable.min.js')
+    script(src='/scripts/jquery-sortable/jquery-sortable.js')
     script(src='/javascripts/func_public.js')
+    
 
     block scripts
