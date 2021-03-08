@@ -1,0 +1,139 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Questions
+
+    include admin_menu.pug
+
+block content
+    div.container.h-100
+        div.toolBar.my-3
+            button.btn.btn-success.addRoundBtn
+                i.mdi.mdi-plus-thick
+                |  Add Round
+        | Here you can define questions
+
+        div.row.questionsContainer
+            div.col-7.questionsMain
+                
+                div.roundsMain
+            div.col-5
+                h3 Editor
+                div.questionEditorMain
+
+    // Confirm modal
+    div.modal.confirmModal(tabindex='-1')
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Confirm
+                    button.close(type='button' data-dismiss='modal' aria-label='Close')
+                        i.mdi.mdi-close
+
+                div.modal-body.confirmMessage ...
+                   
+                div.modal-footer
+                    div.errorMsg.text-danger 
+                    button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                    button.btn.btn-success.btnConfirmYes(type='button') Yes
+
+    // Templates
+    script#roundTemplate(type="text/x-handlebars-template")
+        | {{#each this.questions}}
+        // Rounds
+        div.mb-4.roundMain(style="cursor:pointer;", data-round-uuid="{{this.uuid}}")
+            div.d-flex.w-100.mb-1.justify-content-between.roundToolbar
+                h4.roundName {{this.name}}
+                    span.text-muted 
+                        i.mdi.mdi-pencil-outline
+ 
+                
+                div.dropdown.btn-group.btn-group-sm
+                    button.btn.btn-danger.delRoundBtn(data-question-uuid="{{this.uuid}}", title="Delete question")
+                        i.mdi.mdi-delete-outline
+                    button.btn.btn-success.dropdown-toggle(data-toggle="dropdown")
+                        i.mdi.mdi-plus-thick
+                        |  Question
+                    div.dropdown-menu(data-round-uuid="{{this.uuid}}")
+                        | {{#each ../questionTemplates}}
+                        div.dropdown-item.addQuestionBtn(data-template="{{this.id}}") {{this.name}}
+                        | {{/each}}
+
+            // Questions
+            div.list-group.roundContent(id="list-{{this.uuid}}")
+                | {{#each this.questions}}
+                div.list-group-item.list-group-item-action.questionMain(data-question-uuid="{{this.uuid}}")
+                    div.d-flex.w-100.justify-content-between
+                        h6.mb-1.questionName 
+                            span.font-weight-bolder {{inc this.order 0}}.
+                            span {{this.name}}
+                        div.btn-group
+                            button.btn.btn-xs.btn-danger.noAction.delQuestionBtn(data-question-uuid="{{this.uuid}}", title="Delete question")
+                                i.mdi.mdi-delete-outline
+                            button.btn.btn-xs.btn-secondary.noAction.dupQuestionBtn(data-question-uuid="{{this.uuid}}", title="Duplicate question")
+                                i.mdi.mdi-content-duplicate
+                | {{/each}}
+        | {{/each}}
+
+    script#editorTemplate(type="text/x-handlebars-template")
+        div.questionMain(data-question-uuid="{{content.uuid}}", data-round-uuid="{{round.uuid}}", data-template="{{content.template}}")
+            div.questionTemplate.text-muted.mb-2 Template: {{content.template}}
+            form.questionForm
+                div.form-group
+                    label Question:
+                    textarea.form-control.editorInput.questionNameInput(rows="4" required) {{content.name}}
+                div.mb-2 {{{parameters}}}
+                input.form-control.btn.btn-success.editorSaveBtn(type="submit" value="Save" disabled)
+                
+    //** Form Templates **//
+
+    script#radioTemplate(type="text/x-handlebars-template")
+        div.form-group.optionInputMain(data-id="{{this.data.id}}")
+            label {{this.data.name}}
+
+            | {{#each this.data.content}}
+            div.custom-control.custom-radio.mb-1.optionInput(data-id="{{@key}}")
+                | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
+                label.custom-control-label.w-100(for="answer{{@index}}")
+                    div.input-group
+                        input.form-control.optionName(type="text", value="{{this}}", data-id="{{@key}}")
+                        div.input-group-append
+                            button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
+                                i.mdi.mdi-delete-outline
+            | {{/each}}
+            div.text-center
+                button.btn.btn-sm.btn-primary.addOptionBtn
+                        i.mdi.mdi-plus-thick
+                        | Add option
+
+    script#checkboxTemplate(type="text/x-handlebars-template")
+        div.form-group.optionInputMain(data-id="{{this.data.id}}")
+            label {{this.data.name}}
+            | {{#each this.data.content}}
+            div.custom-control.custom-checkbox.mb-1.optionInput(data-id="{{@key}}")
+                | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
+                label.custom-control-label.w-100(for="answer{{@index}}")
+                    div.input-group
+                        input.form-control.optionName(type="text", value="{{this}}", data-id="{{@key}}")
+                        div.input-group-append
+                            button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
+                                i.mdi.mdi-delete-outline
+            | {{/each}}
+            div.text-center
+                button.btn.btn-sm.btn-primary.addOptionBtn
+                        i.mdi.mdi-plus-thick
+                        | Add option
+
+    script#textTemplate(type="text/x-handlebars-template")
+        div.form-group
+            label {{this.data.name}}
+            input.form-control.editorInput.textInput(type="text", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
+
+    script#numberTemplate(type="text/x-handlebars-template")
+        div.form-group
+            label {{this.data.name}}
+            input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
+
+block scripts
+    script(src='/javascripts/questions_public.js')

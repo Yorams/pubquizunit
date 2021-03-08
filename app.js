@@ -11,7 +11,6 @@ const knex = require('knex')(database.development);
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
 
-
 var app = express();
 
 app.locals.env = "production"
@@ -25,6 +24,13 @@ common.getJsonFile("/questions")
         app.set('questionData', questionData);
     })
     .catch((err) => { console.log(`app: cannot load questions file (${err})`) })
+
+// Load Quiz questions templates
+common.getJsonFile("/question_templates")
+    .then(function (questionTemplates) {
+        app.set('questionTemplates', questionTemplates);
+    })
+    .catch((err) => { console.log(`app: cannot load questions template file (${err})`) })
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -97,6 +103,8 @@ app.use('/scripts/moment', express.static(__dirname + '/node_modules/moment/min'
 app.use('/scripts/icons', express.static(__dirname + '/node_modules/@mdi/font'));
 app.use('/scripts/popper', express.static(__dirname + '/node_modules/popper.js/dist/umd'));
 app.use('/scripts/handlebars', express.static(__dirname + '/node_modules/handlebars/dist'));
+app.use('/scripts/sortable', express.static(__dirname + '/node_modules/sortablejs'));
+app.use('/scripts/jquery-sortable', express.static(__dirname + '/node_modules/jquery-sortablejs/'));
 
 
 app.use('/login', authRouter);

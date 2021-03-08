@@ -1,0 +1,99 @@
+[
+    {
+        "id": "single",
+        "name": "Single",
+        "parameters": [
+            {
+                "type": "radio",
+                "name": "Choose one answer",
+                "id": "default"
+            }
+        ]
+    },
+    {
+        "id": "multi",
+        "name": "Multiple Choice",
+        "parameters": [
+            {
+                "type": "checkbox",
+                "name": "Select muliple answers",
+                "id": "default"
+            }
+        ]
+    },
+    {
+        "id": "open-number",
+        "name": "Number",
+        "parameters": [
+            {
+                "type": "number",
+                "name": "Enter a number",
+                "id": "default"
+            }
+        ]
+    },
+    {
+        "id": "open-text",
+        "name": "Text",
+        "parameters": [
+            {
+                "type": "text",
+                "name": "Type your answer",
+                "id": "default"
+            }
+        ]
+    },
+    {
+        "id": "music",
+        "name": "Artist & Title",
+        "parameters": [
+            {
+                "type": "text",
+                "name": "Artist",
+                "id": "artist"
+            },
+            {
+                "type": "text",
+                "name": "Title",
+                "id": "title"
+            }
+        ]
+    },
+    {
+        "id": "location-music",
+        "name": "Locatie en Nummer",
+        "parameters": [
+            {
+                "type": "radio",
+                "name": "Kies de locatie",
+                "id": "lokatie"
+            },
+            {
+                "type": "text",
+                "name": "Artist",
+                "id": "artist"
+            },
+            {
+                "type": "text",
+                "name": "Title",
+                "id": "title"
+            }
+        ]
+    },
+    {
+        "id": "name-year",
+        "name": "Locatie en Jaar",
+        "parameters": [
+            {
+                "type": "number",
+                "name": "Vul het jaartal in",
+                "id": "jaar"
+            },
+            {
+                "type": "text",
+                "name": "Vul de locatie in",
+                "id": "jaar"
+            }
+        ]
+    }
+]

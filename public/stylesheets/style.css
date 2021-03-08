@@ -1,3 +1,6 @@
+html, body{
+    height: 100%;
+}
 body {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     overflow-y: scroll;
@@ -12,6 +15,13 @@ a {
     font-family: monospace;
     white-space: pre;
     margin: 1em 0;
+}
+.btn-group-xs>.btn, .btn-xs{
+    padding: 0.0rem .3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    height: 28px;
 }
 
 /*** Login form ***/
@@ -225,4 +235,26 @@ div.subTitle{
 }
 .top{
     font-size: 20px;
+}
+
+/** Questions **/
+div.roundMain{
+    padding: 5px;
+}
+div.roundMain.active{
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+}
+div.questionsContainer{
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    height: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+div.questionsMain{
+    height: 100%;
+    overflow-y: scroll;
 }
