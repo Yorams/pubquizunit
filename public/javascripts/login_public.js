@@ -21,7 +21,13 @@ $(".loginForm").on("submit", function (e) {
 
             // Redirect to previous page
             var searchParams = new URLSearchParams(window.location.search);
-            window.location.href = searchParams.get("r")
+            var referral = searchParams.get("r")
+
+            if (referral === null) {
+                referral = "/control"
+            }
+
+            window.location.href = referral
 
         } else if (responseData.status == "failed") {
             $(".loginErrorMsg").html(responseData.message)
