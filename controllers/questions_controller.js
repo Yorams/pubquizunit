@@ -79,20 +79,31 @@ exports.editItem = function (req, res) {
             }
         }
 
-        var questionData = {
-            uuid: uuidv4(),
-            name: "",
-            template: questionTemplateId,
-            parameters: JSON.stringify(currentTemplate.parameters),
-            round: roundUuid,
-            edited_by: req.user.id
-        }
-
-        // Save to database
+        // Determine the last order number
         knex('questions')
-            .insert(questionData)
-            .then(() => res.send({ result: "success", questionUuid: questionData.uuid }))
-            .catch((error) => { common.errorHandler("Cannot create questions", error, req, res) })
+            .where({ round: roundUuid })
+            .max('order', { as: 'last' })
+            .first()
+            .then((row) => {
+                var questionData = {
+                    uuid: uuidv4(),
+                    name: "",
+                    template: questionTemplateId,
+                    parameters: JSON.stringify(currentTemplate.parameters),
+                    round: roundUuid,
+                    edited_by: req.user.id,
+                    order: row.last + 1,
+                }
+
+                // Save to database
+                knex('questions')
+                    .insert(questionData)
+                    .then(() => res.send({ result: "success", questionUuid: questionData.uuid }))
+                    .catch((error) => { common.errorHandler("Cannot create questions", error, req, res) })
+            })
+
+
+
 
     } else if (itemType == "dup_question") {
         var questionUuid = req.body.questionUuid;
