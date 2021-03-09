@@ -112,6 +112,10 @@ $(".roundsMain").on("click", ".delQuestionBtn", function (e) {
         sendPost("edit_item", sendData, function (data) {
             if (data.result == "success") {
                 getQuestionData();
+
+                // Empty the editor
+                $(".questionEditorMain").html("");
+
             } else if (data.result == "error") {
                 showError("Something is going wrong.", "Cannot delete the question, try again or contact the system admin")
             }
