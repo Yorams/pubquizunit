@@ -2,11 +2,15 @@ extends layout
 
 block header
     div.container
-        div.headerTitle Emptiness
+        div.headerTitle Home
+
+    include admin_menu.pug
         
 block content
     div.container.my-5
-        | This is the vast nothingness of the web...
+        div.jumbotron
+            h1.display-4 Welcome to pubquizunit.
+            p.lead Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his cue. Teams can only answer once. There is a live scoreboard and an answer overview to see the given answers for each team. It is possible to edit the teams and question via the webinterface.
 
 block scripts
     script(src='/javascripts/index_public.js')
