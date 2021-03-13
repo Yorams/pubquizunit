@@ -17,6 +17,7 @@ To control the quiz or create teams you must login. Default is: admin & pubquizu
 
 - Create teams at the "Teams" page.
 - Add rounds and questions at the "Questions" page
+- If you have added Teams and Questions you can give the teams their own team link and control the quiz at the "Control" page.
 
 To delete all answers and reset the quiz progress run the following:
 	
