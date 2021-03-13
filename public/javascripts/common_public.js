@@ -37,43 +37,8 @@ Handlebars.registerHelper('questionType', function (type) {
         case "name-year":
             returnValue = "Vul de naam van de persoon op de foto in en het bijbehorende jaartal."
             break;
-
     }
     return returnValue;
 })
 
-function countdown (sec, action) {
-    clearInterval(countdownTimer);
-    countdownTime = 0;
 
-    // Start countdown
-    if (action == "start") {
-        countdownTime = sec;
-        countdownStartTime = sec;
-
-        // Show timer
-        $(".countdownMain").collapse("show");
-        $(".countdownTime").html(countdownTime);
-
-        // Update time
-        countdownTimer = setInterval(() => {
-            countdownTime = countdownTime - 1
-
-            if (countdownTime < 0) {
-                // Countdown voorbij
-                $(".answersInput").prop('disabled', true);
-                clearInterval(countdownTimer);
-            } else {
-                // Bereken percentage voor background in div
-                var currPercent = (100 / countdownStartTime) * countdownTime
-                $(".countdownMain").css("background", `linear-gradient(90deg,#f5d3a1 ${currPercent}%,  #fff ${currPercent}%)`);
-
-                // Plaats tijd in element
-                $(".countdownTime").html(countdownTime);
-            }
-        }, 1000);
-    } else if (action == "cancel") {
-        clearInterval(countdownTimer);
-        $(".countdownMain").collapse("hide");
-    }
-}

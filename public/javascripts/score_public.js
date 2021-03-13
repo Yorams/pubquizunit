@@ -1,4 +1,6 @@
 var scoreBoard = Handlebars.compile($('#scoreBoard').html());
+var questionTemplates;
+
 
 Handlebars.registerHelper('debug', function (data) {
     console.log(data);
@@ -16,12 +18,19 @@ Handlebars.registerHelper('getRoundScore', function (data, key) {
 // Formateer antwoorden voor de popover
 Handlebars.registerHelper('formatAnswer', function (data, type) {
     var returnData = "";
-    if (type == "one" || type == "multi" || type == "open-numeric" || type == "open-text") {
-        returnData = data.default
-    } else if (type == "music") {
-        returnData = `<b>Artiest:</b> ${data.artist}<br> <b>Titel:</b> ${data.title}`
-    } else if (type == "music-locatie") {
-        returnData = `<b>Artiest:</b> ${data.artist}<br> <b>Titel:</b> ${data.title}<br> <b>Locatie:</b> ${data.locatie}`
+
+    if (typeof (type) != "undefined") {
+        var currentParameters = questionTemplates.find((obj) => {
+            return obj.id === type
+        })
+
+        for (key in data) {
+            var parameter = currentParameters.parameters.find((obj) => {
+                return obj.id === data[key].id
+            })
+            returnData = returnData + `<b>${parameter.name}:</b> ${data[key].correct}<br>`
+        }
+
     }
     return returnData
 })
@@ -67,7 +76,6 @@ var tooltipSettings = {
 
 var refreshTimer;
 
-
 jQuery(function () {
     $(".scoreMain").on("mouseover", ".scoreNumber", function () {
         $(".scoreNumber").popover('hide')
@@ -93,15 +101,16 @@ jQuery(function () {
     })
 })
 
-
 function startRefreshTimer () {
-    /*refreshTimer = setInterval(function () {
+    refreshTimer = setInterval(function () {
         loadScore("overview");
-    }, 5000)*/
+    }, 5000)
 }
 
 function loadScore (view) {
     sendPost("getScore", function (data) {
+        questionTemplates = data.questionTemplates
+
         if (view == "overview") {
             $(".scoreMain").html(scoreBoard(data));
             $(".scoreNumber").popover('hide')

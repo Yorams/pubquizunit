@@ -9,14 +9,11 @@ exports.up = function (knex) {
         })
         .createTable('answers', function (table) {
             table.increments()
-            table.string('guid')
-            table.string('type')
-            table.integer('round')
-            table.integer('question')
+            table.string('team_uuid')
+            table.string('question_uuid')
             table.json('answer')
             table.timestamp('answered_at').defaultTo(knex.fn.now());
         })
-
 }
 
 exports.down = function (knex) {

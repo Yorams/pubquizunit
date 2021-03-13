@@ -26,6 +26,7 @@ exports.editItem = function (req, res) {
             .insert(roundData)
             .then(() => res.send({ result: "success", roundUuid: roundData.uuid }))
             .catch((error) => { common.errorHandler("Cannot create round", error, req, res) })
+            .finally(() => common.updateCurrentOrder(knex))// Update current count
 
     } else if (itemType == "save_round") {
         var roundUuid = req.body.roundUuid;
@@ -52,6 +53,7 @@ exports.editItem = function (req, res) {
                     .del()
                     .then(() => res.send({ result: "success" }))
                     .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
+                    .finally(() => common.updateCurrentOrder(knex))// Update current count
             })
             .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
 
@@ -100,6 +102,7 @@ exports.editItem = function (req, res) {
                     .insert(questionData)
                     .then(() => res.send({ result: "success", questionUuid: questionData.uuid }))
                     .catch((error) => { common.errorHandler("Cannot create questions", error, req, res) })
+                    .finally(() => common.updateCurrentOrder(knex))// Update current count
             })
 
 
@@ -124,6 +127,7 @@ exports.editItem = function (req, res) {
                     .insert(currQuestion)
                     .then(() => res.send({ result: "success", questionUuid: currQuestion.uuid }))
                     .catch((error) => { common.errorHandler("Cannot duplicate questions", error, req, res) })
+                    .finally(() => common.updateCurrentOrder(knex))// Update current count
 
 
             })
@@ -137,6 +141,7 @@ exports.editItem = function (req, res) {
             .del()
             .then(() => res.send({ result: "success" }))
             .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })
+            .finally(() => common.updateCurrentOrder(knex))// Update current count
 
     } else if (itemType == "add_option" || itemType == "del_option") {
 
@@ -240,8 +245,6 @@ exports.editItem = function (req, res) {
                 });
         });
 
-
-
     } else {
         common.errorHandler("Unknown command", `${itemType}`, req, res)
     }
@@ -251,40 +254,7 @@ exports.getQuestions = function (req, res) {
     var knex = req.app.get('knex');
     var questionTemplates = req.app.get('questionTemplates');
 
-    knex('rounds')
-        .then((rounds) => {
-            knex('questions')
-                .orderBy('order', 'asc')
-                .then((questions) => {
-
-                    // Parse parameters
-                    for (qKey in questions) {
-                        try {
-                            var parsedParameters = JSON.parse(questions[qKey].parameters)
-                        } catch (error) {
-                            console.log(error)
-                        }
-                        questions[qKey].parameters = parsedParameters
-
-                    }
-
-                    // Group by round
-                    var grouped = _.groupBy(questions, function (obj) {
-                        return obj.round;
-                    });
-
-                    // Add questions to rounds
-                    for (rKey in rounds) {
-                        if (typeof (grouped[rounds[rKey].uuid]) !== "undefined") {
-                            rounds[rKey].questions = grouped[rounds[rKey].uuid]
-                        }
-                    }
-
-                    res.send({ questionTemplates: questionTemplates, questions: rounds });
-
-                })
-                .catch((error) => { common.errorHandler("Cannot get questions", error, req, res) })
-
-        })
-        .catch((error) => { common.errorHandler("Cannot get rounds", error, req, res) })
+    common.getQuestions(knex).then((questionsData) => {
+        res.send({ questionTemplates: questionTemplates, questions: questionsData });
+    }).catch((error) => { common.errorHandler("Cannot get questions", error, req, res) })
 }

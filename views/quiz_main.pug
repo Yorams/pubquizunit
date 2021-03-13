@@ -18,12 +18,11 @@ block content
                     div.col.currentRound
                     
                 div.questionMain
-       
-    include question_templates.html
 
+    include question_templates.pug
+    
     script.
         var glob_data = JSON.parse('!{data}');
 
 block scripts
-    script(src='/javascripts/common_public.js')
     script(src='/javascripts/quiz_public.js')

@@ -4,5 +4,15 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "pubquizunit",
+				"database": "${workspaceFolder:pubquizunit}/database.db"
+			}
+		],
+		"sqltools.useNodeRuntime": true
+	}
 }

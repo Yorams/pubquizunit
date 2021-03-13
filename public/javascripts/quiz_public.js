@@ -1,4 +1,10 @@
 var glob_currStatus;
+var questionTemplate = Handlebars.compile($('#questionTemplate').html());
+var radioTemplate = Handlebars.compile($('#radioTemplate').html());
+var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
+var textTemplate = Handlebars.compile($('#textTemplate').html());
+var numberTemplate = Handlebars.compile($('#numberTemplate').html());
+var alertTemplate = Handlebars.compile($('#alertTemplate').html());
 
 jQuery(function () {
 
@@ -7,7 +13,7 @@ jQuery(function () {
     } else {
 
         // -- WEBSOCKET --
-        var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}?guid=${glob_data.guid}`);
+        var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}?uuid=${glob_data.uuid}`);
 
         socket.onerror = function (m) {
             console.log(m)
@@ -16,7 +22,7 @@ jQuery(function () {
             console.log("websocket Connected");
             socket.send(JSON.stringify({
                 msgType: "getStatus",
-                guid: glob_data.guid
+                uuid: glob_data.uuid
             }));
         }
         socket.onmessage = function (m) {
@@ -36,64 +42,50 @@ jQuery(function () {
             $(".submitAnswerBtn").prop('disabled', true);
             var answer;
 
-            switch (glob_currStatus.question.type) {
-                case "one":
-                    answer = { "default": $("input[name=\"answer\"]:checked").val() };
-                    break;
-                case "multi":
-                    // Get all checked boxes
-                    var checked = [];
-                    $("input[name=\"answer\"]:checked").each(function () {
-                        checked.push($(this).val());
-                    })
-                    answer = { "default": checked };
-                    break;
-                case "open-numeric":
-                    answer = { "default": parseInt($("input[name=\"answer\"]").val()) };
-                    break;
-                case "open-text":
-                    answer = { "default": $("input[name=\"answer\"]").val() };
-                    break;
-                case "music":
-                    answer = {
-                        "artist": $("input[name=\"artist\"]").val(),
-                        "title": $("input[name=\"title\"]").val()
-                    };
-                    break;
-                case "music-locatie":
-                    answer = {
-                        "artist": $("input[name=\"artist\"]").val(),
-                        "title": $("input[name=\"title\"]").val(),
-                        "locatie": $("input[name=\"locatie\"]:checked").val()
-                    };
-                    break;
-                case "name-year":
-                    answer = {
-                        "name": $("input[name=\"name\"]").val(),
-                        "year": $("input[name=\"year\"]").val()
-                    };
-            }
+            var parameters = [];
+
+            // Loop over option input parameters
+            $(".optionInputMain").each(function () {
+                var optionElements = []
+                var correctOptions = []
+
+                var optionElementId = $(this).data("id")
+
+                // Each option input item
+                $(this).find(".optionInput input").each(function () {
+                    // Input type is a option, check if it is checked.
+                    if ($(this).is(':checked')) {
+                        // Get the correct value from the text input
+                        correctOptions.push($(this).val())
+                    }
+                })
+                parameters.push({ id: optionElementId, correct: correctOptions })
+            })
+
+            // Loop over other type parameters
+            $(".textInput, .numberInput").each(function () {
+                parameters.push({ id: $(this).data("id"), correct: $(this).val() })
+            })
 
             var sendData = {
-                guid: glob_data.guid,
-                answer: JSON.stringify(answer),
-                round: glob_currStatus.round.current,
-                question: glob_currStatus.question.current,
-                type: glob_currStatus.question.type
+                teamUuid: glob_data.uuid,
+                answer: JSON.stringify(parameters),
+                questionUuid: glob_currStatus.question.uuid,
             }
 
             $.post("submitanswer", sendData, function (data) {
                 if (data.result == "success") {
                     $(".answersInput").prop('disabled', true);
-                    $(".questionMain").append(qAlertTemplate({ alertType: "success", alertMessage: "Je antwoord is opgeslagen" }));
+                    $(".questionMain").append(alertTemplate({ alertType: "success", alertMessage: "Je antwoord is opgeslagen" }));
                 } else if (data.result == "error") {
                     $(".answersInput").prop('disabled', false);
-                    $(".questionMain").append(qAlertTemplate({ alertType: "danger", alertMessage: "Er ging iets fout, vernieuw evt de pagina. Meer info in de console" }));
+                    $(".questionMain").append(alertTemplate({ alertType: "danger", alertMessage: "Er ging iets fout, vernieuw evt de pagina. Meer info in de console" }));
                     console.log(data.errorMsg);
                 }
             }).fail(function (xhr, status, error) {
-                $(".questionMain").append(qAlertTemplate({ alertType: "danger", alertMessage: `Er ging iets fout, contact de quizmaster (${error})` }));
+                $(".questionMain").append(alertTemplate({ alertType: "danger", alertMessage: `Er ging iets fout, contact de quizmaster (${error})` }));
             })
+
         }
     });
 
@@ -110,32 +102,33 @@ function loadQuestion (data) {
     $(".headerSubTitle").html(`Team: ${glob_data.name}`);
     $(".subTitle").html(data.round.name)
 
-    $(".currentQuestion").html(` Ronde ${data.round.current + 1}/${data.round.total} | Vraag ${data.question.current + 1}/${data.question.total}`)
+    $(".currentQuestion").html(` Ronde ${data.round.currentNr + 1}/${data.round.total} | Vraag ${data.question.currentNr + 1}/${data.question.total}`)
 
     data.question["isDisabled"] = (data.question.answered) ? "disabled" : "";
 
-    var questionContent = {};
-    if (data.question.type == "one") {
-        questionContent = qOneTemplate(data.question);
-    } else if (data.question.type == "multi") {
-        questionContent = qMultiTemplate(data.question);
-    } else if (data.question.type == "open-numeric") {
-        questionContent = qOpenNumericTemplate(data.question);
-    } else if (data.question.type == "open-text") {
-        questionContent = qOpenTextTemplate(data.question);
-    } else if (data.question.type == "music") {
-        questionContent = qMusicTemplate(data.question);
-    } else if (data.question.type == "music-locatie") {
-        data.question["locaties"] = locaties;
-        questionContent = qMusicLocatieTemplate(data.question);
-    } else if (data.question.type == "intro") {
-        questionContent = introTemplate(data.question);
-    } else if (data.question.type == "name-year") {
-        questionContent = qNameYearTemplate(data.question);
-    }
+    var parametersOutput = "";
+    for (key in data.question.parameters) {
+        var currParameter = data.question.parameters[key]
 
-    $(".questionMain").html(questionContent);
+        switch (currParameter.type) {
+            case "radio":
+                parametersOutput = `${parametersOutput}${radioTemplate({ id: key, data: currParameter })}`
+                break;
+            case "checkbox":
+                parametersOutput = `${parametersOutput}${checkboxTemplate({ id: key, data: currParameter })}`
+                break;
+            case "text":
+                parametersOutput = `${parametersOutput}${textTemplate({ id: key, data: currParameter })}`
+                break;
+            case "number":
+                parametersOutput = `${parametersOutput}${numberTemplate({ id: key, data: currParameter })}`
+                break;
+        }
+    }
+    $(".questionMain").html(questionTemplate({ round: data.round, content: data.question, parameters: parametersOutput }))
+
+    // Show message if answer is already given
     if (data.question.answered) {
-        $(".questionMain").append(qAlertTemplate({ alertType: "warning", alertMessage: "Je hebt deze vraag al beantwoord" }));
+        $(".questionMain").append(alertTemplate({ alertType: "warning", alertMessage: "Je hebt deze vraag al beantwoord" }));
     }
 }

@@ -18,6 +18,9 @@ app.locals.env = "production"
 // Set instance to app
 app.set('knex', knex);
 
+// Update current count
+common.updateCurrentOrder(knex);
+
 // Load Quiz questions
 common.getJsonFile("/questions")
     .then(function (questionData) {

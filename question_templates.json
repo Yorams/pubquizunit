@@ -92,7 +92,7 @@
             {
                 "type": "text",
                 "name": "Vul de locatie in",
-                "id": "jaar"
+                "id": "locatie"
             }
         ]
     }

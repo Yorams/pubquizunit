@@ -12,8 +12,9 @@ block content
             button.btn.btn-success.addRoundBtn
                 i.mdi.mdi-plus-thick
                 |  Add Round
-        | Here you can edit questions. First add a round to add questions. There are different templates availiable. Click on a question to open it in the editor. It is possible to change the order by dragging a question to a different position.
-
+        
+        p Here you can edit questions. First add a round to add questions. There are different templates availiable. Click on a question to open it in the editor. It is possible to change the order by dragging a question to a different position.
+        div.alert.alert-warning It is advisable not to change the questions and order during a quiz.
         div.row.questionsContainer
             div.col-7.questionsMain
                 
@@ -44,11 +45,10 @@ block content
         // Rounds
         div.mb-4.roundMain(style="cursor:pointer;", data-round-uuid="{{this.uuid}}")
             div.d-flex.w-100.mb-1.justify-content-between.roundToolbar
-                h4.roundName {{this.name}}
+                h4.roundName {{inc this.order 0}}. {{this.name}}
                     span.text-muted 
                         i.mdi.mdi-pencil-outline
  
-                
                 div.dropdown.btn-group.btn-group-sm
                     button.btn.btn-danger.delRoundBtn(data-question-uuid="{{this.uuid}}", title="Delete question")
                         i.mdi.mdi-delete-outline

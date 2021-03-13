@@ -1,3 +1,9 @@
+var questionTemplate = Handlebars.compile($('#questionTemplate').html());
+var radioTemplate = Handlebars.compile($('#radioTemplate').html());
+var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
+var textTemplate = Handlebars.compile($('#textTemplate').html());
+var numberTemplate = Handlebars.compile($('#numberTemplate').html());
+
 // -- WEBSOCKET --
 var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}`);
 
@@ -17,6 +23,12 @@ socket.onmessage = function (m) {
         loadQuestion(recvData);
     } else if (recvData.msgType == "countdown") {
         countdown(recvData.seconds, recvData.action);
+    } else if (recvData.msgType == "error") {
+
+        if (recvData.msg == "not_logged_in") {
+            showError("You are logged out.", "Please login again")
+            location.reload();
+        }
     }
 }
 
@@ -25,6 +37,7 @@ jQuery(function () {
     $(".controlBtn").on("click", function () {
 
         var currentAction = $(this).data("action");
+        console.log(currentAction)
 
         socket.send(JSON.stringify({
             msgType: "controlQuiz",
@@ -35,33 +48,34 @@ jQuery(function () {
 });
 
 function loadQuestion (data) {
+    // Clear countdown timer
     clearInterval(countdownTimer);
-    $(".subTitle").html(data.round.name);
 
-    $(".currentRound").html(`Ronde ${data.round.current} van ${data.round.total}`)
-    $(".currentQuestion").html(`Vraag ${data.question.current} van ${data.question.total}`)
+    $(".subTitle").html(data.round.name)
 
-    $(".currentQuestion").html(` Ronde ${data.round.current + 1}/${data.round.total} | Vraag ${data.question.current + 1}/${data.question.total}`)
+    $(".currentQuestion").html(` Ronde ${data.round.currentNr + 1}/${data.round.total} | Vraag ${data.question.currentNr + 1}/${data.question.total}`)
 
-    var questionContent = {};
-    if (data.question.type == "one") {
-        questionContent = qOneTemplate(data.question);
-    } else if (data.question.type == "multi") {
-        questionContent = qMultiTemplate(data.question);
-    } else if (data.question.type == "open-numeric") {
-        questionContent = qOpenNumericTemplate(data.question);
-    } else if (data.question.type == "open-text") {
-        questionContent = qOpenTextTemplate(data.question);
-    } else if (data.question.type == "music") {
-        questionContent = qMusicTemplate(data.question);
-    } else if (data.question.type == "music-locatie") {
-        data.question["locaties"] = locaties;
-        questionContent = qMusicLocatieTemplate(data.question);
-    } else if (data.question.type == "intro") {
-        questionContent = introTemplate(data.question);
-    } else if (data.question.type == "name-year") {
-        questionContent = qNameYearTemplate(data.question);
+    data.question["isDisabled"] = (true) ? "disabled" : "";
+
+    var parametersOutput = "";
+    for (key in data.question.parameters) {
+        var currParameter = data.question.parameters[key]
+
+        switch (currParameter.type) {
+            case "radio":
+                parametersOutput = `${parametersOutput}${radioTemplate({ id: key, data: currParameter })}`
+                break;
+            case "checkbox":
+                parametersOutput = `${parametersOutput}${checkboxTemplate({ id: key, data: currParameter })}`
+                break;
+            case "text":
+                parametersOutput = `${parametersOutput}${textTemplate({ id: key, data: currParameter })}`
+                break;
+            case "number":
+                parametersOutput = `${parametersOutput}${numberTemplate({ id: key, data: currParameter })}`
+                break;
+        }
     }
+    $(".questionMain").html(questionTemplate({ round: data.round, content: data.question, parameters: parametersOutput }))
 
-    $(".questionMain").html(questionContent);
 }

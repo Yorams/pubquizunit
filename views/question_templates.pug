@@ -1,167 +1,51 @@
-script#introTemplate(type="text/x-handlebars-template")
+//** Main question template **//
+script#questionTemplate(type="text/x-handlebars-template")
     div.card.my-3
         div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{details}}
-            div.countdownMain.collapse
-                div.countdownText 
-                    | Je hebt nog 
-                    span.countdownTime
-                    |  seconden tot de volgende vraag.
-           
-script#qOneTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
+            h2.card-title {{content.name}}
+            h5.card-subtitle {{content.template}}
             p.card-text
                 form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group
-                            | {{#each this.answers}}
-                            div.custom-control.custom-radio
-                                input.custom-control-input(id="answer{{@index}}", type="radio", name="answer", value="{{this}}" required)
-                                label.custom-control-label(for="answer{{@index}}") {{this}}
-                            | {{/each}}
-                        button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                        div.countdownMain.collapse
-                            div.countdownText 
-                                | Je hebt nog 
-                                span.countdownTime
-                                |  seconden tot de volgende vraag.
-
-script#qMultiTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    div.form-group
-                        fieldset.answersInput({{isDisabled}})
-                            | {{#each this.answers}}
-                            div.custom-control.custom-checkbox
-                                input.custom-control-input(id="answer{{@index}}", type="checkbox", name="answer", value="{{this}}")
-                                label.custom-control-label(for="answer{{@index}}") {{this}}
-                            | {{/each}}
-                            button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                            div.countdownMain.collapse
-                                div.countdownText 
-                                    | Je hebt nog 
-                                    span.countdownTime
-                                    |  tot de volgende vraag.
-
-script#qOpenNumericTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group
-                            input.form-control(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Je antwoord" required)
+                    fieldset.answersInput({{content.isDisabled}})
+                        | {{{parameters}}}
                         button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
                         div.countdownMain.collapse
                             div.countdownText 
                                 | Je hebt nog 
                                 span.countdownTime
                                 |  tot de volgende vraag.
+                
+//** Form Templates **//
+script#radioTemplate(type="text/x-handlebars-template")
+    div.form-group.optionInputMain(data-id="{{this.data.id}}")
+        label {{this.data.name}}
 
-script#qOpenTextTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group
-                            input.form-control(type="text", name="answer", title="Je antwoord" required)
-                        button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                        div.countdownMain.collapse
-                            div.countdownText 
-                                | Je hebt nog 
-                                span.countdownTime
-                                |  tot de volgende vraag.
-
-script#qMusicTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Artiest
-                            div.col-md-10
-                                input.form-control(type="text", name="artist", title="Artiest")
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Titel
-                            div.col-md-10
-                                input.form-control(type="text", name="title", title="Titel")
-                        button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                        div.countdownMain.collapse
-                            div.countdownText 
-                                | Je hebt nog 
-                                span.countdownTime
-                                |  tot de volgende vraag.
+        | {{#each this.data.content}}
+        div.custom-control.custom-radio.mb-1.optionInput(data-id="{{@key}}")
+            | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}"/>
+            label.custom-control-label.w-100(for="answer{{@index}}") {{this}}
+        | {{/each}}
 
 
-script#qNameYearTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Naam
-                            div.col-md-10
-                                input.form-control(type="text", name="name", title="Naam")
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Jaartal
-                            div.col-md-10
-                                input.form-control(type="number", pattern="[0-9]*" inputmode="numeric", name="year", title="Jaartal")
-                        button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                        div.countdownMain.collapse
-                            div.countdownText 
-                                | Je hebt nog 
-                                span.countdownTime
-                                |  tot de volgende vraag.
+script#checkboxTemplate(type="text/x-handlebars-template")
+    div.form-group.optionInputMain(data-id="{{this.data.id}}")
+        label {{this.data.name}}
+        | {{#each this.data.content}}
+        div.custom-control.custom-checkbox.mb-1.optionInput(data-id="{{@key}}")
+            | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}"/>
+            label.custom-control-label.w-100(for="answer{{@index}}")  {{this}}
+        | {{/each}}
 
-script#qMusicLocatieTemplate(type="text/x-handlebars-template")
-    div.card.my-3
-        div.card-body
-            h2.card-title {{name}}
-            h5.card-subtitle {{questionType type}}
-            p.card-text
-                form.answers
-                    fieldset.answersInput({{isDisabled}})
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Artiest
-                            div.col-md-10
-                                input.form-control(type="text", name="artist", title="Artiest" required)
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Titel
-                            div.col-md-10
-                                input.form-control(type="text", name="title", title="Titel" required)
-                        div.form-group.row
-                            label.col-md-2.col-form-label.text-md-left Locatie
-                            div.col-md-10.locaties
-                                | {{#each this.locaties}}
-                                div.custom-control.custom-radio
-                                    input.custom-control-input(id="locatie{{@index}}", type="radio", name="locatie", value="{{this}}" required)
-                                    label.custom-control-label(for="locatie{{@index}}") {{this}}
-                                | {{/each}}
-                        button.btn.btn-success.btn-lg.my-3.submitAnswerBtn Verzenden
-                        div.countdownMain.collapse
-                            div.countdownText 
-                                | Je hebt nog 
-                                span.countdownTime
-                                |  tot de volgende vraag.
 
-script#qAlertTemplate(type="text/x-handlebars-template")
+script#textTemplate(type="text/x-handlebars-template")
+    div.form-group
+        label {{this.data.name}}
+        input.form-control.editorInput.textInput(type="text", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
+
+script#numberTemplate(type="text/x-handlebars-template")
+    div.form-group
+        label {{this.data.name}}
+        input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
+
+script#alertTemplate(type="text/x-handlebars-template")
     div.alert(class="alert-{{alertType}}") {{alertMessage}}

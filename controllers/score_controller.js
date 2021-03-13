@@ -1,4 +1,4 @@
-//const common = require("../common_functions");
+const common = require("../common_functions");
 
 exports.getPageContent = function (req, res) {
     res.render('score', { username: req.user.username });
@@ -13,209 +13,176 @@ exports.getTopVideoPageContent = function (req, res) {
 }
 
 exports.getScore = function (req, res) {
-    var questionData = req.app.get('questionData');
     var answersChecked = [];
+
     var knex = req.app.get('knex');
+    var questionTemplates = req.app.get('questionTemplates');
 
-    // Get team data
-    knex('teams')
-        .then((teamData) => {
-            if (typeof (teamData) !== "undefined") {
-                // Team found
-                // Generate empty array. Multidimensional: [Rounds][questions][teams]
-                for (rkey in questionData.rounds) {
-                    var questions = [];
-                    for (qkey in questionData.rounds[rkey].vragen) {
-                        var teams = [];
-                        var teamsLookup = {};
-                        var tI = 0;
-                        for (tKey in teamData) {
+    common.getQuestions(knex).then((questionData) => {
 
-                            teams.push({
-                                guid: teamData[tKey].guid,
-                                answer: "",
-                                score: 0
-                            })
+        // Get team data
+        knex('teams')
+            .then((teamData) => {
+                if (typeof (teamData) !== "undefined") {
+                    // Team found
+                    // Generate empty array. Multidimensional: [Rounds][questions][teams]
+                    for (rkey in questionData) {
+                        var questions = [];
+                        for (qkey in questionData[rkey].questions) {
+                            var teams = [];
+                            var teamsLookup = {};
+                            var tI = 0;
+                            for (tKey in teamData) {
 
-                            // Create team lookup table
-                            teamsLookup[teamData[tKey].guid] = {
-                                index: tI,
-                                name: teamData[tKey].name,
-                                totalScore: 0,
-                                roundScore: Array(questionData.rounds.length).fill(0)
+                                teams.push({
+                                    uuid: teamData[tKey].uuid,
+                                    answer: "",
+                                    score: 0
+                                })
+
+                                // Create team lookup table
+                                teamsLookup[teamData[tKey].uuid] = {
+                                    index: tI,
+                                    name: teamData[tKey].name,
+                                    totalScore: 0,
+                                    roundScore: Array(questionData.length).fill(0)
+                                }
+                                tI++;
                             }
-                            tI++;
+
+                            questions[qkey] = teams
                         }
-
-                        questions[qkey] = teams
+                        answersChecked[rkey] = questions
                     }
-                    answersChecked[rkey] = questions
-                }
 
-                knex('answers')
-                    .then((rows) => {
-                        if (rows.length == 0) {
-                            return res.send({
-                                teams: teamsLookup,
-                                answers: answersChecked
-                            });
-                        } else {
 
-                            for (key in rows) {
+                    knex('answers')
+                        .then((rows) => {
+                            if (rows.length == 0) {
+                                // Send empty array if there are no answers
+                                return res.send({
+                                    teams: teamsLookup,
+                                    answers: answersChecked
+                                });
+                            } else {
+                                // Add given answers to answer array
+                                for (key in rows) {
 
-                                // TODO. Multi vragen worden niet goed geteld.
-
-                                if (typeof (questionData.rounds[rows[key].round].vragen[rows[key].question]) !== "undefined") {
                                     try {
-                                        var currGuid = rows[key].guid;
-                                        var currRound = rows[key].round;
-                                        var currQuestion = rows[key].question;
+
+                                        // Search for indexes in currentOrder array
+                                        var questionIndex;
+                                        var roundIndex = common.getCurrentOrder().rounds.findIndex((roundObj) => {
+                                            // Find index of question in round
+                                            questionIndex = roundObj.questions.findIndex((questionsObj) => {
+                                                return questionsObj.uuid === rows[key].question_uuid
+                                            })
+
+                                            // return if question is found in round
+                                            return questionIndex != -1
+                                        })
+
+                                        var currTeamUuid = rows[key].team_uuid;
                                         var currTeamAnswer = JSON.parse(rows[key].answer);
 
-                                        var currRightAnswer = questionData.rounds[currRound].vragen[currQuestion].correct;
-                                        var currQuestionType = rows[key].type;
+                                        var currentQuestion = questionData[roundIndex].questions[questionIndex]
 
                                         // Check answer and get score
-                                        var score = checkAnswer(currQuestionType, currTeamAnswer, currRightAnswer);
+                                        var score = checkAnswer(currentQuestion, currTeamAnswer);
 
                                         // Round score
                                         score = Math.round((score + Number.EPSILON) * 100) / 100
 
                                         // Add score to total
-                                        teamsLookup[currGuid].totalScore = teamsLookup[currGuid].totalScore + score
+                                        teamsLookup[currTeamUuid].totalScore = teamsLookup[currTeamUuid].totalScore + score
 
                                         // Add score to each round total
-                                        teamsLookup[currGuid].roundScore[currRound] = teamsLookup[currGuid].roundScore[currRound] + score
+                                        teamsLookup[currTeamUuid].roundScore[roundIndex] = teamsLookup[currTeamUuid].roundScore[roundIndex] + score
 
                                         // Add answer, question score and type to team object
-                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].answer = currTeamAnswer;
-                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].type = currQuestionType;
-                                        answersChecked[currRound][currQuestion][teamsLookup[currGuid].index].score = score;
+                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].answer = currTeamAnswer;
+                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].template = currentQuestion.template;
+                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
 
                                     } catch (error) {
                                         console.log("Error:", error)
                                     }
-                                } else {
-                                    console.log(`Error: Score controller: cannot find question with given answer(Round ${rows[key].round}, Question ${rows[key].question}) this occours when questions are edited. Delete all answers to resolve this.`)
-                                }
-                            }
-                            return res.send({
-                                teams: teamsLookup,
-                                answers: answersChecked
-                            });
-                        }
-                    })
-            }
 
-        }).catch((error) => {
-            if (error.stack) { console.log(error.stack) }
-            ws.send(JSON.stringify({
-                msgType: "error",
-                msg: `team_not_found (${error})`
-            }))
-        })
+                                }
+                                return res.send({
+                                    teams: teamsLookup,
+                                    answers: answersChecked,
+                                    questionTemplates: questionTemplates,
+                                });
+                            }
+                        })
+
+                }
+
+            }).catch((error) => {
+                if (error.stack) { console.log(error.stack) }
+                ws.send(JSON.stringify({
+                    msgType: "error",
+                    msg: `team_not_found (${error})`
+                }))
+            })
+    }).catch((error) => { common.errorHandler("Cannot get questions", error, req, res) })
 }
 
-function checkAnswer (type, teamAnswer, correctAnswer) {
+function checkAnswer (questionData, teamAnswer) {
     var returnScore = 0;
-    switch (type) {
-        case "one":
-            returnScore = (teamAnswer.default == correctAnswer.default) ? 1 : 0;
-            break;
 
-        case "multi":
-            var totalScore = 0;
+    // Loop through answer parameters
+    for (key in questionData.parameters) {
 
-            // Loop trough correct answers
-            for (key in teamAnswer.default) {
+        var parameterType = questionData.parameters[key].type
+        var parameterId = questionData.parameters[key].id
+        var correctAnswer = questionData.parameters[key].correct
 
-                // If an correct answer is found in the team answers, add a point
-                if (correctAnswer.default.includes(teamAnswer.default[key])) {
-                    totalScore = totalScore + 1;
+        var currentTeamAnswer = teamAnswer.find((obj) => {
+            return obj.id === parameterId
+        }).correct
+
+        switch (parameterType) {
+            case "radio":
+                returnScore = (currentTeamAnswer[0] == correctAnswer[0]) ? 1 : 0;
+                break;
+
+            case "checkbox":
+                var totalScore = 0;
+
+                // Loop trough correct answers
+                for (key in currentTeamAnswer) {
+
+                    // If an correct answer is found in the team answers, add a point
+                    if (correctAnswer.includes(currentTeamAnswer[key])) {
+                        totalScore = totalScore + 1;
+                    } else {
+                        //substract half a point if a incorrect option is given. 
+                        totalScore = totalScore - 0.5;
+                    }
                 }
-            }
-            // TODO: substract point if a incorrect option is given. 
 
-            // Average out all points to a float
-            returnScore = totalScore / correctAnswer.default.length
-            break;
+                // Score cannot be negative.
+                if (totalScore / correctAnswer.length < 0) {
+                    returnScore = 0
+                } else {
+                    // Average out all points to a float
+                    returnScore = totalScore / correctAnswer.length
+                }
 
+                break;
 
-        case "open-numeric":
-            // Check is if simmalair
-            if (typeof (teamAnswer.default) !== "undefined") {
-                returnScore = (correctAnswer.default == teamAnswer.default) ? 1 : 0;
-            } else {
-                returnScore = 0
-            }
-            break;
+            case "number":
+                returnScore = (currentTeamAnswer == correctAnswer) ? 1 : 0;
+                break;
 
-
-        case "open-text":
-            // Compare string to each other, return a score
-            if (typeof (teamAnswer.default) !== "undefined") {
-                returnScore = similarity(correctAnswer.default, teamAnswer.default)
-            } else {
-                returnScore = 0
-            }
-            break;
-
-
-        case "music":
-            // Compare artist and title, return avarage of both
-            if (typeof (teamAnswer.artist) !== "undefined") {
-                var artistScore = similarity(correctAnswer.artist, teamAnswer.artist)
-            } else {
-                var artistScore = 0
-            }
-
-            if (typeof (teamAnswer.title) !== "undefined") {
-                var titleScore = similarity(correctAnswer.title, teamAnswer.title)
-            } else {
-                var titleScore = 0
-            }
-            returnScore = (artistScore + titleScore) / 2
-            break;
-
-
-        case "music-locatie":
-            // Compare artist and title and location, return avarage of both
-
-            if (typeof (teamAnswer.artist) !== "undefined") {
-                var artistScore = similarity(correctAnswer.artist, teamAnswer.artist)
-            } else {
-                var artistScore = 0
-            }
-
-            if (typeof (teamAnswer.title) !== "undefined") {
-                var titleScore = similarity(correctAnswer.title, teamAnswer.title)
-            } else {
-                var titleScore = 0
-            }
-
-            var locatieScore = (teamAnswer.locatie == correctAnswer.locatie) ? 1 : 0;
-
-            returnScore = (artistScore + titleScore + locatieScore) / 3
-            break;
-
-        case "name-year":
-            // Compare name and year, return avarage of both
-
-            if (typeof (teamAnswer.name) !== "undefined") {
-                var nameScore = similarity(correctAnswer.name, teamAnswer.name)
-            } else {
-                var nameScore = 0
-            }
-
-            if (typeof (teamAnswer.year) !== "undefined") {
-                var yearScore = (correctAnswer.year == teamAnswer.year) ? 1 : 0;
-            } else {
-                var yearScore = 0
-            }
-
-            returnScore = (nameScore + yearScore) / 3
-            break;
+            case "text":
+                returnScore = similarity(correctAnswer, currentTeamAnswer)
+                break;
+        }
     }
+
     return returnScore
 }
 

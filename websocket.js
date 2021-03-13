@@ -2,8 +2,6 @@ const WebSocket = require('ws');
 const common = require("./common_functions");
 
 var countdownTimer;
-var teamData;
-var questionData;
 var knex;
 
 // Broadcast to all clients
@@ -22,20 +20,15 @@ exports.parseCommands = function (data, ws, req, app, wss) {
     // Set globals
     knex = app.get('knex');
     teamData = app.get('teamData');
-    questionData = app.get('questionData');
 
     var allowedUsers = ["admin", "user"]
 
     // If there is no known logged in client, it is probarly a team
 
-    if (data.msgType == "getStatus") {
-        /**
-         * Returns current question data to team. When they are requesting it.
-         */
+    if (data.msgType == "getStatus") { // Return current question data to team. When they are requesting it.
 
         // Check if client is admin or user to get the current question.
-        if (typeof (req.session.passport) !== "undefined" && typeof (data.guid) === "undefined") {
-
+        if (typeof (req.session.passport) !== "undefined" && typeof (data.uuid) === "undefined") {
             // Check if client is an admin.
             knex('users')
                 .where({ id: req.session.passport.user })
@@ -45,7 +38,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                     // Check if user is allowed
                     if (allowedUsers.includes(row.role)) {
                         // User is allowed
-                        data.guid = ""
+                        data.uuid = ""
                         pubQuestionToSingle()
                     }
                 })
@@ -56,18 +49,19 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                         msg: `user_not_found (${error})`
                     }))
                 })
-
         } else {
-            if (typeof (data.guid) !== "undefined") {
+            // Client is not a admin, check if it is a valid team member
+
+            if (typeof (data.uuid) !== "undefined") {
                 // Get team data
                 knex('teams')
-                    .where({ guid: data.guid })
+                    .where({ uuid: data.uuid })
                     .first()
                     .then((row) => {
 
                         if (typeof (row) !== "undefined") {
-                            // Team found
-                            pubQuestionToSingle();
+                            // Team found publish question to client
+                            pubQuestionToSingle(data.uuid);
                         }
 
                     }).catch((error) => {
@@ -80,68 +74,55 @@ exports.parseCommands = function (data, ws, req, app, wss) {
             } else {
                 ws.send(JSON.stringify({
                     msgType: "error",
-                    msg: `invalid_guid`
+                    msg: `invalid_uuid`
                 }))
             }
         }
 
-        function pubQuestionToSingle () {
-            // Get current round and question ID from db
-            common.getCurrent(knex).then(currentData => {
+        function pubQuestionToSingle (teamUuid = "") {
 
-                // Check if current round exists in question data
-                var currentRound = questionData.rounds[currentData.round];
-                if (typeof (currentRound) !== "undefined") {
+            // Get current question ID from db
+            common.getCurrentQuestion(knex).then(currentQuestionUuid => {
 
-                    // Check if question exists
-                    var currentQuestion = currentRound.vragen[currentData.question];
-                    if (typeof (currentQuestion) !== "undefined") {
+                common.getQuestion(knex, currentQuestionUuid).then((questionData) => {
 
-                        var currQuestionCount = questionData.rounds[parseInt(currentData.round)].vragen.length
-                        var roundCount = questionData.rounds.length
-                        var answered = false;
+                    var currQuestionCount = common.getCurrentOrder().rounds.find((obj) => { return obj.uuid === questionData.round }).questionCount
+                    var roundCount = common.getCurrentOrder().roundCount
+                    var answered = false;
 
-                        // Check of vraag al beantwoord is.
-                        knex('answers')
-                            .where({ guid: data.guid, round: currentData.round, question: currentData.question })
-                            .first()
-                            .then((row) => {
-                                answered = (typeof (row) !== "undefined") ? true : false
-                            })
-                            .catch((error) => {
-                                console.log(`Websocket: cannot get question: ${error.error}: ${error.reason}`)
-                            })
-                            .finally((e) => {
-                                // Send question with stripped answers to client
-                                ws.send(JSON.stringify({
-                                    msgType: "question",
-                                    round: {
-                                        name: currentRound.name,
-                                        details: currentRound.details,
-                                        current: currentData.round,
-                                        total: roundCount
-                                    },
-                                    question: {
-                                        name: currentQuestion.name,
-                                        type: currentQuestion.type,
-                                        answers: currentQuestion.answers,
-                                        current: currentData.question,
-                                        total: currQuestionCount,
-                                        answered: answered
-                                    }
-                                }));
-                            });
+                    // Check of vraag al beantwoord is.
+                    knex('answers')
+                        .where({ question_uuid: currentQuestionUuid, team_uuid: teamUuid })
+                        .first()
+                        .then((row) => {
+                            answered = (typeof (row) !== "undefined") ? true : false
+                        })
+                        .catch((error) => { common.errorHandler("Cannot get answer", error) })
+                        .finally((e) => {
+                            // Send question with stripped answers to client
+                            ws.send(JSON.stringify({
+                                msgType: "question",
+                                round: {
+                                    name: questionData.round_name,
+                                    details: questionData.round_details,
+                                    currentNr: questionData.round_order,
+                                    total: roundCount
+                                },
+                                question: {
+                                    uuid: questionData.uuid,
+                                    name: questionData.name,
+                                    type: questionData.type,
+                                    parameters: questionData.parameters,
+                                    currentNr: questionData.order,
+                                    total: currQuestionCount,
+                                    answered: answered
+                                }
+                            }));
+                        });
 
-                    } else {
-                        console.log(`Websocket: cannot get question(${currentData.question})`);
-                    }
-                } else {
-                    console.log(`Websocket: cannot get round(${currentData.round})`);
-                }
+                }).catch((error) => { common.errorHandler("Cannot get question", error) })
 
-            }).catch((error) => {
-                console.log(`Cannot get current data: ${error}`);
-            })
+            }).catch((error) => { common.errorHandler("Cannot get current data", error) })
         }
 
     } else if (data.msgType == "controlQuiz") {
@@ -157,7 +138,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                     if (allowedUsers.includes(row.role)) {
 
                         /**
-                         * Controls the the quiz
+                         * Control the quiz
                          */
 
                         if (data.action == "next" || data.action == "prev") {
@@ -233,30 +214,36 @@ exports.parseCommands = function (data, ws, req, app, wss) {
 
 }
 
-
 function pubQuestionToAll (action, wss) {
-    // Get current round and question ID from db
-    common.getCurrent(knex).then(currentData => {
+    // Get current question ID from db
+    common.getCurrentQuestion(knex).then(currentQuestionUuid => {
 
-        var currQuestionCount = questionData.rounds[parseInt(currentData.round)].vragen.length
+        // Search for indexes in currentOrder array
+        var questionIndex;
+        var roundIndex = common.getCurrentOrder().rounds.findIndex((roundObj) => {
+            // Find index of question in round
+            questionIndex = roundObj.questions.findIndex((questionsObj) => {
+                return questionsObj.uuid === currentQuestionUuid
+            })
 
-        var roundCount = questionData.rounds.length
+            // return if question is found in round
+            return questionIndex != -1
+        })
+
+        var currQuestionCount = common.getCurrentOrder().rounds[roundIndex].questionCount
+        var roundCount = common.getCurrentOrder().roundCount
 
         switch (action) {
             case "next":
 
-                /** 
-                 * Next question
-                 */
-
                 // Check if end of round is reached
-                if (currentData.question < currQuestionCount - 1) {
-                    currentData.question = parseInt(currentData.question) + 1
+                if (questionIndex < currQuestionCount - 1) {
+                    questionIndex = parseInt(questionIndex) + 1
                 } else {
 
-                    if (currentData.round < roundCount - 1) {
-                        currentData.round = parseInt(currentData.round) + 1
-                        currentData.question = 0;
+                    if (roundIndex < roundCount - 1) {
+                        roundIndex = parseInt(roundIndex) + 1
+                        questionIndex = 0;
                     } else {
                         console.log("Websocket: End of quiz reached.")
                     }
@@ -265,22 +252,19 @@ function pubQuestionToAll (action, wss) {
                 break;
 
             case "prev":
-                /**
-                 * Previous question
-                 */
 
                 // Check if begin of round is reached
-                if (currentData.question > 0) {
-                    currentData.question = parseInt(currentData.question) - 1
+                if (questionIndex > 0) {
+                    questionIndex = parseInt(questionIndex) - 1
                 } else {
 
-                    if (currentData.round > 0) {
-                        currentData.round = parseInt(currentData.round) - 1
+                    if (roundIndex > 0) {
+                        roundIndex = parseInt(roundIndex) - 1
 
                         // Aantal vragen van ronde hiervoor
-                        var prevRoundQuestionCount = questionData.rounds[parseInt(currentData.round)].vragen.length
+                        var prevRoundQuestionCount = common.getCurrentOrder().rounds[parseInt(roundIndex)].questions.length
 
-                        currentData.question = prevRoundQuestionCount - 1;
+                        questionIndex = prevRoundQuestionCount - 1;
                     } else {
                         console.log("Websocket: Begin of quiz reached.")
                     }
@@ -289,53 +273,58 @@ function pubQuestionToAll (action, wss) {
                 break;
         }
 
+        // Get new question uuid
+        var newQuestionUuid = common.getCurrentOrder().rounds[roundIndex].questions[questionIndex].uuid
+
         // Save current round and question to DB
-        common.updateCurrent(knex, currentData).then(() => {
+        knex('current_question')
+            .where({ name: 'current' })
+            .update({ question: newQuestionUuid })
+            .then(() => {
 
-            var currentRound = questionData.rounds[currentData.round];
-            var currentQuestion = currentRound.vragen[currentData.question];
-            var answeredList = [];
+                // Get question data
+                common.getQuestion(knex, newQuestionUuid).then((questionData) => {
+                    var answeredList = [];
 
-            knex('answers')
-                .where({ round: currentData.round, question: currentData.question })
-                .then((rows) => {
-                    // Push all guid of team with an answer to array
-                    for (key in rows) {
-                        answeredList.push(rows[key].guid);
-                    }
+                    knex('answers')
+                        .where({ question_uuid: newQuestionUuid })
+                        .then((rows) => {
+                            // Push all uuid of team with an answer to array
+                            for (key in rows) {
+                                answeredList.push(rows[key].team_uuid);
+                            }
 
-                    var sendData = {
-                        msgType: "question",
-                        round: {
-                            name: currentRound.name,
-                            details: currentRound.details,
-                            current: currentData.round,
-                            total: roundCount
-                        },
-                        question: {
-                            name: currentQuestion.name,
-                            type: currentQuestion.type,
-                            answers: currentQuestion.answers,
-                            current: currentData.question,
-                            total: currQuestionCount,
-                        }
-                    }
+                            var sendData = {
+                                msgType: "question",
+                                round: {
+                                    name: questionData.round_name,
+                                    details: questionData.round_details,
+                                    currentNr: questionData.round_order,
+                                    total: roundCount
+                                },
+                                question: {
+                                    uuid: questionData.uuid,
+                                    name: questionData.name,
+                                    type: questionData.type,
+                                    parameters: questionData.parameters,
+                                    currentNr: questionData.order,
+                                    total: currQuestionCount,
+                                }
+                            }
 
-                    // Send data to all clients
-                    wss.clients.forEach(function each (client) {
-                        // Check if current client/team has answered
-                        sendData.question.answered = answeredList.includes(client.guid)
+                            // Send data to all clients
+                            wss.clients.forEach(function each (client) {
+                                // Check if current client/team has answered
+                                sendData.question.answered = answeredList.includes(client.uuid)
 
-                        if (client.readyState === WebSocket.OPEN) {
-                            client.send(JSON.stringify(sendData));
-                        }
-                    });
-
+                                if (client.readyState === WebSocket.OPEN) {
+                                    client.send(JSON.stringify(sendData));
+                                }
+                            });
+                        })
                 })
 
-        }).catch((error) => {
-            console.log(`Websocket: error: cannot update (${error})`);
-        });
+            }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
 
     });
 }

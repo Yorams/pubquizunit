@@ -6,6 +6,7 @@ exports.up = function (knex) {
             table.uuid("uuid")
             table.string('name')
             table.text('details')
+            table.integer('order')
         })
 }
 

@@ -4,7 +4,7 @@ exports.up = function (knex) {
         .createTable('teams', function (table) {
             table.increments()
             table.string('name')
-            table.string('guid')
+            table.string('uuid')
         })
 }
 
