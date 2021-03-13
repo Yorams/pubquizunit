@@ -21,13 +21,6 @@ app.set('knex', knex);
 // Update current count
 common.updateCurrentOrder(knex);
 
-// Load Quiz questions
-common.getJsonFile("/questions")
-    .then(function (questionData) {
-        app.set('questionData', questionData);
-    })
-    .catch((err) => { console.log(`app: cannot load questions file (${err})`) })
-
 // Load Quiz questions templates
 common.getJsonFile("/question_templates")
     .then(function (questionTemplates) {
