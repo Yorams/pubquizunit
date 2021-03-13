@@ -6,7 +6,7 @@ var controller = require('../controllers/quiz_controller');
 
 // Index
 router.get('/', controller.getPageContent);
-router.get('/:guid', controller.getPageContent);
+router.get('/:uuid', controller.getPageContent);
 
 router.post('/submitanswer', controller.submitAnswer);
 

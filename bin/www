@@ -50,8 +50,8 @@ common.getJsonFile("/settings")
 
         wss.on('connection', function (ws, req) {
             const urlParams = new URLSearchParams(url.parse(req.url, true).search)
-            clientGuid = urlParams.get("guid");
-            ws.guid = clientGuid
+            clientGuid = urlParams.get("uuid");
+            ws.uuid = clientGuid
 
             // Websocket client connected
             const ip = req.connection.remoteAddress;

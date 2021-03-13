@@ -17,7 +17,7 @@ $("body").on("click", ".editItem", function (e) {
     // Reset inputs
     $(".editInput[name='id']").val("")
     $(".editInput[name='name']").val("")
-    $(".editInput[name='guid']").val("")
+    $(".editInput[name='uuid']").val("")
 
 
     // Get ID
@@ -40,7 +40,7 @@ $("body").on("click", ".editItem", function (e) {
 
         $(".editInput[name='id']").val(currentItem.id)
         $(".editInput[name='name']").val(currentItem.name)
-        $(".editInput[name='guid']").val(currentItem.guid)
+        $(".editInput[name='uuid']").val(currentItem.uuid)
     }
 
     // Copy id from delete button to "yes" button

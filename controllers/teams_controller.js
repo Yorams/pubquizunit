@@ -1,9 +1,4 @@
-const common = require("../common_functions");
-var crypto = require('crypto');
-
-function rand (hashLength) {
-    return crypto.randomBytes(hashLength).toString('hex')
-}
+const { v4: uuidv4 } = require('uuid');
 
 exports.getPageContent = function (req, res) {
     res.render('teams', { username: req.user.username });
@@ -12,7 +7,7 @@ exports.getPageContent = function (req, res) {
 exports.getList = function (req, res) {
     var knex = req.app.get('knex');
     knex('teams')
-        .select('id', 'name', 'guid')
+        .select('id', 'name', 'uuid')
         .then((rows) => res.send({ result: "success", data: rows }))
         .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get teams: ${error}` }))
 }
@@ -47,8 +42,8 @@ exports.edit = function (req, res) {
                     if (typeof (id) === "undefined" || id == "") {
                         // Add team
 
-                        // Generate guid
-                        dbData.guid = `${rand(4)}-${rand(2)}-${rand(2)}-${rand(2)}-${rand(6)}`;
+                        // Generate uuid
+                        dbData.uuid = uuidv4();
 
                         // Save to database
                         knex('teams')

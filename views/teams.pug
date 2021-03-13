@@ -34,7 +34,7 @@ block content
 
                             div.form-group
                                 label(for="name") GUID
-                                input.form-control.editInput#name(type="text", name="guid", placeholder="Is automatically filled in")
+                                input.form-control.editInput#name(type="text", name="uuid", placeholder="Is automatically filled in")
 
                             div.form-group
                                 div.errorMsg.text-danger 
@@ -75,8 +75,8 @@ block content
                     td {{this.id}}
                     th(scope="row") {{this.name}}
                     td 
-                        a.noEdit(href="{{../baseUrl}}/quiz/{{this.guid}}", target="_blank")
-                            | {{../baseUrl}}/quiz/{{this.guid}}
+                        a.noEdit(href="{{../baseUrl}}/quiz/{{this.uuid}}", target="_blank")
+                            | {{../baseUrl}}/quiz/{{this.uuid}}
                             
                     td.text-right(style="padding: 0.25rem;")
                         button.btn.btn-sm.btn-danger.btnDelItem(data-id="{{this.id}}")
