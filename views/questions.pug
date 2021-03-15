@@ -65,9 +65,10 @@ block content
                 | {{#each this.questions}}
                 div.list-group-item.list-group-item-action.questionMain(data-question-uuid="{{this.uuid}}")
                     div.d-flex.w-100.justify-content-between
-                        h6.mb-1.questionName 
+                        div.mb-1.questionName 
                             span.font-weight-bolder {{inc this.order 0}}.
-                            span {{this.name}}
+                            span.text-muted  {{getTemplateName this.template}}
+                            div {{this.name}}
                         div.btn-group
                             button.btn.btn-xs.btn-danger.noAction.delQuestionBtn(data-question-uuid="{{this.uuid}}", title="Delete question")
                                 i.mdi.mdi-delete-outline
@@ -134,6 +135,11 @@ block content
         div.form-group
             label {{this.data.name}}
             input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
+    
+    script#messageTemplate(type="text/x-handlebars-template")
+        div.form-group
+                label {{this.data.name}}:
+                textarea.form-control.editorInput.messageInput(rows="4", data-id="{{this.data.id}}", required) {{this.data.content}}
 
 block scripts
     script(src='/javascripts/questions_public.js')

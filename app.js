@@ -24,6 +24,19 @@ common.updateCurrentOrder(knex);
 // Load Quiz questions templates
 common.getJsonFile("/question_templates")
     .then(function (questionTemplates) {
+        // Add default "message" question template.
+        questionTemplates.unshift({
+            "id": "message",
+            "name": "Message",
+            "parameters": [
+                {
+                    "type": "message",
+                    "name": "Message",
+                    "id": "default"
+                }
+            ]
+        })
+
         app.set('questionTemplates', questionTemplates);
     })
     .catch((err) => { console.log(`app: cannot load questions template file (${err})`) })

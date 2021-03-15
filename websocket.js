@@ -110,7 +110,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                                 question: {
                                     uuid: questionData.uuid,
                                     name: questionData.name,
-                                    type: questionData.type,
+                                    template: questionData.template,
                                     parameters: questionData.parameters,
                                     currentNr: questionData.order,
                                     total: currQuestionCount,
@@ -301,7 +301,7 @@ function pubQuestionToAll (action, wss) {
                                 question: {
                                     uuid: questionData.uuid,
                                     name: questionData.name,
-                                    type: questionData.type,
+                                    template: questionData.template,
                                     parameters: questionData.parameters,
                                     currentNr: questionData.order,
                                     total: currQuestionCount,

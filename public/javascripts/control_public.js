@@ -3,6 +3,7 @@ var radioTemplate = Handlebars.compile($('#radioTemplate').html());
 var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
 var textTemplate = Handlebars.compile($('#textTemplate').html());
 var numberTemplate = Handlebars.compile($('#numberTemplate').html());
+var messageTemplate = Handlebars.compile($('#messageTemplate').html());
 
 // -- WEBSOCKET --
 var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}`);
@@ -74,8 +75,17 @@ function loadQuestion (data) {
             case "number":
                 parametersOutput = `${parametersOutput}${numberTemplate({ id: key, data: currParameter })}`
                 break;
+            case "message":
+                parametersOutput = `${parametersOutput}${messageTemplate({ id: key, data: currParameter })}`
+                break;
         }
     }
     $(".questionMain").html(questionTemplate({ round: data.round, content: data.question, parameters: parametersOutput }))
 
+    // Hide submit button if question is a message
+    if (data.question.template == "message") {
+        $(".submitAnswerBtn").hide()
+    } else {
+        $(".submitAnswerBtn").show()
+    }
 }

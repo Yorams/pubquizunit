@@ -29,15 +29,16 @@ exports.getScore = function (req, res) {
                     for (rkey in questionData) {
                         var questions = [];
                         for (qkey in questionData[rkey].questions) {
+
                             var teams = [];
                             var teamsLookup = {};
                             var tI = 0;
                             for (tKey in teamData) {
-
                                 teams.push({
                                     uuid: teamData[tKey].uuid,
                                     answer: "",
-                                    score: 0
+                                    score: 0,
+                                    template: questionData[rkey].questions[qkey].template
                                 })
 
                                 // Create team lookup table
@@ -52,6 +53,7 @@ exports.getScore = function (req, res) {
 
                             questions[qkey] = teams
                         }
+
                         answersChecked[rkey] = questions
                     }
 
@@ -82,27 +84,35 @@ exports.getScore = function (req, res) {
                                             return questionIndex != -1
                                         })
 
-                                        var currTeamUuid = rows[key].team_uuid;
-                                        var currTeamAnswer = JSON.parse(rows[key].answer);
+                                        if (questionIndex != -1) {
 
-                                        var currentQuestion = questionData[roundIndex].questions[questionIndex]
+                                            var currTeamUuid = rows[key].team_uuid;
+                                            var currTeamAnswer = JSON.parse(rows[key].answer);
 
-                                        // Check answer and get score
-                                        var score = checkAnswer(currentQuestion, currTeamAnswer);
+                                            var currentQuestion = questionData[roundIndex].questions[questionIndex]
 
-                                        // Round score
-                                        score = Math.round((score + Number.EPSILON) * 100) / 100
+                                            // Ignore message type questions
+                                            if (currentQuestion.template != "message") {
+                                                // Check answer and get score
+                                                var score = checkAnswer(currentQuestion, currTeamAnswer);
 
-                                        // Add score to total
-                                        teamsLookup[currTeamUuid].totalScore = teamsLookup[currTeamUuid].totalScore + score
+                                                // Round score
+                                                score = Math.round((score + Number.EPSILON) * 100) / 100
 
-                                        // Add score to each round total
-                                        teamsLookup[currTeamUuid].roundScore[roundIndex] = teamsLookup[currTeamUuid].roundScore[roundIndex] + score
+                                                // Add score to total
+                                                teamsLookup[currTeamUuid].totalScore = teamsLookup[currTeamUuid].totalScore + score
 
-                                        // Add answer, question score and type to team object
-                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].answer = currTeamAnswer;
-                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].template = currentQuestion.template;
-                                        answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
+                                                // Add score to each round total
+                                                teamsLookup[currTeamUuid].roundScore[roundIndex] = teamsLookup[currTeamUuid].roundScore[roundIndex] + score
+
+                                                // Add answer, question score and type to team object
+                                                answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].answer = currTeamAnswer;
+                                                //answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].template = currentQuestion.template;
+                                                answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
+                                            }
+                                        } else {
+                                            console.log(`Orphaned answer found: ${rows[key].question_uuid}`)
+                                        }
 
                                     } catch (error) {
                                         console.log("Error:", error)

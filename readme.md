@@ -57,4 +57,11 @@ After that you can start and stop the service with this commands:
 To view the log enter this:
 
 	journalctl -u pubquizunit.service
-	
+
+### ToDo Major
+- [x] Add message type question useable for intro or outros for rounds
+- [ ] Make a settings page to adjust.
+- [ ] Add a question overview/list to the control page.
+- [ ] Make a installation wizard or something like that.
+
+### ToDo Minor

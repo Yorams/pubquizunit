@@ -50,7 +50,7 @@ block content
                     div.col.scoreQuestion {{inc @index 0}}
                     // Teams
                     | {{#each this}}
-                    div.col.scoreNumber(data-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.template}}") {{showScore this.score}}
+                    div.col.scoreNumber(data-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.template}}") {{showScore this.score this.template}}
                     | {{/each}}
             | {{/each}}
 

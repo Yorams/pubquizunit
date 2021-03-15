@@ -1,10 +1,10 @@
 var roundTemplate = Handlebars.compile($('#roundTemplate').html());
 var editorTemplate = Handlebars.compile($('#editorTemplate').html());
-
 var radioTemplate = Handlebars.compile($('#radioTemplate').html());
 var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
 var textTemplate = Handlebars.compile($('#textTemplate').html());
 var numberTemplate = Handlebars.compile($('#numberTemplate').html());
+var messageTemplate = Handlebars.compile($('#messageTemplate').html());
 
 var mainQuestionData;
 var questionTemplates;
@@ -29,6 +29,13 @@ Handlebars.registerHelper("checkedIf", function (answer, correct) {
     if (typeof (correct) !== "undefined") {
         return (correct.includes(answer)) ? "checked" : "";
     }
+});
+
+Handlebars.registerHelper("getTemplateName", function (templateId) {
+    var currentTemplate = questionTemplates.find((obj) => {
+        return obj.id === templateId
+    })
+    return currentTemplate.name
 });
 
 /**
@@ -203,6 +210,7 @@ $(".questionEditorMain").on("input", ".editorInput, .optionInput, .optionName", 
 function getQuestionData (callback = () => { }) {
     sendPost("get_questions", function (data) {
         mainQuestionData = data.questions;
+        questionTemplates = data.questionTemplates
 
         // Show rounds with questions
         $(".roundsMain").html(roundTemplate(data));
@@ -289,8 +297,12 @@ function openInEditor (roundUuid, questionUuid) {
                 case "number":
                     parametersOutput = `${parametersOutput}${numberTemplate({ id: key, data: currParameter })}`
                     break;
+                case "message":
+                    parametersOutput = `${parametersOutput}${messageTemplate({ id: key, data: currParameter })}`
+                    break;
             }
         }
+
         $(".questionEditorMain").html(editorTemplate({ round: currentRound, content: currentQuestion, parameters: parametersOutput }))
     }
 
@@ -321,6 +333,8 @@ function optionEdit (action, currentElement) {
             if (data.result == "success") {
                 getQuestionData(() => {
                     openInEditor(roundUuid, questionUuid);
+
+                    window.onbeforeunload = false;
                 });
             } else if (data.result == "error") {
                 showError("Something is going wrong.", "Cannot save the options, try again or contact the system admin")
@@ -352,7 +366,6 @@ function saveQuestion (roundUuid, questionUuid, callback = () => { }) {
                     // Get the correct value from the text input
                     correctOptions.push($(this).siblings("label").find(".optionName").val())
                 }
-
             }
         })
         parameters.push({ id: optionElementId, content: optionElements, correct: correctOptions })
@@ -361,6 +374,11 @@ function saveQuestion (roundUuid, questionUuid, callback = () => { }) {
     // Loop over other type parameters
     $(".textInput, .numberInput").each(function () {
         parameters.push({ id: $(this).data("id"), correct: $(this).val() })
+    })
+
+    // Loop over message type parameters
+    $(".messageInput").each(function () {
+        parameters.push({ id: $(this).data("id"), content: $(this).val() })
     })
 
     // Compose data to send

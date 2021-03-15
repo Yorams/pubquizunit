@@ -50,33 +50,40 @@ exports.submitAnswer = function (req, res) {
                         // Check if answer is from current round & question
                         if (questionUuidIn == currentQuestionUuid) {
 
-                            // Check if answer is already given
-                            knex('answers')
-                                .where({ question_uuid: currentQuestionUuid, team_uuid: teamUuid })
-                                .first()
-                                .then((row) => {
-                                    if (typeof (row) === "undefined") {
+                            // Check if current question is not a message
+                            common.getQuestion(knex, currentQuestionUuid).then((questionData) => {
 
-                                        // Compose data
-                                        var dbData = {
-                                            team_uuid: teamUuid,
-                                            question_uuid: currentQuestionUuid,
-                                            answer: JSON.stringify(answer)
-                                        }
+                                // Ignore answers for a messag type question
+                                if (questionData.template != "message") {
+                                    // Check if answer is already given
+                                    knex('answers')
+                                        .where({ question_uuid: currentQuestionUuid, team_uuid: teamUuid })
+                                        .first()
+                                        .then((row) => {
+                                            if (typeof (row) === "undefined") {
 
-                                        // Save answer to database
-                                        knex('answers')
-                                            .insert(dbData)
-                                            .then(() => res.send({ result: "success" }))
-                                            .catch((error) => res.send({ result: "error", errorMsg: `Cannot save answer: ${error}` }))
-                                    } else {
-                                        return res.send({ result: "error", errorMsg: `Answer is already given` })
-                                    }
+                                                // Compose data
+                                                var dbData = {
+                                                    team_uuid: teamUuid,
+                                                    question_uuid: currentQuestionUuid,
+                                                    answer: JSON.stringify(answer)
+                                                }
 
-                                })
-                                .catch((error) => { common.errorHandler("Cannot get answer", error) })
+                                                // Save answer to database
+                                                knex('answers')
+                                                    .insert(dbData)
+                                                    .then(() => res.send({ result: "success" }))
+                                                    .catch((error) => res.send({ result: "error", errorMsg: `Cannot save answer: ${error}` }))
+                                            } else {
+                                                return res.send({ result: "error", errorMsg: `Answer is already given` })
+                                            }
 
-
+                                        })
+                                        .catch((error) => { common.errorHandler("Cannot get answer", error) })
+                                } else {
+                                    return res.send({ result: "error", errorMsg: `cannot answers a message type question` })
+                                }
+                            })
                         } else {
                             return res.send({ result: "error", errorMsg: `current question id mismatch` })
                         }

@@ -4,6 +4,7 @@ var radioTemplate = Handlebars.compile($('#radioTemplate').html());
 var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
 var textTemplate = Handlebars.compile($('#textTemplate').html());
 var numberTemplate = Handlebars.compile($('#numberTemplate').html());
+var messageTemplate = Handlebars.compile($('#messageTemplate').html());
 var alertTemplate = Handlebars.compile($('#alertTemplate').html());
 
 jQuery(function () {
@@ -98,6 +99,8 @@ function loadQuestion (data) {
     // Clear countdown timer
     clearInterval(countdownTimer);
 
+
+
     glob_currStatus = data;
     $(".headerSubTitle").html(`Team: ${glob_data.name}`);
     $(".subTitle").html(data.round.name)
@@ -123,6 +126,9 @@ function loadQuestion (data) {
             case "number":
                 parametersOutput = `${parametersOutput}${numberTemplate({ id: key, data: currParameter })}`
                 break;
+            case "message":
+                parametersOutput = `${parametersOutput}${messageTemplate({ id: key, data: currParameter })}`
+                break;
         }
     }
     $(".questionMain").html(questionTemplate({ round: data.round, content: data.question, parameters: parametersOutput }))
@@ -130,5 +136,12 @@ function loadQuestion (data) {
     // Show message if answer is already given
     if (data.question.answered) {
         $(".questionMain").append(alertTemplate({ alertType: "warning", alertMessage: "Je hebt deze vraag al beantwoord" }));
+    }
+
+    // Hide submit button if question is a message
+    if (data.question.template == "message") {
+        $(".submitAnswerBtn").hide()
+    } else {
+        $(".submitAnswerBtn").show()
     }
 }

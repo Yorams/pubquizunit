@@ -35,11 +35,15 @@ Handlebars.registerHelper('formatAnswer', function (data, type) {
     return returnData
 })
 
-Handlebars.registerHelper('showScore', function (data) {
-    if (typeof (data) !== "undefined") {
-        return data;
+Handlebars.registerHelper('showScore', function (data, template) {
+    if (template == "message") {
+        return ""
     } else {
-        return 0
+        if (typeof (data) !== "undefined") {
+            return data;
+        } else {
+            return ""
+        }
     }
 })
 
@@ -102,9 +106,9 @@ jQuery(function () {
 })
 
 function startRefreshTimer () {
-    refreshTimer = setInterval(function () {
+    /*refreshTimer = setInterval(function () {
         loadScore("overview");
-    }, 5000)
+    }, 5000)*/
 }
 
 function loadScore (view) {

@@ -47,5 +47,11 @@ script#numberTemplate(type="text/x-handlebars-template")
         label {{this.data.name}}
         input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
 
+script#messageTemplate(type="text/x-handlebars-template")
+    | {{this.data.name}}:
+    br
+    | {{this.data.content}}
+    br
+
 script#alertTemplate(type="text/x-handlebars-template")
     div.alert(class="alert-{{alertType}}") {{alertMessage}}
