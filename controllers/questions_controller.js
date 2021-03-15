@@ -2,8 +2,6 @@ const common = require("../common_functions");
 var _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
 
-var mainQuestionData = [];
-
 exports.getPageContent = function (req, res) {
     res.render('questions', { username: req.user.username });
 }
@@ -48,9 +46,10 @@ exports.editItem = function (req, res) {
         var roundUuid = req.body.roundUuid;
 
         var deletedRoundHasCurrent = false;
-
+        var answersToDelete = []
 
         common.getCurrentQuestion(knex).then((currentQuestionUuid) => {
+
 
             // Check if one of the to be deleted questions is the current question
             knex('questions')
@@ -61,28 +60,37 @@ exports.editItem = function (req, res) {
                         if (rows[key].uuid == currentQuestionUuid) {
                             deletedRoundHasCurrent = true
                         }
-                    }
+                        answersToDelete.push(rows[key].uuid)
 
+                    }
                     if (deletedRoundHasCurrent) {
                         // Reset current question uuid to first
                         common.resetCurrent(knex)
                     }
 
-                    // Delete corresponding questions of round
-                    knex('questions')
-                        .where({ round: roundUuid })
+                    // Also delete corresponding answers
+                    knex("answers")
+                        .whereIn("question_uuid", answersToDelete)
                         .del()
                         .then(() => {
-
-                            // Delete round
-                            knex('rounds')
-                                .where({ uuid: roundUuid })
+                            // Delete corresponding questions of round
+                            knex('questions')
+                                .where({ round: roundUuid })
                                 .del()
-                                .then(() => res.send({ result: "success" }))
-                                .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
-                                .finally(() => common.updateCurrentOrder(knex))// Update current order
+                                .then(() => {
+
+                                    // Delete round
+                                    knex('rounds')
+                                        .where({ uuid: roundUuid })
+                                        .del()
+                                        .then(() => res.send({ result: "success" }))
+                                        .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
+                                        .finally(() => common.updateCurrentOrder(knex))// Update current order
+                                })
+                                .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
                         })
-                        .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
+                        .catch((error) => { common.errorHandler("Cannot delete corresponding answers", error, req, res) })
+
                 })
                 .catch((error) => { common.errorHandler("Cannot get questions from round", error, req, res) })
         })
@@ -178,7 +186,16 @@ exports.editItem = function (req, res) {
                         common.resetCurrent(knex)
                     }
 
-                    res.send({ result: "success" })
+                    // Also delete corresponding answers
+                    knex("answers")
+                        .where({ question_uuid: currentQuestionUuid })
+                        .del()
+                        .then(() => {
+                            res.send({ result: "success" })
+                        })
+                        .catch((error) => { common.errorHandler("Cannot delete corresponding answers", error, req, res) })
+
+
                 })
                 .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })
                 .finally(() => common.updateCurrentOrder(knex))// Update current order

@@ -75,7 +75,7 @@ $(".roundsMain").on("click", ".roundName", function (e) {
 $(".roundsMain").on("click", ".delRoundBtn", function (e) {
     var roundUuid = $(this).parent().parent().parent().data("round-uuid")
 
-    confirmModal("Are you sure you want to delete this round and all corresponding questions?", () => {
+    confirmModal("Are you sure you want to delete this round and all corresponding questions? <br>This will also delete any corresponding answers from the teams.", () => {
         var sendData = {
             itemType: "del_round",
             roundUuid: roundUuid,
@@ -111,7 +111,7 @@ $(".roundsMain").on("click", ".addQuestionBtn", function (e) {
 
 // Delete question button
 $(".roundsMain").on("click", ".delQuestionBtn", function (e) {
-    confirmModal("Are you sure you want to delete this questions?", () => {
+    confirmModal("Are you sure you want to delete this questions? <br>This will also delete any corresponding answers from the teams.", () => {
         var sendData = {
             itemType: "del_question",
             questionUuid: $(this).data("question-uuid")

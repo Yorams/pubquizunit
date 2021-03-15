@@ -81,11 +81,22 @@ exports.delete = function (req, res) {
     knex('teams')
         .where({ id: id })
         .first()
-        .then(() => {
+        .then((teamData) => {
             knex('teams')
                 .where({ id: id })
                 .del()
-                .then(() => res.send({ result: "success" }))
+                .then(() => {
+
+                    // Also delete corresponding answers
+                    knex("answers")
+                        .where({ team_uuid: teamData.uuid })
+                        .del()
+                        .then(() => {
+                            res.send({ result: "success" })
+                        })
+                        .catch((error) => { common.errorHandler("Cannot delete corresponding answers", error, req, res) })
+
+                })
                 .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot delete team: ${error}` }))
 
         })

@@ -84,6 +84,7 @@ exports.getScore = function (req, res) {
                                             return questionIndex != -1
                                         })
 
+                                        // Check for orphaned answer from question
                                         if (questionIndex != -1) {
 
                                             var currTeamUuid = rows[key].team_uuid;
@@ -91,27 +92,30 @@ exports.getScore = function (req, res) {
 
                                             var currentQuestion = questionData[roundIndex].questions[questionIndex]
 
-                                            // Ignore message type questions
-                                            if (currentQuestion.template != "message") {
-                                                // Check answer and get score
-                                                var score = checkAnswer(currentQuestion, currTeamAnswer);
+                                            if (typeof (teamsLookup[currTeamUuid]) != "undefined") {
+                                                // Ignore message type questions
+                                                if (currentQuestion.template != "message") {
+                                                    // Check answer and get score
+                                                    var score = checkAnswer(currentQuestion, currTeamAnswer);
 
-                                                // Round score
-                                                score = Math.round((score + Number.EPSILON) * 100) / 100
+                                                    // Round score
+                                                    score = Math.round((score + Number.EPSILON) * 100) / 100
 
-                                                // Add score to total
-                                                teamsLookup[currTeamUuid].totalScore = teamsLookup[currTeamUuid].totalScore + score
+                                                    // Add score to total
+                                                    teamsLookup[currTeamUuid].totalScore = teamsLookup[currTeamUuid].totalScore + score
 
-                                                // Add score to each round total
-                                                teamsLookup[currTeamUuid].roundScore[roundIndex] = teamsLookup[currTeamUuid].roundScore[roundIndex] + score
+                                                    // Add score to each round total
+                                                    teamsLookup[currTeamUuid].roundScore[roundIndex] = teamsLookup[currTeamUuid].roundScore[roundIndex] + score
 
-                                                // Add answer, question score and type to team object
-                                                answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].answer = currTeamAnswer;
-                                                //answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].template = currentQuestion.template;
-                                                answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
+                                                    // Add answer, question score and type to team object
+                                                    answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].answer = currTeamAnswer;
+                                                    answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
+                                                }
+                                            } else {
+                                                console.log(`Orphaned answer found, corresponding team is not found: ${currTeamUuid}`)
                                             }
                                         } else {
-                                            console.log(`Orphaned answer found: ${rows[key].question_uuid}`)
+                                            console.log(`Orphaned answer found, corresponding question is not found: ${rows[key].question_uuid}`)
                                         }
 
                                     } catch (error) {
