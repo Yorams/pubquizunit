@@ -31,7 +31,7 @@ exports.editItem = function (req, res) {
                     .insert(roundData)
                     .then(() => res.send({ result: "success", roundUuid: roundData.uuid }))
                     .catch((error) => { common.errorHandler("Cannot create round", error, req, res) })
-                    .finally(() => common.updateCurrentOrder(knex))// Update current count
+                    .finally(() => common.updateCurrentOrder(knex))// Update current order
             })
     } else if (itemType == "save_round") {
         var roundUuid = req.body.roundUuid;
@@ -80,7 +80,7 @@ exports.editItem = function (req, res) {
                                 .del()
                                 .then(() => res.send({ result: "success" }))
                                 .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
-                                .finally(() => common.updateCurrentOrder(knex))// Update current count
+                                .finally(() => common.updateCurrentOrder(knex))// Update current order
                         })
                         .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
                 })
@@ -132,7 +132,7 @@ exports.editItem = function (req, res) {
                     .insert(questionData)
                     .then(() => res.send({ result: "success", questionUuid: questionData.uuid }))
                     .catch((error) => { common.errorHandler("Cannot create questions", error, req, res) })
-                    .finally(() => common.updateCurrentOrder(knex))// Update current count
+                    .finally(() => common.updateCurrentOrder(knex))// Update current order
             })
 
     } else if (itemType == "dup_question") {
@@ -154,7 +154,7 @@ exports.editItem = function (req, res) {
                     .insert(currQuestion)
                     .then(() => res.send({ result: "success", questionUuid: currQuestion.uuid }))
                     .catch((error) => { common.errorHandler("Cannot duplicate questions", error, req, res) })
-                    .finally(() => common.updateCurrentOrder(knex))// Update current count
+                    .finally(() => common.updateCurrentOrder(knex))// Update current order
 
 
             })
@@ -181,7 +181,7 @@ exports.editItem = function (req, res) {
                     res.send({ result: "success" })
                 })
                 .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })
-                .finally(() => common.updateCurrentOrder(knex))// Update current count
+                .finally(() => common.updateCurrentOrder(knex))// Update current order
         })
 
 
@@ -285,7 +285,8 @@ exports.editItem = function (req, res) {
                     // And rollback in case any of them goes wrong
                     trx.rollback();
                     res.send({ result: "error" })
-                });
+                })
+                .finally(() => common.updateCurrentOrder(knex))// Update current order
         });
 
     } else {
