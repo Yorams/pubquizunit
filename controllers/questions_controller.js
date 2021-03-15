@@ -13,21 +13,26 @@ exports.editItem = function (req, res) {
     var itemType = req.body.itemType;
 
     if (itemType == "add_round") {
-        // Add a round
-
-        var roundData = {
-            uuid: uuidv4(),
-            name: "New round",
-            details: "Vragen over nog een ronde",
-        }
-
-        // Save to database
+        // Determine the last order number
         knex('rounds')
-            .insert(roundData)
-            .then(() => res.send({ result: "success", roundUuid: roundData.uuid }))
-            .catch((error) => { common.errorHandler("Cannot create round", error, req, res) })
-            .finally(() => common.updateCurrentOrder(knex))// Update current count
+            .max('order', { as: 'last' })
+            .first()
+            .then((row) => {
+                // Add a round
+                var roundData = {
+                    uuid: uuidv4(),
+                    name: "New round",
+                    details: "Vragen over nog een ronde",
+                    order: row.last + 1
+                }
 
+                // Save to database
+                knex('rounds')
+                    .insert(roundData)
+                    .then(() => res.send({ result: "success", roundUuid: roundData.uuid }))
+                    .catch((error) => { common.errorHandler("Cannot create round", error, req, res) })
+                    .finally(() => common.updateCurrentOrder(knex))// Update current count
+            })
     } else if (itemType == "save_round") {
         var roundUuid = req.body.roundUuid;
         var roundName = req.body.roundName;
@@ -41,21 +46,46 @@ exports.editItem = function (req, res) {
 
     } else if (itemType == "del_round") {
         var roundUuid = req.body.roundUuid;
-        // Delete corresponding questions
-        knex('questions')
-            .where({ round: roundUuid })
-            .del()
-            .then(() => {
 
-                // Delete round
-                knex('rounds')
-                    .where({ uuid: roundUuid })
-                    .del()
-                    .then(() => res.send({ result: "success" }))
-                    .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
-                    .finally(() => common.updateCurrentOrder(knex))// Update current count
-            })
-            .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
+        var deletedRoundHasCurrent = false;
+
+
+        common.getCurrentQuestion(knex).then((currentQuestionUuid) => {
+
+            // Check if one of the to be deleted questions is the current question
+            knex('questions')
+                .where({ round: roundUuid })
+                .then((rows) => {
+                    // Loop trough questions from given round
+                    for (key in rows) {
+                        if (rows[key].uuid == currentQuestionUuid) {
+                            deletedRoundHasCurrent = true
+                        }
+                    }
+
+                    if (deletedRoundHasCurrent) {
+                        // Reset current question uuid to first
+                        common.resetCurrent(knex)
+                    }
+
+                    // Delete corresponding questions of round
+                    knex('questions')
+                        .where({ round: roundUuid })
+                        .del()
+                        .then(() => {
+
+                            // Delete round
+                            knex('rounds')
+                                .where({ uuid: roundUuid })
+                                .del()
+                                .then(() => res.send({ result: "success" }))
+                                .catch((error) => { common.errorHandler("Cannot delete round", error, req, res) })
+                                .finally(() => common.updateCurrentOrder(knex))// Update current count
+                        })
+                        .catch((error) => { common.errorHandler("Cannot delete questions", error, req, res) })
+                })
+                .catch((error) => { common.errorHandler("Cannot get questions from round", error, req, res) })
+        })
 
     } else if (itemType == "add_question") {
         // Add a question
@@ -105,9 +135,6 @@ exports.editItem = function (req, res) {
                     .finally(() => common.updateCurrentOrder(knex))// Update current count
             })
 
-
-
-
     } else if (itemType == "dup_question") {
         var questionUuid = req.body.questionUuid;
 
@@ -135,13 +162,29 @@ exports.editItem = function (req, res) {
 
     } else if (itemType == "del_question") {
         var questionUuid = req.body.questionUuid;
-        // Get parameters from question
-        knex('questions')
-            .where({ uuid: questionUuid })
-            .del()
-            .then(() => res.send({ result: "success" }))
-            .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })
-            .finally(() => common.updateCurrentOrder(knex))// Update current count
+
+
+        common.getCurrentQuestion(knex).then((currentQuestionUuid) => {
+
+            // Get parameters from question
+            knex('questions')
+                .where({ uuid: questionUuid })
+                .del()
+                .then(() => {
+
+                    // Check if to be deleted question is the current
+                    if (questionUuid == currentQuestionUuid) {
+                        // Reset current question uuid to first
+                        common.resetCurrent(knex)
+                    }
+
+                    res.send({ result: "success" })
+                })
+                .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })
+                .finally(() => common.updateCurrentOrder(knex))// Update current count
+        })
+
+
 
     } else if (itemType == "add_option" || itemType == "del_option") {
 

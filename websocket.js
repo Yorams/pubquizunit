@@ -83,7 +83,6 @@ exports.parseCommands = function (data, ws, req, app, wss) {
 
             // Get current question ID from db
             common.getCurrentQuestion(knex).then(currentQuestionUuid => {
-
                 common.getQuestion(knex, currentQuestionUuid).then((questionData) => {
 
                     var currQuestionCount = common.getCurrentOrder().rounds.find((obj) => { return obj.uuid === questionData.round }).questionCount
@@ -120,7 +119,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                             }));
                         });
 
-                }).catch((error) => { common.errorHandler("Cannot get question", error) })
+                }).catch((error) => { common.errorHandler("Cannot get question at websocket/pubQuestionToSingle", error) })
 
             }).catch((error) => { common.errorHandler("Cannot get current data", error) })
         }
@@ -277,11 +276,8 @@ function pubQuestionToAll (action, wss) {
         var newQuestionUuid = common.getCurrentOrder().rounds[roundIndex].questions[questionIndex].uuid
 
         // Save current round and question to DB
-        knex('current_question')
-            .where({ name: 'current' })
-            .update({ question: newQuestionUuid })
+        common.updateCurrentQuestion(knex, newQuestionUuid)
             .then(() => {
-
                 // Get question data
                 common.getQuestion(knex, newQuestionUuid).then((questionData) => {
                     var answeredList = [];

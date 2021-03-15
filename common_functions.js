@@ -59,11 +59,11 @@ exports.getCurrentQuestion = function (knex) {
     })
 }
 
-exports.updateCurrentQuestion = function (knex, data) {
+exports.updateCurrentQuestion = function (knex, questionUuid) {
     return new Promise(function (resolve, reject) {
         return knex('current_question')
             .where({ name: 'current' })
-            .update({ question: data.question })
+            .update({ question: questionUuid })
             .then(resolve())
             .catch(error => reject(error))
     })
@@ -123,7 +123,7 @@ exports.isAuthed = function (req, res, next) {
 }
 
 exports.errorHandler = function (action, error, req = false, res = false) {
-    console.log(`Error: ${action}: ${error}`)
+    console.log(`Error: ${action}: ${error} \n ${error.stack}`)
     if (req != false) {
         res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot  ${action}` })
     }
@@ -191,15 +191,19 @@ exports.getQuestion = function (knex, questionUuid) {
             )
             .first()
             .then(row => {
-                // Parse parameters
-                row.parameters = JSON.parse(row.parameters)
+                if (typeof (row) != "undefined") {
+                    // Parse parameters
+                    row.parameters = JSON.parse(row.parameters)
 
-                // Strip answers from parameters
-                for (key in row.parameters) {
-                    delete row.parameters[key].correct
+                    // Strip answers from parameters
+                    for (key in row.parameters) {
+                        delete row.parameters[key].correct
+                    }
+
+                    resolve(row)
+                } else {
+                    throw new Error('question does not exists')
                 }
-
-                resolve(row)
             })
             .catch(error => reject(error))
     })
@@ -242,4 +246,9 @@ exports.getQuestions = function (knex) {
             })
             .catch(error => reject(error))
     })
+}
+
+exports.resetCurrent = function (knex) {
+    var firstQuestonUuid = exports.getCurrentOrder().rounds[0].questions[0].uuid
+    exports.updateCurrentQuestion(knex, firstQuestonUuid)
 }
