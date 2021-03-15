@@ -184,7 +184,7 @@ div.subTitle{
 .scoreMain .scoreNumber{
     border-left: 1px solid #999;
     text-align: left;
-    padding: 2px 5px;
+    padding: 0px 4px;
 }
 .hasAnswer{
     background-color: rgb(90 252 0 / 23%);
