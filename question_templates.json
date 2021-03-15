@@ -1,7 +1,7 @@
 [
     {
         "id": "single",
-        "name": "Single",
+        "name": "Single choice",
         "parameters": [
             {
                 "type": "radio",
@@ -23,7 +23,7 @@
     },
     {
         "id": "open-number",
-        "name": "Number",
+        "name": "Number Input",
         "parameters": [
             {
                 "type": "number",
@@ -34,7 +34,7 @@
     },
     {
         "id": "open-text",
-        "name": "Text",
+        "name": "Text Input",
         "parameters": [
             {
                 "type": "text",
