@@ -1,6 +1,6 @@
 {
   "name": "quizunit",
-  "version": "0.0.1",
+  "version": "2.2.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
-    "aedes": "^0.42.6",
+    "aedes": "^0.45.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.6.0",
     "connect-session-knex": "^2.0.0",
@@ -17,24 +17,24 @@
     "debug": "^4.3.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "http-errors": "^1.8.0",
-    "jquery": "^3.5.1",
+    "jquery": "^3.6.0",
     "jquery-sortablejs": "^1.0.1",
-    "knex": "^0.21.17",
+    "knex": "^0.95.2",
     "lodash": "^4.17.21",
     "md5-file": "^5.0.0",
-    "memorystore": "^1.6.4",
+    "memorystore": "^1.6.5",
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "mqtt": "^4.2.6",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "popper.js": "^1.16.1",
-    "pug": "^3.0.0",
+    "pug": "^3.0.2",
     "reconnecting-websocket": "^4.4.0",
     "sortablejs": "^1.13.0",
-    "sqlite3": "^5.0.1",
+    "sqlite3": "^5.0.2",
     "uuid": "^8.3.2"
   }
 }
