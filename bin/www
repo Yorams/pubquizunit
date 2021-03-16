@@ -26,8 +26,8 @@ common.getJsonFile("/settings")
         };
 
         // Get port from settings and store in Express.
-        app.set('port', appSettings.app.port);
-        var port = appSettings.app.port;
+        app.set('port', appSettings.app.sslPort);
+        var port = appSettings.app.sslPort;
 
         // Create HTTP server.
         //var server = http.createServer(app);
@@ -131,4 +131,4 @@ common.getJsonFile("/settings")
             debug('Listening on ' + bind);
         }
     })
-    .catch((err) => { console.log(`www: cannot load settings file (${err})`) })
+    .catch((err) => { console.log(`Cannot load settings file: settings.json. You have to rename settings_empty.json to settings.json and alter the settings in de file. \n(${err})`) })

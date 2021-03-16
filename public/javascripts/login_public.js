@@ -5,6 +5,9 @@ $(".loginForm").on("submit", function (e) {
     e.preventDefault();
     e.stopPropagation()
 
+    // Reset error messages
+    $(".loginErrorMsg").html("");
+
     var sendData = {
         username: $("input[name='username']").val(),
         password: $("input[name='password']").val()

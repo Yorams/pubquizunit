@@ -57,14 +57,14 @@ exports.getScore = function (req, res) {
                         answersChecked[rkey] = questions
                     }
 
-
                     knex('answers')
                         .then((rows) => {
                             if (rows.length == 0) {
                                 // Send empty array if there are no answers
                                 return res.send({
                                     teams: teamsLookup,
-                                    answers: answersChecked
+                                    answers: answersChecked,
+                                    questionTemplates: questionTemplates
                                 });
                             } else {
                                 // Add given answers to answer array
