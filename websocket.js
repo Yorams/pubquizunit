@@ -119,7 +119,13 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                             }));
                         });
 
-                }).catch((error) => { common.errorHandler("Cannot get question at websocket/pubQuestionToSingle", error) })
+                }).catch((error) => {
+                    ws.send(JSON.stringify({
+                        msgType: "error",
+                        msg: "currect_question_does_not_exsists"
+                    }));
+                    common.errorHandler("Cannot get question at websocket/pubQuestionToSingle", error)
+                })
 
             }).catch((error) => { common.errorHandler("Cannot get current data", error) })
         }
@@ -180,6 +186,12 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                                 msgType: "countdown",
                                 action: "cancel"
                             }), wss);
+                        } else if (data.action == "reset") {
+
+                            common.resetCurrent(knex).then(() => {
+                                // Publish question to players
+                                pubQuestionToAll("back", wss);
+                            })
 
                         }
 
@@ -321,6 +333,5 @@ function pubQuestionToAll (action, wss) {
                 })
 
             }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
-
     });
 }

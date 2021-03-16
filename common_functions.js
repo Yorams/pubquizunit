@@ -250,5 +250,10 @@ exports.getQuestions = function (knex) {
 
 exports.resetCurrent = function (knex) {
     var firstQuestonUuid = exports.getCurrentOrder().rounds[0].questions[0].uuid
-    exports.updateCurrentQuestion(knex, firstQuestonUuid)
+
+    return new Promise(function (resolve, reject) {
+        return exports.updateCurrentQuestion(knex, firstQuestonUuid)
+            .then(resolve())
+            .catch(error => reject(error))
+    })
 }
