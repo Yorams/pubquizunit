@@ -4,7 +4,7 @@ var path = require('path');
 var sessionParser = require('./session');
 var cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-//var logger = require('morgan');
+var logger = require('morgan');
 const common = require("./common_functions");
 const database = require("./knexfile");
 const knex = require('knex')(database.development);
@@ -17,6 +17,19 @@ app.locals.env = "production"
 
 // Set instance to app
 app.set('knex', knex);
+
+// Check if users table is present
+knex("users")
+    .where({ username: "admin" })
+    .first()
+    .then((row) => {
+        if (typeof (row) == "undefined") {
+            throw new Error("Database not initialized. Run npm install to initialize database automatically");
+        }
+    })
+    .catch((error) => {
+        throw new Error("Database not initialized. Run npm install to initialize database automatically");
+    })
 
 // Update current count
 common.updateCurrentOrder(knex);
