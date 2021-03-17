@@ -5,6 +5,7 @@ var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
 var textTemplate = Handlebars.compile($('#textTemplate').html());
 var numberTemplate = Handlebars.compile($('#numberTemplate').html());
 var messageTemplate = Handlebars.compile($('#messageTemplate').html());
+var alertTemplate = Handlebars.compile($('#alertTemplate').html());
 
 var mainQuestionData;
 var questionTemplates;
@@ -212,39 +213,46 @@ function getQuestionData (callback = () => { }) {
         mainQuestionData = data.questions;
         questionTemplates = data.questionTemplates
 
-        // Show rounds with questions
-        $(".roundsMain").html(roundTemplate(data));
+        if (data.questions.length != 0) {
 
-        // Make questions sortable
-        $(".roundContent").sortable({
-            //group: "questionGroup",
-            animation: 150,
-            onUpdate: function (evt) {
-                // Dragged item
-                var itemEl = evt.item
-                var roundUuid = $(itemEl).closest(".roundMain").data("round-uuid");
 
-                // Create list with uuid's of questions
-                var orderList = [];
-                $(`#list-${roundUuid}`).children().each(function (index) {
-                    orderList.push({ order: index, uuid: $(this).data("question-uuid") })
-                })
+            // Show rounds with questions
+            $(".roundsMain").html(roundTemplate(data));
 
-                // Save order if dragging is done
-                var sendData = {
-                    itemType: "save_order",
-                    roundUuid: roundUuid,
-                    order: JSON.stringify(orderList)
-                }
-                sendPost("edit_item", sendData, function (data) {
-                    if (data.result == "success") {
-                        getQuestionData();
-                    } else if (data.result == "error") {
-                        showError("Something is going wrong.", "Cannot save the order, try again or contact the system admin")
+            // Make questions sortable
+            $(".roundContent").sortable({
+                //group: "questionGroup",
+                animation: 150,
+                onUpdate: function (evt) {
+                    // Dragged item
+                    var itemEl = evt.item
+                    var roundUuid = $(itemEl).closest(".roundMain").data("round-uuid");
+
+                    // Create list with uuid's of questions
+                    var orderList = [];
+                    $(`#list-${roundUuid}`).children().each(function (index) {
+                        orderList.push({ order: index, uuid: $(this).data("question-uuid") })
+                    })
+
+                    // Save order if dragging is done
+                    var sendData = {
+                        itemType: "save_order",
+                        roundUuid: roundUuid,
+                        order: JSON.stringify(orderList)
                     }
-                })
-            },
-        });
+                    sendPost("edit_item", sendData, function (data) {
+                        if (data.result == "success") {
+                            getQuestionData();
+                        } else if (data.result == "error") {
+                            showError("Something is going wrong.", "Cannot save the order, try again or contact the system admin")
+                        }
+                    })
+                },
+            });
+        } else {
+            $(".roundsMain").html(alertTemplate("No rounds found, add a round to continue."))
+
+        }
         callback();
     })
 }

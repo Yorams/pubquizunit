@@ -29,6 +29,13 @@ socket.onmessage = function (m) {
         if (recvData.msg == "not_logged_in") {
             showError("You are logged out.", "Please login again")
             location.reload();
+
+        } else if (recvData.msg == "invalid_uuid") {
+            showError("You are logged out.", "Please login again")
+            location.reload();
+
+        } else if (recvData.msg == "current_question_does_not_exsists") {
+            showError("Question does not exists", "Add a question to continue.")
         }
     }
 }

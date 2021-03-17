@@ -83,5 +83,8 @@ block content
                             i.mdi.mdi-delete
                 | {{/each}}
 
+    script#alertTemplate(type="text/x-handlebars-template")
+        div.alert.alert-primary {{this}}
+
 block scripts
     script(src='/javascripts/teams_public.js')

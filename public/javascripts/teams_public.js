@@ -1,11 +1,9 @@
 var glob_list;
 
 var listTemplate = Handlebars.compile($('#listTemplate').html());
-
+var alertTemplate = Handlebars.compile($('#alertTemplate').html());
 
 getList()
-
-
 
 $("body").on("click", ".editItem", function (e) {
 
@@ -122,6 +120,11 @@ function getList () {
     sendPost("list", function (responseData) {
         glob_list = responseData.data;
 
-        $(".listMain").html(listTemplate({ listData: responseData.data, baseUrl: window.location.origin }));
+        if (responseData.data.length != 0) {
+            $(".listMain").html(listTemplate({ listData: responseData.data, baseUrl: window.location.origin }));
+        } else {
+            $(".listMain").html(alertTemplate("No teams found, add a team to continue."))
+
+        }
     })
 }

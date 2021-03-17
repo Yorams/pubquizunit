@@ -122,7 +122,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                 }).catch((error) => {
                     ws.send(JSON.stringify({
                         msgType: "error",
-                        msg: "currect_question_does_not_exsists"
+                        msg: "current_question_does_not_exsists"
                     }));
                     common.errorHandler("Cannot get question at websocket/pubQuestionToSingle", error)
                 })
@@ -232,106 +232,115 @@ function pubQuestionToAll (action, wss) {
         // Search for indexes in currentOrder array
         var questionIndex;
         var roundIndex = common.getCurrentOrder().rounds.findIndex((roundObj) => {
-            // Find index of question in round
-            questionIndex = roundObj.questions.findIndex((questionsObj) => {
-                return questionsObj.uuid === currentQuestionUuid
-            })
+
+            // Check if there are questions
+            if (typeof (roundObj.questions) !== "undefined") {
+                // Find index of question in round
+                questionIndex = roundObj.questions.findIndex((questionsObj) => {
+                    return questionsObj.uuid === currentQuestionUuid
+                })
+            } else {
+                questionIndex = -1
+            }
 
             // return if question is found in round
             return questionIndex != -1
         })
+        if (questionIndex !== -1 || roundIndex !== -1) {
+            var currQuestionCount = common.getCurrentOrder().rounds[roundIndex].questionCount
+            var roundCount = common.getCurrentOrder().roundCount
 
-        var currQuestionCount = common.getCurrentOrder().rounds[roundIndex].questionCount
-        var roundCount = common.getCurrentOrder().roundCount
+            switch (action) {
+                case "next":
 
-        switch (action) {
-            case "next":
-
-                // Check if end of round is reached
-                if (questionIndex < currQuestionCount - 1) {
-                    questionIndex = parseInt(questionIndex) + 1
-                } else {
-
-                    if (roundIndex < roundCount - 1) {
-                        roundIndex = parseInt(roundIndex) + 1
-                        questionIndex = 0;
+                    // Check if end of round is reached
+                    if (questionIndex < currQuestionCount - 1) {
+                        questionIndex = parseInt(questionIndex) + 1
                     } else {
-                        console.log("Websocket: End of quiz reached.")
+
+                        if (roundIndex < roundCount - 1) {
+                            roundIndex = parseInt(roundIndex) + 1
+                            questionIndex = 0;
+                        } else {
+                            console.log("Websocket: End of quiz reached.")
+                        }
                     }
-                }
 
-                break;
+                    break;
 
-            case "prev":
+                case "prev":
 
-                // Check if begin of round is reached
-                if (questionIndex > 0) {
-                    questionIndex = parseInt(questionIndex) - 1
-                } else {
-
-                    if (roundIndex > 0) {
-                        roundIndex = parseInt(roundIndex) - 1
-
-                        // Aantal vragen van ronde hiervoor
-                        var prevRoundQuestionCount = common.getCurrentOrder().rounds[parseInt(roundIndex)].questions.length
-
-                        questionIndex = prevRoundQuestionCount - 1;
+                    // Check if begin of round is reached
+                    if (questionIndex > 0) {
+                        questionIndex = parseInt(questionIndex) - 1
                     } else {
-                        console.log("Websocket: Begin of quiz reached.")
-                    }
-                }
 
-                break;
+                        if (roundIndex > 0) {
+                            roundIndex = parseInt(roundIndex) - 1
+
+                            // Aantal vragen van ronde hiervoor
+                            var prevRoundQuestionCount = common.getCurrentOrder().rounds[parseInt(roundIndex)].questions.length
+
+                            questionIndex = prevRoundQuestionCount - 1;
+                        } else {
+                            console.log("Websocket: Begin of quiz reached.")
+                        }
+                    }
+
+                    break;
+            }
+
+            // Get new question uuid
+            var newQuestionUuid = common.getCurrentOrder().rounds[roundIndex].questions[questionIndex].uuid
+
+            // Save current round and question to DB
+            common.updateCurrentQuestion(knex, newQuestionUuid)
+                .then(() => {
+                    // Get question data
+                    common.getQuestion(knex, newQuestionUuid).then((questionData) => {
+                        var answeredList = [];
+
+                        knex('answers')
+                            .where({ question_uuid: newQuestionUuid })
+                            .then((rows) => {
+                                // Push all uuid of team with an answer to array
+                                for (key in rows) {
+                                    answeredList.push(rows[key].team_uuid);
+                                }
+
+                                var sendData = {
+                                    msgType: "question",
+                                    round: {
+                                        name: questionData.round_name,
+                                        details: questionData.round_details,
+                                        currentNr: questionData.round_order,
+                                        total: roundCount
+                                    },
+                                    question: {
+                                        uuid: questionData.uuid,
+                                        name: questionData.name,
+                                        template: questionData.template,
+                                        parameters: questionData.parameters,
+                                        currentNr: questionData.order,
+                                        total: currQuestionCount,
+                                    }
+                                }
+
+                                // Send data to all clients
+                                wss.clients.forEach(function each (client) {
+                                    // Check if current client/team has answered
+                                    sendData.question.answered = answeredList.includes(client.uuid)
+
+                                    if (client.readyState === WebSocket.OPEN) {
+                                        client.send(JSON.stringify(sendData));
+                                    }
+                                });
+                            })
+                    })
+
+                }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
+        } else {
+            console.log("Websocket: cannot find round or question")
         }
-
-        // Get new question uuid
-        var newQuestionUuid = common.getCurrentOrder().rounds[roundIndex].questions[questionIndex].uuid
-
-        // Save current round and question to DB
-        common.updateCurrentQuestion(knex, newQuestionUuid)
-            .then(() => {
-                // Get question data
-                common.getQuestion(knex, newQuestionUuid).then((questionData) => {
-                    var answeredList = [];
-
-                    knex('answers')
-                        .where({ question_uuid: newQuestionUuid })
-                        .then((rows) => {
-                            // Push all uuid of team with an answer to array
-                            for (key in rows) {
-                                answeredList.push(rows[key].team_uuid);
-                            }
-
-                            var sendData = {
-                                msgType: "question",
-                                round: {
-                                    name: questionData.round_name,
-                                    details: questionData.round_details,
-                                    currentNr: questionData.round_order,
-                                    total: roundCount
-                                },
-                                question: {
-                                    uuid: questionData.uuid,
-                                    name: questionData.name,
-                                    template: questionData.template,
-                                    parameters: questionData.parameters,
-                                    currentNr: questionData.order,
-                                    total: currQuestionCount,
-                                }
-                            }
-
-                            // Send data to all clients
-                            wss.clients.forEach(function each (client) {
-                                // Check if current client/team has answered
-                                sendData.question.answered = answeredList.includes(client.uuid)
-
-                                if (client.readyState === WebSocket.OPEN) {
-                                    client.send(JSON.stringify(sendData));
-                                }
-                            });
-                        })
-                })
-
-            }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
     });
 }
