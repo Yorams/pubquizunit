@@ -23,6 +23,10 @@ a {
     height: 28px;
 }
 
+.list-group-item.active .text-muted{
+    color:#d0d0d0 !important;
+}
+
 /*** Login form ***/
 div.loginMain{
     width: 30em;
