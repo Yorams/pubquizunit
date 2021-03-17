@@ -16,12 +16,16 @@ exports.editItem = function (req, res) {
             .max('order', { as: 'last' })
             .first()
             .then((row) => {
+
+                // If there are no rounds, take 0 as next order number
+                var nextOrderNr = (row.last == null) ? 0 : row.last + 1
+
                 // Add a round
                 var roundData = {
                     uuid: uuidv4(),
                     name: "New round",
                     details: "Vragen over nog een ronde",
-                    order: row.last + 1
+                    order: nextOrderNr
                 }
 
                 // Save to database
