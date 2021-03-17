@@ -8,7 +8,7 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 
 		git clone https://github.com/Yorams/pubquizunit.git
 
-Go to the folder and run:	
+- Go to the folder and run:	
 
 	    npm install
 
@@ -34,7 +34,7 @@ To control the quiz or create teams you must login. Default is: admin & pubquizu
 - Add rounds and questions at the "Questions" page
 - If you have added Teams and Questions you can give the teams their own team link and control the quiz at the "Control" page.
 
-To begin a new quiz, you can delete or rename the database.db file and run npm install in the folder to initiate the database again.
+To begin a new quiz, you can delete or rename the database.db file and run npm install again to initiate the database again.
 
 # Question Templates File:
 It is possible to add a custom question template in question_templates.json. There are 4 default input types:
@@ -73,7 +73,7 @@ To view the log enter this:
 
 ### ToDo Major
 - [x] Add message type question, useable for intro or outros for rounds
-- [ ] Decent logging
+- [x] Decent logging
 - [ ] Add a question overview/list to the control page.
 - [ ] Make a settings page to adjust settings.
 - [ ] Let the server also listen to port http to redirect clients to https.

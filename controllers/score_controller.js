@@ -1,4 +1,9 @@
 const common = require("../common_functions");
+var path = require('path');
+var logger = require('../logger')
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 exports.getPageContent = function (req, res) {
     res.render('score', { username: req.user.username });
@@ -112,14 +117,14 @@ exports.getScore = function (req, res) {
                                                     answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
                                                 }
                                             } else {
-                                                console.log(`Orphaned answer found, corresponding team is not found: ${currTeamUuid}`)
+                                                log.warning(`Orphaned answer found, corresponding team is not found: ${currTeamUuid}`)
                                             }
                                         } else {
-                                            console.log(`Orphaned answer found, corresponding question is not found: ${rows[key].question_uuid}`)
+                                            log.warning(`Orphaned answer found, corresponding question is not found: ${rows[key].question_uuid}`)
                                         }
 
                                     } catch (error) {
-                                        console.log("Error:", error)
+                                        log.error("Error:", error)
                                     }
 
                                 }
@@ -134,7 +139,7 @@ exports.getScore = function (req, res) {
                 }
 
             }).catch((error) => {
-                if (error.stack) { console.log(error.stack) }
+                if (error.stack) { log.error(error.stack) }
                 ws.send(JSON.stringify({
                     msgType: "error",
                     msg: `team_not_found (${error})`

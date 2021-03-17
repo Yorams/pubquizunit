@@ -1,4 +1,9 @@
 const common = require("../common_functions");
+var path = require('path');
+var logger = require('../logger')
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 exports.getPageContent = function (req, res) {
     var uuidIn = req.params.uuid
@@ -89,7 +94,7 @@ exports.submitAnswer = function (req, res) {
                         }
 
                     }).catch((error) => {
-                        console.log(`Cannot get current state: ${error}`);
+                        log.warning(`Cannot get current state: ${error}`);
                     })
                 } else {
                     return res.send({ result: "error", errorMsg: `player not found` })

@@ -4,6 +4,11 @@ var path = require('path');
 var crypto = require('crypto');
 const passport = require('passport');
 var _ = require('lodash');
+var path = require('path');
+var logger = require('./logger')
+
+// Init logger
+var log = logger
 
 exports.getJsonFile = function (fileName) {
     return new Promise(function (resolve, reject) {
@@ -16,7 +21,7 @@ exports.getJsonFile = function (fileName) {
 
 exports.saveJson = function (fileName, data, callback) {
     fs.writeFile(path.join(__dirname, fileName + ".json"), JSON.stringify(data), function (err) {
-        if (err) return console.log(err);
+        if (err) return log.error(err);
         callback();
     });
 }
@@ -123,7 +128,7 @@ exports.isAuthed = function (req, res, next) {
 }
 
 exports.errorHandler = function (action, error, req = false, res = false) {
-    console.log(`Error: ${action}: ${error} \n ${error.stack}`)
+    log.error(`${action}: ${error} \n ${error.stack}`)
     if (req != false) {
         res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot  ${action}` })
     }
@@ -223,7 +228,7 @@ exports.getQuestions = function (knex) {
                             try {
                                 var parsedParameters = JSON.parse(questions[qKey].parameters)
                             } catch (error) {
-                                console.log(error)
+                                log.error(error)
                             }
                             questions[qKey].parameters = parsedParameters
 

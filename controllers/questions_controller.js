@@ -1,6 +1,11 @@
 const common = require("../common_functions");
 var _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
+var path = require('path');
+var logger = require('../logger')
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 exports.getPageContent = function (req, res) {
     res.render('questions', { username: req.user.username });
@@ -253,7 +258,7 @@ exports.editItem = function (req, res) {
         try {
             var parametersIn = JSON.parse(req.body.parameters);
         } catch (error) {
-            console.log(error)
+            log.error(error)
         }
 
         // Get parameters from question

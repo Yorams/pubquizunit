@@ -17,6 +17,7 @@
     "debug": "^4.3.1",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "express-winston": "^4.1.0",
     "handlebars": "^4.7.7",
     "http-errors": "^1.8.0",
     "jquery": "^3.6.0",
@@ -26,7 +27,6 @@
     "md5-file": "^5.0.0",
     "memorystore": "^1.6.5",
     "moment": "^2.29.1",
-    "morgan": "^1.10.0",
     "mqtt": "^4.2.6",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
@@ -35,6 +35,8 @@
     "reconnecting-websocket": "^4.4.0",
     "sortablejs": "^1.13.0",
     "sqlite3": "^5.0.2",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.1"
   }
 }

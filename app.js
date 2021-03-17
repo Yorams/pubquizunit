@@ -4,12 +4,15 @@ var path = require('path');
 var sessionParser = require('./session');
 var cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-var logger = require('morgan');
+var logger = require('./logger')
 const common = require("./common_functions");
 const database = require("./knexfile");
 const knex = require('knex')(database.development);
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 var app = express();
 
@@ -52,11 +55,13 @@ common.getJsonFile("/question_templates")
 
         app.set('questionTemplates', questionTemplates);
     })
-    .catch((err) => { console.log(`app: cannot load questions template file (${err})`) })
+    .catch((err) => { log.error(`app: cannot load questions template file (${err})`) })
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+
 
 app.use(sessionParser.handler);
 
@@ -75,7 +80,7 @@ passport.use(new LocalStrategy(
                 if (hash != user.password) {
                     return done(null, false, { message: 'Incorrect password.' });
                 }
-                console.log(`User ${username} logged in`);
+                log.info(`User ${username} logged in`);
                 return done(null, user);
             })
             .catch(error => {
@@ -99,7 +104,9 @@ passport.deserializeUser(function (id, done) {
         })
 });
 
-//app.use(logger('dev'));
+// Web logger instance
+app.use(logger.express);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

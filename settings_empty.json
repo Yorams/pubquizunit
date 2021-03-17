@@ -2,7 +2,7 @@
     "app": {
         "port": 80,
         "sslPort": 443,
-        "websocketPort": 8080
+        "logLevel": "debug"
     },
     "certificate": {
         "cert": "/etc/letsencrypt/live/FILL_IN_HOST/cert.pem",

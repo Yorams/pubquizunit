@@ -1,5 +1,5 @@
 node_modules
 settings.json
-logs/*
+log/*
 database.db
 ignore/

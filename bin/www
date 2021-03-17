@@ -9,6 +9,11 @@ const WebSocket = require('ws');
 var sessionParser = require('../session');
 var websocketHandler = require("../websocket");
 var url = require('url');
+var path = require('path');
+var logger = require('../logger')
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 // Get settings
 common.getJsonFile("/settings")
@@ -50,12 +55,12 @@ common.getJsonFile("/settings")
 
         wss.on('connection', function (ws, req) {
             const urlParams = new URLSearchParams(url.parse(req.url, true).search)
-            clientGuid = urlParams.get("uuid");
-            ws.uuid = clientGuid
+            clientUuid = urlParams.get("uuid");
+            ws.uuid = clientUuid
 
             // Websocket client connected
             const ip = req.connection.remoteAddress;
-            console.log("Websocket: Client connected.", ip)
+            log.info(`Websocket: Client connected. ip:${ip}, uuid:${clientUuid}`)
 
             ws.on('message', function (data) {
                 // Check parsed Data
@@ -63,7 +68,7 @@ common.getJsonFile("/settings")
                 try {
                     parsedData = JSON.parse(data);
                 } catch (e) {
-                    console.log("Websocket: incoming parse error:", e)
+                    log.warning("Websocket: incoming parse error:", e)
                 }
 
                 if (typeof (parsedData) !== "undefined") {
@@ -87,8 +92,8 @@ common.getJsonFile("/settings")
         serverHttps.on('error', onError);
         serverHttps.on('listening', onListeningHttps);
 
-        //console.log(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
-        console.log(`Pubquiz Unit server is running on port ${appSettings.app.sslPort}`)
+        //log.info(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
+        log.info(`Pubquiz Unit server is running on port ${appSettings.app.sslPort}`)
 
         // Event listener for HTTP server "error" event.
         function onError (error) {
@@ -131,4 +136,4 @@ common.getJsonFile("/settings")
             debug('Listening on ' + bind);
         }
     })
-    .catch((err) => { console.log(`Cannot load settings file: settings.json. You have to rename settings_empty.json to settings.json and alter the settings in de file. \n(${err})`) })
+    .catch((err) => { log.error(`Cannot load settings file: settings.json. You have to rename settings_empty.json to settings.json and alter the settings in de file. \n(${err})`) })

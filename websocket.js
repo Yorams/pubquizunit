@@ -1,5 +1,10 @@
 const WebSocket = require('ws');
 const common = require("./common_functions");
+var path = require('path');
+var logger = require('./logger')
+
+// Init logger
+var log = logger.app(path.parse(__filename).name);
 
 var countdownTimer;
 var knex;
@@ -43,7 +48,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                     }
                 })
                 .catch((error) => {
-                    if (error.stack) { console.log(error.stack) }
+                    if (error.stack) { log.error(error.stack) }
                     ws.send(JSON.stringify({
                         msgType: "error",
                         msg: `user_not_found (${error})`
@@ -65,7 +70,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                         }
 
                     }).catch((error) => {
-                        if (error.stack) { console.log(error.stack) }
+                        if (error.stack) { log.error(error.stack) }
                         ws.send(JSON.stringify({
                             msgType: "error",
                             msg: `team_not_found (${error})`
@@ -180,7 +185,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
 
                             clearTimeout(countdownTimer);
 
-                            console.log("Countdown canceled");
+                            log.info("Countdown canceled");
 
                             broadcastMsg(JSON.stringify({
                                 msgType: "countdown",
@@ -203,7 +208,7 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                     }
                 })
                 .catch((error) => {
-                    if (error.stack) { console.log(error.stack) }
+                    if (error.stack) { log.error(error.stack) }
                     ws.send(JSON.stringify({
                         msgType: "error",
                         msg: `user_not_found (${error})`
@@ -262,7 +267,7 @@ function pubQuestionToAll (action, wss) {
                             roundIndex = parseInt(roundIndex) + 1
                             questionIndex = 0;
                         } else {
-                            console.log("Websocket: End of quiz reached.")
+                            log.info("Websocket: End of quiz reached.")
                         }
                     }
 
@@ -283,7 +288,7 @@ function pubQuestionToAll (action, wss) {
 
                             questionIndex = prevRoundQuestionCount - 1;
                         } else {
-                            console.log("Websocket: Begin of quiz reached.")
+                            log.info("Websocket: Begin of quiz reached.")
                         }
                     }
 
@@ -307,6 +312,8 @@ function pubQuestionToAll (action, wss) {
                                 for (key in rows) {
                                     answeredList.push(rows[key].team_uuid);
                                 }
+
+                                log.info(`Action: ${action}, round nr: ${roundIndex} (${questionData.round_uuid}), question nr: ${questionIndex} (${newQuestionUuid})`)
 
                                 var sendData = {
                                     msgType: "question",
@@ -340,7 +347,7 @@ function pubQuestionToAll (action, wss) {
 
                 }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
         } else {
-            console.log("Websocket: cannot find round or question")
+            log.warning("Websocket: cannot find round or question")
         }
     });
 }
