@@ -74,9 +74,10 @@ To view the log enter this:
 ### ToDo Major
 - [x] Add message type question, useable for intro or outros for rounds
 - [x] Decent logging
-- [ ] Add a question overview/list to the control page.
+- [X] Add a question overview/list to the control page.
+- [ ] Do some costumizable styling.
 - [ ] Make a settings page to adjust settings.
 - [ ] Let the server also listen to port http to redirect clients to https.
 
 ### ToDo Minor
-...
+- Better style/format of questions.
