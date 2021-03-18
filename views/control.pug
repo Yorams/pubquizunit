@@ -7,7 +7,7 @@ block header
     include admin_menu.pug
 
 block content
-    div.container.my-3
+    div.container.h-100.my-3
         div.controlsContainer
             div.controlsMain
                 button.btn.btn-lg.btn-danger.controlBtn.mx-2(data-action="reset") 
@@ -40,11 +40,39 @@ block content
                                 i.mdi.mdi-timer-outline
                         input.form-control.countdownTimeInput#timerInput(type="number", min="0", max="9999", value="30")
                         
-        div.subTitle
-        div.row
-            div.col.currentQuestion
-        div.questionMain
         
+        div.row.my-3.controlQuestionsContainer
+            div.col-5.controlQuestionsMain
+                div.roundsMain
+
+            div.col-7
+                div.subTitle
+                div.currentQuestion
+                div.questionMain
+
+    
+    script#roundTemplate(type="text/x-handlebars-template")
+        | {{#each this.questions}}
+        // Rounds
+        div.mb-4.roundMain(style="cursor:pointer;", data-round-uuid="{{this.uuid}}")
+            div.d-flex.w-100.mb-1.justify-content-between.roundToolbar
+                h4.roundName {{inc this.order 0}}. {{this.name}}
+ 
+            // Questions
+            div.list-group.roundContent(id="list-{{this.uuid}}")
+                | {{#each this.questions}}
+                div.list-group-item.list-group-item-action.questionOverviewMain(data-question-uuid="{{this.uuid}}")
+                    div.d-flex.w-100.justify-content-between
+                        div.mb-1.questionName 
+                            span.font-weight-bolder {{inc this.order 0}}.
+                            span.text-muted  {{getTemplateName this.template}}
+                            div {{this.name}}
+                | {{/each}}
+        | {{/each}}
+
+    script#alertTemplate(type="text/x-handlebars-template")
+        div.alert.alert-primary {{this}}
+
     include question_templates.pug
    
 block scripts

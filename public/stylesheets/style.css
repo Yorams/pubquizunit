@@ -249,6 +249,7 @@ div.roundMain.active{
     color: #fff;
     border-radius: 5px;
 }
+div.controlQuestionsContainer,
 div.questionsContainer{
     border-radius: 5px;
     background-color: #f8f9fa;
@@ -257,7 +258,9 @@ div.questionsContainer{
     padding-bottom: 15px;
 }
 
-div.questionsMain{
+div.questionsMain,
+div.controlQuestionsMain{
     height: 100%;
     overflow-y: scroll;
+    scroll-behavior: smooth;
 }

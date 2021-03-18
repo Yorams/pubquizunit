@@ -4,6 +4,26 @@ var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
 var textTemplate = Handlebars.compile($('#textTemplate').html());
 var numberTemplate = Handlebars.compile($('#numberTemplate').html());
 var messageTemplate = Handlebars.compile($('#messageTemplate').html());
+var roundTemplate = Handlebars.compile($('#roundTemplate').html());
+
+Handlebars.registerHelper("inc", function (value, add) {
+    if (typeof (add) !== "undefined") {
+        return parseInt(value) + 1 + add;
+    } else {
+        return parseInt(value) + 1;
+    }
+});
+
+Handlebars.registerHelper("debug", function (value) {
+    console.log(value)
+});
+
+Handlebars.registerHelper("getTemplateName", function (templateId) {
+    var currentTemplate = questionTemplates.find((obj) => {
+        return obj.id === templateId
+    })
+    return currentTemplate.name
+});
 
 // -- WEBSOCKET --
 var socket = new ReconnectingWebSocket(`wss://${window.location.hostname}`);
@@ -45,7 +65,6 @@ jQuery(function () {
     $(".controlBtn").on("click", function () {
 
         var currentAction = $(this).data("action");
-        console.log(currentAction)
 
         socket.send(JSON.stringify({
             msgType: "controlQuiz",
@@ -53,6 +72,7 @@ jQuery(function () {
             countdownTime: parseInt($(".countdownTimeInput").val())
         }));
     })
+    getQuestionData();
 });
 
 function loadQuestion (data) {
@@ -95,4 +115,35 @@ function loadQuestion (data) {
     } else {
         $(".submitAnswerBtn").show()
     }
+
+    // Make current question active in overview
+    $(`.questionOverviewMain`).removeClass("active");
+
+    var questionElement = $(`.questionOverviewMain[data-question-uuid="${data.question.uuid}"]`)
+    questionElement.addClass("active");
+
+    // Scroll to question in overview
+    var childPos = questionElement.offset();
+    var parentPos = questionElement.parent().parent().parent().offset();
+
+    var childTopOffset = childPos.top - parentPos.top;
+
+    $(".controlQuestionsMain").scrollTop(childTopOffset);
+}
+
+function getQuestionData (callback = () => { }) {
+    sendPost("/questions/get_questions", function (data) {
+        questionTemplates = data.questionTemplates
+
+        if (data.questions.length != 0) {
+
+            // Show rounds with questions
+            $(".roundsMain").html(roundTemplate(data));
+
+        } else {
+            $(".roundsMain").html(alertTemplate("No rounds found, add a round to continue."))
+
+        }
+        callback();
+    })
 }
