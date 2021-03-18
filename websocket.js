@@ -197,7 +197,6 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                                 // Publish question to players
                                 pubQuestionToAll("back", wss);
                             })
-
                         }
 
                     } else {
