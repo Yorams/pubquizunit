@@ -14,7 +14,7 @@ Pubquiz unit is a quiz system thats presents questions live to any team. It is p
 
 Because Pubquizunit uses SQLite3, it has to compile the SQLite3 package. Sometimes it's a bitch and it does not want to compile. So if you get allot of errors you can try to install SQLite seperate with root access.
 
-		sudo npm install sqlite3
+	sudo npm install sqlite3
 
 And then run the npm install again.
 Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
@@ -80,4 +80,4 @@ To view the log enter this:
 - [ ] Let the server also listen to port http to redirect clients to https.
 
 ### ToDo Minor
-- Better style/format of questions.
+- Better user feedback of broken websocket connections
