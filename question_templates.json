@@ -1,81 +1,60 @@
 [
     {
         "id": "single",
-        "name": "Single choice",
+        "name": "Enkele keuzevraag",
         "parameters": [
             {
                 "type": "radio",
-                "name": "Choose one answer",
+                "name": "Kies een antwoord",
                 "id": "default"
             }
         ]
     },
     {
         "id": "multi",
-        "name": "Multiple Choice",
+        "name": "Meerkeuzevraag",
         "parameters": [
             {
                 "type": "checkbox",
-                "name": "Select muliple answers",
+                "name": "Kies meerdere antwoorden",
                 "id": "default"
             }
         ]
     },
     {
         "id": "open-number",
-        "name": "Number Input",
+        "name": "Open vraag met getal",
         "parameters": [
             {
                 "type": "number",
-                "name": "Enter a number",
+                "name": "Vul een getal in",
                 "id": "default"
             }
         ]
     },
     {
         "id": "open-text",
-        "name": "Text Input",
+        "name": "Open vraag met tekst",
         "parameters": [
             {
                 "type": "text",
-                "name": "Type your answer",
+                "name": "Typ je antwoord",
                 "id": "default"
             }
         ]
     },
     {
         "id": "music",
-        "name": "Artist & Title",
+        "name": "Muziek vraag",
         "parameters": [
             {
                 "type": "text",
-                "name": "Artist",
+                "name": "Artiest",
                 "id": "artist"
             },
             {
                 "type": "text",
-                "name": "Title",
-                "id": "title"
-            }
-        ]
-    },
-    {
-        "id": "location-music",
-        "name": "Locatie en Nummer",
-        "parameters": [
-            {
-                "type": "radio",
-                "name": "Kies de locatie",
-                "id": "lokatie"
-            },
-            {
-                "type": "text",
-                "name": "Artist",
-                "id": "artist"
-            },
-            {
-                "type": "text",
-                "name": "Title",
+                "name": "Titel",
                 "id": "title"
             }
         ]
