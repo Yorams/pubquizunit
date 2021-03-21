@@ -1,6 +1,6 @@
 # Pubquiz Unit
 
-> **A pub quiz system for interactive display of questions with automatic scoring.**
+> **A pubquiz system for interactive display of questions with automatic scoring.**
 
 Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his or her cue. There is a live scoreboard and an answer overview to see the given answers for each team.
 
