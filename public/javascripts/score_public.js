@@ -106,9 +106,9 @@ jQuery(function () {
 })
 
 function startRefreshTimer () {
-    /*refreshTimer = setInterval(function () {
+    refreshTimer = setInterval(function () {
         loadScore("overview");
-    }, 5000)*/
+    }, 5000)
 }
 
 function loadScore (view) {

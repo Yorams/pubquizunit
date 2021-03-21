@@ -1,7 +1,5 @@
 var errorTemplate = Handlebars.compile($('#errorTemplate').html());
 
-
-
 function sendPost (url, parameterA, parameterB) {
     if (typeof (parameterA) === "function") {
         callback = parameterA
