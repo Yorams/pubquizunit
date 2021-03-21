@@ -10,6 +10,8 @@ const store = new MemoryStore({ checkPeriod: 86400000 })
 exports.handler = session({
     key: 'user_sid',
     secret: "thisisaverysecretphrasejusttodosomethings",
+    httpOnly: true,
+    secure: true,
     resave: false,
     saveUninitialized: false,
     cookie: {
