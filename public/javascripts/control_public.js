@@ -72,6 +72,15 @@ jQuery(function () {
             countdownTime: parseInt($(".countdownTimeInput").val())
         }));
     })
+
+    $("#switchState").on("change", function () {
+
+        socket.send(JSON.stringify({
+            msgType: "controlQuiz",
+            action: "switchState",
+            state: $(this).prop("checked")
+        }));
+    })
     getQuestionData();
 });
 
@@ -79,6 +88,10 @@ function loadQuestion (data) {
     // Clear countdown timer
     clearInterval(countdownTimer);
 
+    // Set live state switch
+    $("#switchState").prop('checked', data.quizLive);
+
+    // Set title
     $(".subTitle").html(data.round.name)
 
     $(".currentQuestion").html(` Ronde ${data.round.currentNr + 1}/${data.round.total} | Vraag ${data.question.currentNr + 1}/${data.question.total}`)
@@ -136,7 +149,6 @@ function getQuestionData (callback = () => { }) {
         questionTemplates = data.questionTemplates
 
         if (data.questions.length != 0) {
-
             // Show rounds with questions
             $(".roundsMain").html(roundTemplate(data));
 
