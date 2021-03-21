@@ -40,13 +40,15 @@ It is possible to add a stream next to questions
 - Go to the folder and run:	
 
 	    npm install
+- Once installed everything rename the "settings_empty.json" to "settings.json" and adjust settings.
 
 Because Pubquizunit uses SQLite3, it has to compile the SQLite3 package. Sometimes it's a bitch and it does not want to compile. So if you get allot of errors you can try to install SQLite seperate with root access.
 
 	sudo npm install sqlite3
 
 And then run the npm install again.
-Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
+
+
 
 # How to use
 Start the server with
@@ -55,7 +57,7 @@ Start the server with
 
 The server uses certificates and port 80/443, therefore it has to have elevated rights.
 
-To control the quiz or create teams you must login. Default is: admin & pubquizunit:
+To control the quiz or create teams you must login. ***Default is: admin & pubquizunit:***
 
 	https://<IP or HOST>
 
@@ -103,10 +105,10 @@ To view the log enter this:
 ### ToDo Major
 - [x] Add message type question, useable for intro or outros for rounds
 - [x] Decent logging
-- [X] Add a question overview/list to the control page.
+- [x] Add a question overview/list to the control page.
+- [x] Let the server also listen to port http to redirect clients to https.
 - [ ] Do some costumizable styling.
 - [ ] Make a settings page to adjust settings.
-- [ ] Let the server also listen to port http to redirect clients to https.
 
 ### ToDo Minor
 - Better user feedback of broken websocket connections
