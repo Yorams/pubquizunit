@@ -4,17 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "postinstall": "npx knex migrate:latest && npx knex seed:run",
-    "reset_quiz": "knex seed:run --specific=reset_quiz.js"
+    "postinstall": "npx knex migrate:latest && npx knex seed:run"
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
-    "aedes": "^0.45.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.6.0",
     "connect-session-knex": "^2.0.0",
     "cookie-parser": "^1.4.5",
-    "debug": "^4.3.1",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.6",
     "express-session": "^1.17.1",
@@ -25,9 +22,7 @@
     "jquery-sortablejs": "^1.0.1",
     "knex": "^0.95.2",
     "lodash": "^4.17.21",
-    "md5-file": "^5.0.0",
     "memorystore": "^1.6.5",
-    "moment": "^2.29.1",
     "mqtt": "^4.2.6",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
