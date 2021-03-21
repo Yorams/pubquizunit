@@ -10,6 +10,7 @@ const database = require("./knexfile");
 const knex = require('knex')(database.development);
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
+const rateLimit = require("express-rate-limit");
 
 // Init logger
 var log = logger.app(path.parse(__filename).name);
@@ -17,6 +18,12 @@ var log = logger.app(path.parse(__filename).name);
 var app = express();
 
 app.locals.env = "production"
+
+// Set rate limiter
+const limiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
 
 // Set instance to app
 app.set('knex', knex);
@@ -47,7 +54,7 @@ common.getJsonFile("/question_templates")
             "parameters": [
                 {
                     "type": "message",
-                    "name": "Message",
+                    "name": "Bericht",
                     "id": "default"
                 }
             ]
@@ -61,10 +68,10 @@ common.getJsonFile("/question_templates")
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-
-
+// Session handler
 app.use(sessionParser.handler);
 
+// Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -135,15 +142,14 @@ app.use('/scripts/handlebars', express.static(__dirname + '/node_modules/handleb
 app.use('/scripts/sortable', express.static(__dirname + '/node_modules/sortablejs'));
 app.use('/scripts/jquery-sortable', express.static(__dirname + '/node_modules/jquery-sortablejs/'));
 
-
-app.use('/login', authRouter);
+app.use('/login', limiter, authRouter);
 app.use('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
 });
 
 // Main route defenitions
-app.use('/quiz', quizRouter);
+app.use('/quiz', limiter, quizRouter);
 
 app.use('/', common.isAuthed, indexRouter);
 app.use('/user', common.isAuthed, userRouter);
