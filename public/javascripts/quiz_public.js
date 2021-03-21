@@ -7,6 +7,7 @@ var numberTemplate = Handlebars.compile($('#numberTemplate').html());
 var messageTemplate = Handlebars.compile($('#messageTemplate').html());
 var alertTemplate = Handlebars.compile($('#alertTemplate').html());
 
+
 jQuery(function () {
 
     if (!glob_data.success) {
@@ -41,13 +42,10 @@ jQuery(function () {
 
         if ($("form.answers")[0].reportValidity()) {
             $(".submitAnswerBtn").prop('disabled', true);
-            var answer;
-
             var parameters = [];
 
             // Loop over option input parameters
             $(".optionInputMain").each(function () {
-                var optionElements = []
                 var correctOptions = []
 
                 var optionElementId = $(this).data("id")
@@ -99,7 +97,8 @@ function loadQuestion (data) {
     // Clear countdown timer
     clearInterval(countdownTimer);
 
-
+    var welcomeModalState = (!data.quizLive) ? "show" : "hide"
+    $(".welcomeModal").modal(welcomeModalState)
 
     glob_currStatus = data;
     $(".headerSubTitle").html(`Team: ${glob_data.name}`);
@@ -131,6 +130,8 @@ function loadQuestion (data) {
                 break;
         }
     }
+
+    // Show the question
     $(".questionMain").html(questionTemplate({ round: data.round, content: data.question, parameters: parametersOutput }))
 
     // Show message if answer is already given
