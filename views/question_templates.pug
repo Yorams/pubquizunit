@@ -3,7 +3,7 @@ script#questionTemplate(type="text/x-handlebars-template")
     div.card.my-3
         div.card-body
             h2.card-title {{content.name}}
-            h5.card-subtitle {{content.template}}
+            h6.card-subtitle.text-muted {{content.templateName}}
             p.card-text
                 form.answers
                     fieldset.answersInput({{content.isDisabled}})
@@ -48,10 +48,7 @@ script#numberTemplate(type="text/x-handlebars-template")
         input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
 
 script#messageTemplate(type="text/x-handlebars-template")
-    | {{this.data.name}}:
-    br
-    | {{this.data.content}}
-    br
+    p {{this.data.content}}
 
 script#alertTemplate(type="text/x-handlebars-template")
     div.alert(class="alert-{{alertType}}") {{alertMessage}}
