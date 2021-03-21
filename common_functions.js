@@ -74,7 +74,6 @@ exports.updateCurrentQuestion = function (knex, questionUuid) {
     })
 }
 
-
 exports.hashPassword = function (password, salt) {
     var hash = crypto.createHash('sha256');
     hash.update(password);
@@ -260,5 +259,31 @@ exports.resetCurrent = function (knex) {
         return exports.updateCurrentQuestion(knex, firstQuestonUuid)
             .then(resolve())
             .catch(error => reject(error))
+    })
+}
+
+exports.getSetting = function (knex, settingId) {
+    return new Promise(function (resolve, reject) {
+        return knex('settings')
+            .where({ id: settingId })
+            .first()
+            .then(row => { resolve(row) })
+            .catch(error => {
+                log.error(`Cannot get setting: ${settingId}`)
+                reject(error)
+            })
+    })
+}
+
+exports.updateSetting = function (knex, settingId, value) {
+    return new Promise(function (resolve, reject) {
+        return knex('settings')
+            .where({ id: settingId })
+            .update({ value: value })
+            .then(resolve())
+            .catch(error => {
+                log.error(`Cannot update setting: ${settingId}`)
+                reject(error)
+            })
     })
 }
