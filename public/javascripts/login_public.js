@@ -37,6 +37,10 @@ $(".loginForm").on("submit", function (e) {
             $(".userInput").addClass("is-invalid")
 
         }
-        console.log(responseData);
+    }).fail((error) => {
+        if (error.status == 429) {
+            $(".loginErrorMsg").html(error.responseText)
+            $(".userInput").addClass("is-invalid")
+        }
     })
 })
