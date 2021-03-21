@@ -39,6 +39,11 @@ block content
                             div.input-group-text
                                 i.mdi.mdi-timer-outline
                         input.form-control.countdownTimeInput#timerInput(type="number", min="0", max="9999", value="30")
+                div.timeInputMain.px-2
+                    div.custom-control.custom-switch
+                        input.custom-control-input#switchState(type="checkbox")
+                        label.custom-control-label(for="switchState") Quiz Live
+
                         
         
         div.row.my-3.controlQuestionsContainer

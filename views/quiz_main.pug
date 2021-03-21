@@ -19,6 +19,17 @@ block content
                     
                 div.questionMain
 
+    div.modal.welcomeModal(tabindex='-1', data-backdrop="static")
+        div.modal-dialog.modal-lg
+            div.modal-content
+
+
+                div.modal-body.text-center
+                    h1.display-1 Welkom,
+                    h2 bij de Houtense online Koningsdag pubquiz.
+                    p De pubquiz is nog niet begonnen, maar dit kan elk moment gebeuren. 
+                    div.alert.alert-info Nog even geduld, we gaan zo beginnen. Deze melding verdwijnt vanzelf.
+
     include question_templates.pug
     
     script.

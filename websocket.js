@@ -24,7 +24,7 @@ exports.send = broadcastMsg;
 exports.parseCommands = function (data, ws, req, app, wss) {
     // Set globals
     knex = app.get('knex');
-    teamData = app.get('teamData');
+    questionTemplates = app.get('questionTemplates');
 
     var allowedUsers = ["admin", "user"]
 
@@ -94,35 +94,47 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                     var roundCount = common.getCurrentOrder().roundCount
                     var answered = false;
 
-                    // Check of vraag al beantwoord is.
-                    knex('answers')
-                        .where({ question_uuid: currentQuestionUuid, team_uuid: teamUuid })
-                        .first()
-                        .then((row) => {
-                            answered = (typeof (row) !== "undefined") ? true : false
-                        })
-                        .catch((error) => { common.errorHandler("Cannot get answer", error) })
-                        .finally((e) => {
-                            // Send question with stripped answers to client
-                            ws.send(JSON.stringify({
-                                msgType: "question",
-                                round: {
-                                    name: questionData.round_name,
-                                    details: questionData.round_details,
-                                    currentNr: questionData.round_order,
-                                    total: roundCount
-                                },
-                                question: {
-                                    uuid: questionData.uuid,
-                                    name: questionData.name,
-                                    template: questionData.template,
-                                    parameters: questionData.parameters,
-                                    currentNr: questionData.order,
-                                    total: currQuestionCount,
-                                    answered: answered
-                                }
-                            }));
-                        });
+                    // Get template name with template id.
+                    var currentTemplate = questionTemplates.find((obj) => {
+                        return obj.id === questionData.template
+                    })
+                    questionData.templateName = currentTemplate.name
+
+                    // Get quiz live state
+                    common.getSetting(knex, "quiz_live").then((quizLiveData) => {
+
+                        // Check of vraag al beantwoord is.
+                        knex('answers')
+                            .where({ question_uuid: currentQuestionUuid, team_uuid: teamUuid })
+                            .first()
+                            .then((row) => {
+                                answered = (typeof (row) !== "undefined") ? true : false
+                            })
+                            .catch((error) => { common.errorHandler("Cannot get answer", error) })
+                            .finally((e) => {
+                                // Send question with stripped answers to client
+                                ws.send(JSON.stringify({
+                                    msgType: "question",
+                                    quizLive: quizLiveData.value,
+                                    round: {
+                                        name: questionData.round_name,
+                                        details: questionData.round_details,
+                                        currentNr: questionData.round_order,
+                                        total: roundCount
+                                    },
+                                    question: {
+                                        uuid: questionData.uuid,
+                                        name: questionData.name,
+                                        template: questionData.template,
+                                        templateName: questionData.templateName,
+                                        parameters: questionData.parameters,
+                                        currentNr: questionData.order,
+                                        total: currQuestionCount,
+                                        answered: answered
+                                    }
+                                }));
+                            });
+                    })
 
                 }).catch((error) => {
                     ws.send(JSON.stringify({
@@ -197,6 +209,14 @@ exports.parseCommands = function (data, ws, req, app, wss) {
                                 // Publish question to players
                                 pubQuestionToAll("back", wss);
                             })
+                        } else if (data.action == "switchState") {
+
+                            // Change global state of the quiz
+                            if (typeof (data.state) != "undefined") {
+                                common.updateSetting(knex, "quiz_live", data.state).then(() => {
+                                    pubQuestionToAll("switch_state", wss);
+                                })
+                            }
                         }
 
                     } else {
@@ -304,45 +324,57 @@ function pubQuestionToAll (action, wss) {
                     common.getQuestion(knex, newQuestionUuid).then((questionData) => {
                         var answeredList = [];
 
-                        knex('answers')
-                            .where({ question_uuid: newQuestionUuid })
-                            .then((rows) => {
-                                // Push all uuid of team with an answer to array
-                                for (key in rows) {
-                                    answeredList.push(rows[key].team_uuid);
-                                }
+                        // Get quiz live state
+                        common.getSetting(knex, "quiz_live").then((quizLiveData) => {
 
-                                log.info(`Action: ${action}, round nr: ${roundIndex} (${questionData.round_uuid}), question nr: ${questionIndex} (${newQuestionUuid})`)
-
-                                var sendData = {
-                                    msgType: "question",
-                                    round: {
-                                        name: questionData.round_name,
-                                        details: questionData.round_details,
-                                        currentNr: questionData.round_order,
-                                        total: roundCount
-                                    },
-                                    question: {
-                                        uuid: questionData.uuid,
-                                        name: questionData.name,
-                                        template: questionData.template,
-                                        parameters: questionData.parameters,
-                                        currentNr: questionData.order,
-                                        total: currQuestionCount,
+                            knex('answers')
+                                .where({ question_uuid: newQuestionUuid })
+                                .then((rows) => {
+                                    // Push all uuid of team with an answer to array
+                                    for (key in rows) {
+                                        answeredList.push(rows[key].team_uuid);
                                     }
-                                }
 
-                                // Send data to all clients
-                                wss.clients.forEach(function each (client) {
-                                    // Check if current client/team has answered
-                                    sendData.question.answered = answeredList.includes(client.uuid)
+                                    // Get template name with template id.
+                                    var currentTemplate = questionTemplates.find((obj) => {
+                                        return obj.id === questionData.template
+                                    })
+                                    questionData.templateName = currentTemplate.name
 
-                                    if (client.readyState === WebSocket.OPEN) {
-                                        client.send(JSON.stringify(sendData));
+                                    log.info(`Action: ${action}, round nr: ${roundIndex} (${questionData.round_uuid}), question nr: ${questionIndex} (${newQuestionUuid})`)
+
+                                    var sendData = {
+                                        msgType: "question",
+                                        quizLive: quizLiveData.value,
+                                        round: {
+                                            name: questionData.round_name,
+                                            details: questionData.round_details,
+                                            currentNr: questionData.round_order,
+                                            total: roundCount
+                                        },
+                                        question: {
+                                            uuid: questionData.uuid,
+                                            name: questionData.name,
+                                            template: questionData.template,
+                                            templateName: questionData.templateName,
+                                            parameters: questionData.parameters,
+                                            currentNr: questionData.order,
+                                            total: currQuestionCount,
+                                        }
                                     }
+
+                                    // Send data to all clients
+                                    wss.clients.forEach(function each (client) {
+                                        // Check if current client/team has answered
+                                        sendData.question.answered = answeredList.includes(client.uuid)
+
+                                        if (client.readyState === WebSocket.OPEN) {
+                                            client.send(JSON.stringify(sendData));
+                                        }
+                                    });
                                 });
-                            })
-                    })
+                        });
+                    });
 
                 }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
         } else {
