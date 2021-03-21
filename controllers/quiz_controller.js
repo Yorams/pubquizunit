@@ -35,6 +35,7 @@ exports.submitAnswer = function (req, res) {
     try {
         var answer = JSON.parse(req.body.answer);
     } catch (error) {
+        log.warning(`Cannot parse answer from team: ${teamUuid}`)
         return res.send({ result: "error", errorMsg: `cannot parse answer` })
     }
 
@@ -86,10 +87,12 @@ exports.submitAnswer = function (req, res) {
                                         })
                                         .catch((error) => { common.errorHandler("Cannot get answer", error) })
                                 } else {
-                                    return res.send({ result: "error", errorMsg: `cannot answers a message type question` })
+                                    log.warning(`Cannot answer a message type question from team: ${teamUuid}`)
+                                    return res.send({ result: "error", errorMsg: `cannot answer a message type question` })
                                 }
                             })
                         } else {
+                            log.warning(`Current question id mismatch from team: ${teamUuid}`)
                             return res.send({ result: "error", errorMsg: `current question id mismatch` })
                         }
 
@@ -97,11 +100,13 @@ exports.submitAnswer = function (req, res) {
                         log.warning(`Cannot get current state: ${error}`);
                     })
                 } else {
+                    log.warning(`Player not found: ${teamUuid}`);
                     return res.send({ result: "error", errorMsg: `player not found` })
                 }
             }).catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` }))
 
     } else {
+        log.warning(`Answer is undefined from team: ${teamUuid}`);
         return res.send({ result: "error", errorMsg: `answer is undefined` })
     }
 }
