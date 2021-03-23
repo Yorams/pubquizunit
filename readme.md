@@ -36,11 +36,10 @@ It is possible to add a stream next to questions
 - Clone the git repository: (or download and extract all the files to a folder on your disk.)
 
 		git clone https://github.com/Yorams/pubquizunit.git
-
-- Go to the folder and run:	
+- Go to the folder and rename the "settings_empty.json" to "settings.json" and fill in the database settings.
+- If the settings are correct, install the package:	
 
 	    npm install
-- Once installed everything rename the "settings_empty.json" to "settings.json" and adjust settings.
 
 Because Pubquizunit uses SQLite3, it has to compile the SQLite3 package. Sometimes it's a bitch and it does not want to compile. So if you get allot of errors you can try to install SQLite seperate with root access.
 
