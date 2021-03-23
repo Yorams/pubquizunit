@@ -4,6 +4,12 @@
         "sslPort": 443,
         "logLevel": "debug"
     },
+    "database": {
+        "client": "sqlite3",
+        "connection": {
+            "filename": "database.db"
+        }
+    },
     "certificate": {
         "cert": "/etc/letsencrypt/live/FILL_IN_HOST/cert.pem",
         "key": "/etc/letsencrypt/live/FILL_IN_HOST/privkey.pem",

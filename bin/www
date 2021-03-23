@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var app = require('../app');
 var debug = require('debug')('pubquizunit:server');
-//var http = require('http');
 var https = require('https');
 const fs = require('fs');
 const common = require("../common_functions");
@@ -16,122 +15,116 @@ var express = require('express');
 // Init logger
 var log = logger.app(path.parse(__filename).name);
 
-// Get settings
-common.getJsonFile("/settings")
-    .then(function (appSettings) {
-        app.set('appSettings', appSettings);
+app.then(function (app) {
 
-        app.locals.quizTitle = appSettings.quiz.title
+    var appSettings = app.get('appSettings');
+    //app.set('appSettings', appSettings);
 
-        // Set up plain http server for redirecting to https
-        var http = express();
+    app.locals.quizTitle = appSettings.quiz.title
 
-        // Set up a route to redirect http to https
-        http.get('*', function (req, res) {
-            res.redirect('https://' + req.headers.host + req.url);
-        })
-        // Have it listen to port 80
-        http.listen(appSettings.app.port);
+    // Set up plain http server for redirecting to https
+    var http = express();
 
-        // Define certificates
-        const credentials = {
-            key: fs.readFileSync(appSettings.certificate.key, 'utf8'),
-            cert: fs.readFileSync(appSettings.certificate.cert, 'utf8'),
-            ca: fs.readFileSync(appSettings.certificate.chain, 'utf8')
-        };
+    // Set up a route to redirect http to https
+    http.get('*', function (req, res) {
+        res.redirect('https://' + req.headers.host + req.url);
+    })
+    // Have it listen to port 80
+    http.listen(appSettings.app.port);
 
-        // Get port from settings and store in Express.
-        app.set('port', appSettings.app.sslPort);
-        var port = appSettings.app.sslPort;
+    // Define certificates
+    const credentials = {
+        key: fs.readFileSync(appSettings.certificate.key, 'utf8'),
+        cert: fs.readFileSync(appSettings.certificate.cert, 'utf8'),
+        ca: fs.readFileSync(appSettings.certificate.chain, 'utf8')
+    };
 
-        // Create HTTP server.
-        var serverHttps = https.createServer(credentials, app);
+    // Get port from settings and store in Express.
+    app.set('port', appSettings.app.sslPort);
+    var port = appSettings.app.sslPort;
 
-        //
-        // Create a WebSocket server completely detached from the HTTP server.
-        //
-        const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
+    // Create HTTP server.
+    var serverHttps = https.createServer(credentials, app);
 
-        serverHttps.on('upgrade', function (req, socket, head) {
+    //
+    // Create a WebSocket server completely detached from the HTTP server.
+    //
+    const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
 
-            sessionParser.handler(req, {}, () => {
+    serverHttps.on('upgrade', function (req, socket, head) {
 
-                wss.handleUpgrade(req, socket, head, function (ws) {
-                    wss.emit('connection', ws, req);
-                });
+        sessionParser.handler(req, {}, () => {
+
+            wss.handleUpgrade(req, socket, head, function (ws) {
+                wss.emit('connection', ws, req);
             });
         });
+    });
 
-        wss.on('connection', function (ws, req) {
-            const urlParams = new URLSearchParams(url.parse(req.url, true).search)
-            clientUuid = urlParams.get("uuid");
-            ws.uuid = clientUuid
+    wss.on('connection', function (ws, req) {
+        const urlParams = new URLSearchParams(url.parse(req.url, true).search)
+        clientUuid = urlParams.get("uuid");
+        ws.uuid = clientUuid
 
-            // Websocket client connected
-            const ip = req.connection.remoteAddress;
-            log.info(`Websocket: Client connected. ip:${ip}, uuid:${clientUuid}`)
+        // Websocket client connected
+        const ip = req.connection.remoteAddress;
+        log.info(`Websocket: Client connected. ip:${ip}, uuid:${clientUuid}`)
 
-            ws.on('message', function (data) {
-                // Check parsed Data
-                var parsedData;
-                try {
-                    parsedData = JSON.parse(data);
-                } catch (e) {
-                    log.warning("Websocket: incoming parse error:", e)
-                }
+        ws.on('message', function (data) {
+            // Check parsed Data
+            var parsedData;
+            try {
+                parsedData = JSON.parse(data);
+            } catch (e) {
+                log.warning("Websocket: incoming parse error:", e)
+            }
 
-                if (typeof (parsedData) !== "undefined") {
-                    websocketHandler.parseCommands(parsedData, ws, req, app, wss);
-                }
-            });
-
-            ws.on('close', function () {
-
-            });
+            if (typeof (parsedData) !== "undefined") {
+                websocketHandler.parseCommands(parsedData, ws, req, app, wss);
+            }
         });
 
-        // HTTPS
-        serverHttps.listen(appSettings.app.sslPort);
-        serverHttps.on('error', onError);
-        serverHttps.on('listening', onListeningHttps);
+        ws.on('close', function () {
 
-        log.info(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
+        });
+    });
 
-        // Event listener for HTTP server "error" event.
-        function onError (error) {
-            if (error.syscall !== 'listen') {
+    // HTTPS
+    serverHttps.listen(appSettings.app.sslPort);
+    serverHttps.on('error', onError);
+    serverHttps.on('listening', onListeningHttps);
+
+    log.info(`Pubquiz Unit server is running on port ${appSettings.app.port} & secure port ${appSettings.app.sslPort}`)
+
+    // Event listener for HTTP server "error" event.
+    function onError (error) {
+        if (error.syscall !== 'listen') {
+            throw error;
+        }
+
+        var bind = typeof port === 'string'
+            ? 'Pipe ' + port
+            : 'Port ' + port;
+
+        // handle specific listen errors with friendly messages
+        switch (error.code) {
+            case 'EACCES':
+                console.error(bind + ' requires elevated privileges');
+                process.exit(1);
+            case 'EADDRINUSE':
+                console.error(bind + ' is already in use');
+                process.exit(1);
+            default:
                 throw error;
-            }
-
-            var bind = typeof port === 'string'
-                ? 'Pipe ' + port
-                : 'Port ' + port;
-
-            // handle specific listen errors with friendly messages
-            switch (error.code) {
-                case 'EACCES':
-                    console.error(bind + ' requires elevated privileges');
-                    process.exit(1);
-                case 'EADDRINUSE':
-                    console.error(bind + ' is already in use');
-                    process.exit(1);
-                default:
-                    throw error;
-            }
         }
+    }
 
-        function onListeningHttps () {
-            var addr = serverHttps.address();
-            var bind = typeof addr === 'string'
-                ? 'pipe ' + addr
-                : 'port ' + addr.port;
-            debug('Listening on ' + bind);
-        }
-    })
-    .catch((err) => {
-        if (err.message.includes("ENOENT") && err.message.includes("settings")) {
-            log.error(`Cannot load settings file: settings.json. You have to rename settings_empty.json to settings.json and alter the settings in de file.`)
-        } else {
-            log.error(err.stack)
-        }
-    })
+    function onListeningHttps () {
+        var addr = serverHttps.address();
+        var bind = typeof addr === 'string'
+            ? 'pipe ' + addr
+            : 'port ' + addr.port;
+        debug('Listening on ' + bind);
+    }
+
+})
