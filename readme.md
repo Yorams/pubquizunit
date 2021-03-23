@@ -1,14 +1,43 @@
+# Pubquiz Unit
 
-Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his cue. Teams can only answer once. There is a live scoreboard and an answer overview to see the given answers for each team. It is possible to edit the teams and question via the webinterface.
+> **A pubquiz system for interactive display of questions with automatic scoring.**
 
-**I will update this repo reguarlly. This was originally made for a one time event, but i'm improving it to use it for generic use.**
+Pubquiz unit is a quiz system thats presents questions live to any team. It is possible for the quizmaster present the next question on his or her cue. There is a live scoreboard and an answer overview to see the given answers for each team.
+
+# Screenshots
+
+
+<table>
+<tbody>
+  <tr>
+    <td align="center"><img src="https://github.com/Yorams/pubquizunit/blob/v2/screenshots/control.jpg" width="400" ></td>
+    <td align="center"><img src="https://github.com/Yorams/pubquizunit/blob/v2/screenshots/questions.jpg" width="400" ></td>
+    <td align="center"><img src="https://github.com/Yorams/pubquizunit/blob/v2/screenshots/score.jpg" width="400" ></td>
+    <td align="center"><img src="https://github.com/Yorams/pubquizunit/blob/v2/screenshots/teams.jpg" width="400" ></td>
+  </tr>
+  <tr>
+    <td>Quiz Control</td>
+    <td>Edit Questions</td>
+    <td>See the live score</td>
+    <td>Add teams</td>
+  </tr>
+</tbody>
+</table>
+
+### The team page
+
+It is possible to add a stream next to questions
+
+<p align="center">
+<img src="https://github.com/Yorams/pubquizunit/blob/v2/screenshots/quiz.jpg">
+</p>
 
 # How to install
 - Clone the git repository: (or download and extract all the files to a folder on your disk.)
 
 		git clone https://github.com/Yorams/pubquizunit.git
-
-- Go to the folder and run:	
+- Go to the folder and rename the "settings_empty.json" to "settings.json" and fill in the database settings.
+- If the settings are correct, install the package:	
 
 	    npm install
 
@@ -17,7 +46,8 @@ Because Pubquizunit uses SQLite3, it has to compile the SQLite3 package. Sometim
 	sudo npm install sqlite3
 
 And then run the npm install again.
-Once installed everything rename the "settings_empty.json" to "settings.json" and fill in the database settings.
+
+
 
 # How to use
 Start the server with
@@ -26,7 +56,7 @@ Start the server with
 
 The server uses certificates and port 80/443, therefore it has to have elevated rights.
 
-To control the quiz or create teams you must login. Default is: admin & pubquizunit:
+To control the quiz or create teams you must login. ***Default is: admin & pubquizunit:***
 
 	https://<IP or HOST>
 
@@ -74,10 +104,10 @@ To view the log enter this:
 ### ToDo Major
 - [x] Add message type question, useable for intro or outros for rounds
 - [x] Decent logging
-- [X] Add a question overview/list to the control page.
+- [x] Add a question overview/list to the control page.
+- [x] Let the server also listen to port http to redirect clients to https.
 - [ ] Do some costumizable styling.
 - [ ] Make a settings page to adjust settings.
-- [ ] Let the server also listen to port http to redirect clients to https.
 
 ### ToDo Minor
 - Better user feedback of broken websocket connections
