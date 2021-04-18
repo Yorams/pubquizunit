@@ -10,22 +10,29 @@ exports.getPageContent = function (req, res) {
     var appSettings = req.app.get('appSettings');
     var knex = req.app.get('knex');
 
-    // Get team data
-    knex('teams')
-        .where({ uuid: uuidIn })
-        .first()
-        .then((row) => {
-            if (typeof (row) !== "undefined") {
-                var currentTeam = row
-                currentTeam.success = true;
-            } else {
-                var currentTeam = {
-                    success: false
+    if (typeof (uuidIn) !== "undefined") {
+        // Get team data
+        knex('teams')
+            .where({ uuid: uuidIn })
+            .first()
+            .then((row) => {
+                if (typeof (row) !== "undefined") {
+                    var currentTeam = row
+                    currentTeam.success = true;
+                } else {
+                    var currentTeam = {
+                        success: false
+                    }
                 }
-            }
 
-            return res.render('quiz_main', { data: JSON.stringify(currentTeam), quizTitle: appSettings.quiz.title });
-        }).catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` }))
+                return res.render('quiz_main', { data: JSON.stringify(currentTeam), quizTitle: appSettings.quiz.title });
+            }).catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` }))
+    } else {
+        var currentTeam = {
+            success: false
+        }
+        return res.render('quiz_main', { data: JSON.stringify(currentTeam), quizTitle: appSettings.quiz.title });
+    }
 }
 
 exports.submitAnswer = function (req, res) {
@@ -35,7 +42,7 @@ exports.submitAnswer = function (req, res) {
     try {
         var answer = JSON.parse(req.body.answer);
     } catch (error) {
-        log.warning(`Cannot parse answer from team: ${teamUuid}`)
+        log.warn(`Cannot parse answer from team: ${teamUuid}, data: ${req.body.answer}`)
         return res.send({ result: "error", errorMsg: `cannot parse answer` })
     }
 
@@ -78,7 +85,10 @@ exports.submitAnswer = function (req, res) {
                                                 // Save answer to database
                                                 knex('answers')
                                                     .insert(dbData)
-                                                    .then(() => res.send({ result: "success" }))
+                                                    .then(() => {
+                                                        res.send({ result: "success" })
+                                                        log.info(`Answer submitted, team: ${teamUuid}, question: ${currentQuestionUuid}, answer: ${JSON.stringify(answer)}`)
+                                                    })
                                                     .catch((error) => res.send({ result: "error", errorMsg: `Cannot save answer: ${error}` }))
                                             } else {
                                                 return res.send({ result: "error", errorMsg: `Answer is already given` })
@@ -87,26 +97,26 @@ exports.submitAnswer = function (req, res) {
                                         })
                                         .catch((error) => { common.errorHandler("Cannot get answer", error) })
                                 } else {
-                                    log.warning(`Cannot answer a message type question from team: ${teamUuid}`)
+                                    log.warn(`Cannot answer a message type question from team: ${teamUuid}`)
                                     return res.send({ result: "error", errorMsg: `cannot answer a message type question` })
                                 }
                             })
                         } else {
-                            log.warning(`Current question id mismatch from team: ${teamUuid}`)
+                            log.warn(`Current question id mismatch from team: ${teamUuid}`)
                             return res.send({ result: "error", errorMsg: `current question id mismatch` })
                         }
 
                     }).catch((error) => {
-                        log.warning(`Cannot get current state: ${error}`);
+                        log.warn(`Cannot get current state: ${error}`);
                     })
                 } else {
-                    log.warning(`Player not found: ${teamUuid}`);
+                    log.warn(`Player not found: ${teamUuid}`);
                     return res.send({ result: "error", errorMsg: `player not found` })
                 }
             }).catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` }))
 
     } else {
-        log.warning(`Answer is undefined from team: ${teamUuid}`);
+        log.warn(`Answer is undefined from team: ${teamUuid}`);
         return res.send({ result: "error", errorMsg: `answer is undefined` })
     }
 }
