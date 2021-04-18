@@ -206,27 +206,41 @@ div.subTitle{
     
 }
 
-
-
 .topFirst{
-    font-size: 32px;
+    font-size: 50px;
 }
 .topSecond{
-    font-size: 29px;
+    font-size: 45px;
 }
 .topThird{
-    font-size: 26px;
+    font-size: 42px;
     margin-bottom: 15px;
 }
 
-.videobody{
-    color: #FFF;
-    
-}
-.video{
-    background-color: #555;
+.scoreLogo{
+    background-image: url(/images/score_header.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right top;
+    height: 190px;
+    margin: 0px 50px -190px 40px;
 }
 
+.videoTitle{
+    font-family: "Pacifico", Arial, Helvetica, sans-serif;
+    font-size: 100px;
+    padding-bottom: 1.1rem;
+    text-align: center;
+}
+
+.videobody{
+    background: rgb(0,105,170);
+    background: linear-gradient(356deg, rgb(0 83 134) 0%, #128fc3 100%);
+    color: #FFF;
+    overflow: hidden;
+    text-shadow: 3px 6px 7px #2d2d2db5;
+    -webkit-font-smoothing: antialiased;
+}
 .scoreOthers{
     -moz-column-count: 2;
     -moz-column-gap: 20px;
@@ -235,13 +249,21 @@ div.subTitle{
     column-count: 2;
     column-gap: 20px;
     list-style: none;
+    font-size: 25px;
 }
 .scoreOthers li{
-    border-bottom: 1px solid #888;
+    border-bottom: 2px solid #4491b3;
     margin-bottom: 5px;
 }
 .top{
     font-size: 20px;
+}
+
+#tsparticles{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -10;
 }
 
 /** Questions **/

@@ -48,7 +48,6 @@ Because Pubquizunit uses SQLite3, it has to compile the SQLite3 package. Sometim
 And then run the npm install again.
 
 
-
 # How to use
 Start the server with
 
@@ -74,6 +73,11 @@ It is possible to add a custom question template in question_templates.json. The
 - number: Presents a number input field.
 
 # Other info
+## Scoreboard for streaming
+There is a spiced up scoreboard for streaming purposes. You can find the scoreboard here:
+
+	https://<IP or HOST>/score/topvideo
+
 ## Service file
 Create a service file a .... with the following contents:
 
@@ -108,6 +112,7 @@ To view the log enter this:
 - [x] Let the server also listen to port http to redirect clients to https.
 - [ ] Do some costumizable styling.
 - [ ] Make a settings page to adjust settings.
+- [ ] Update order by removing question. Current update mechanism is triggered by frontend. Must do it in backend.
 
 ### ToDo Minor
 - Better user feedback of broken websocket connections

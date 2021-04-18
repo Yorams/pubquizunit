@@ -150,6 +150,8 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
     app.use('/scripts/handlebars', express.static(__dirname + '/node_modules/handlebars/dist'));
     app.use('/scripts/sortable', express.static(__dirname + '/node_modules/sortablejs'));
     app.use('/scripts/jquery-sortable', express.static(__dirname + '/node_modules/jquery-sortablejs/'));
+    app.use('/scripts/tsparticles', express.static(__dirname + '/node_modules/tsparticles/dist/'));
+    app.use('/scripts/jquery-particles', express.static(__dirname + '/node_modules/jquery-particles/dist/'));
 
     app.use('/login', limiter, authRouter);
     app.use('/logout', function (req, res) {

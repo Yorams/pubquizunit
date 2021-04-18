@@ -1,12 +1,16 @@
 extends layout
         
 block content
-    
+    div#tsparticles
+
+    div.scoreLogo.mt-5
+
     div.container
+        div.videoTitle Scorebord
         div.scoreMain.video.top
-        
+
     script#scoreBoard(type="text/x-handlebars-template")
-        div.row.h5
+        div.row.h4
             div.col.text-right Plaats
             div.col Team
             div.col Score
@@ -35,7 +39,10 @@ block content
         | {{/each}}
 
 block scripts
+    script(src='/scripts/tsparticles/tsparticles.min.js')
+    script(src='/scripts/jquery-particles/jquery.particles.min.js')
     script(src='/javascripts/score_public.js')
+    
     script.
         document.title = "Quizunit Topscore video"
         $("body").addClass("videobody");
