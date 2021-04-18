@@ -76,7 +76,7 @@ app.then(function (app) {
             try {
                 parsedData = JSON.parse(data);
             } catch (e) {
-                log.warning("Websocket: incoming parse error:", e)
+                log.warn("Websocket: incoming parse error:", e)
             }
 
             if (typeof (parsedData) !== "undefined") {

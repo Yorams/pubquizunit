@@ -117,10 +117,10 @@ exports.getScore = function (req, res) {
                                                     answersChecked[roundIndex][questionIndex][teamsLookup[currTeamUuid].index].score = score;
                                                 }
                                             } else {
-                                                log.info(`Orphaned answer found, corresponding team is not found: ${currTeamUuid}`)
+                                                log.warn(`Orphaned answer found, corresponding team is not found: ${currTeamUuid}`)
                                             }
                                         } else {
-                                            log.info(`Orphaned answer found, corresponding question is not found: ${rows[key].question_uuid}`)
+                                            log.warn(`Orphaned answer found, corresponding question is not found: ${rows[key].question_uuid}`)
                                         }
 
                                     } catch (error) {

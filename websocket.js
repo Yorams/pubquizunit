@@ -378,7 +378,7 @@ function pubQuestionToAll (action, wss) {
 
                 }).catch((error) => { common.errorHandler("Websocket: error: cannot update current", error) })
         } else {
-            log.warning("Websocket: cannot find round or question")
+            log.warn("Websocket: cannot find round or question")
         }
     });
 }
