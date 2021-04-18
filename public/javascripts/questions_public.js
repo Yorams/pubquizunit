@@ -112,6 +112,8 @@ $(".roundsMain").on("click", ".addQuestionBtn", function (e) {
 
 // Delete question button
 $(".roundsMain").on("click", ".delQuestionBtn", function (e) {
+    var roundUuid = $(this).closest(".roundMain").data("round-uuid");
+
     confirmModal("Are you sure you want to delete this questions? <br>This will also delete any corresponding answers from the teams.", () => {
         var sendData = {
             itemType: "del_question",
@@ -119,7 +121,9 @@ $(".roundsMain").on("click", ".delQuestionBtn", function (e) {
         }
         sendPost("edit_item", sendData, function (data) {
             if (data.result == "success") {
-                getQuestionData();
+                updateOrder(roundUuid, () => {
+                    getQuestionData();
+                })
 
                 // Empty the editor
                 $(".questionEditorMain").html("");
@@ -140,9 +144,12 @@ $(".roundsMain").on("click", ".dupQuestionBtn", function (e) {
     }
     sendPost("edit_item", sendData, function (data) {
         if (data.result == "success") {
-            getQuestionData(() => {
-                openInEditor(sendData.roundUuid, data.questionUuid);
-            });
+            updateOrder(sendData.roundUuid, () => {
+                getQuestionData(() => {
+                    openInEditor(sendData.roundUuid, data.questionUuid);
+                });
+            })
+
         } else if (data.result == "error") {
             showError("Something is going wrong.", "Cannot duplicate the question, try again or contact the system admin")
         }
@@ -228,25 +235,7 @@ function getQuestionData (callback = () => { }) {
                     var itemEl = evt.item
                     var roundUuid = $(itemEl).closest(".roundMain").data("round-uuid");
 
-                    // Create list with uuid's of questions
-                    var orderList = [];
-                    $(`#list-${roundUuid}`).children().each(function (index) {
-                        orderList.push({ order: index, uuid: $(this).data("question-uuid") })
-                    })
-
-                    // Save order if dragging is done
-                    var sendData = {
-                        itemType: "save_order",
-                        roundUuid: roundUuid,
-                        order: JSON.stringify(orderList)
-                    }
-                    sendPost("edit_item", sendData, function (data) {
-                        if (data.result == "success") {
-                            getQuestionData();
-                        } else if (data.result == "error") {
-                            showError("Something is going wrong.", "Cannot save the order, try again or contact the system admin")
-                        }
-                    })
+                    updateOrder(roundUuid);
                 },
             });
         } else {
@@ -254,6 +243,28 @@ function getQuestionData (callback = () => { }) {
 
         }
         callback();
+    })
+}
+
+function updateOrder (roundUuid) {
+    // Create list with uuid's of questions
+    var orderList = [];
+    $(`#list-${roundUuid}`).children().each(function (index) {
+        orderList.push({ order: index, uuid: $(this).data("question-uuid") })
+    })
+
+    // Save order if dragging is done
+    var sendData = {
+        itemType: "save_order",
+        roundUuid: roundUuid,
+        order: JSON.stringify(orderList)
+    }
+    sendPost("edit_item", sendData, function (data) {
+        if (data.result == "success") {
+            getQuestionData();
+        } else if (data.result == "error") {
+            showError("Something is going wrong.", "Cannot save the order, try again or contact the system admin")
+        }
     })
 }
 
