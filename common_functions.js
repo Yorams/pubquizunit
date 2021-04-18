@@ -133,6 +133,10 @@ exports.errorHandler = function (action, error, req = false, res = false) {
     }
 }
 
+/*
+Current order is a array with all the info about rounds and questions without the question data.
+Used for question order and the control mechanism (next, previous)
+*/
 var currentOrder = {}
 exports.updateCurrentOrder = function (knex) {
     // Unpdate the question and round count.
@@ -267,7 +271,13 @@ exports.getSetting = function (knex, settingId) {
         return knex('settings')
             .where({ id: settingId })
             .first()
-            .then(row => { resolve(row) })
+            .then(row => {
+                // Convert db entry to boolean
+                if (row.type == "boolean") {
+                    row.value = (row.value == "1") ? true : false
+                }
+                resolve(row)
+            })
             .catch(error => {
                 log.error(`Cannot get setting: ${settingId}`)
                 reject(error)
