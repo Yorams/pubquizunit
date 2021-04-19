@@ -113,6 +113,7 @@ To view the log enter this:
 - [ ] Do some costumizable styling.
 - [ ] Make a settings page to adjust settings.
 - [ ] Update order by removing question. Current update mechanism is triggered by frontend. Must do it in backend.
+- [ ] Configure stream from frontend
 
 ### ToDo Minor
 - Better user feedback of broken websocket connections
