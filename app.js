@@ -162,7 +162,7 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
     // Main route defenitions
     app.use('/quiz', limiter, quizRouter);
 
-    app.use('/', common.isAuthed, indexRouter);
+    app.use('/', indexRouter);
     app.use('/user', common.isAuthed, userRouter);
     app.use('/control', common.isAuthed, controlRouter);
     app.use('/score', common.isAuthed, scoreRouter);

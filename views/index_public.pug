@@ -1,0 +1,26 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle #{quizTitle}
+        
+block content
+    div.container.my-5
+        div.mb-4.row
+            div.col-xl-3
+            div.col-xl-6
+                img.img-fluid(src="/images/score_header.png")
+            div.col-xl-3
+            
+        div.jumbotron
+            h1.display-4 Welkom bij de koningsdag pubquiz 2021.
+            p.lead Om mee te doen moet je eerst je team aanmelden. Dat kan via deze pagina: <a href="https://www.koningsdaginhouten.nl/pubquiz/" target="_blank">Aanmelden voor de pubquiz</a>.
+                |  Je krijgt dan een persoonlijke link toegestuurd om je antwoorden door te geven. Het aanmelden kan tot 26 April. <br>
+            p Als je de pubquiz wilt volgen zonder dat je je team hebt aangemeld kan dat ook door de quiz te volgen via de livestream hieronder.
+        include stream.pug
+
+    div.text-right.text-white
+        a(href="/login") Inloggen
+
+block scripts
+    script(src='/javascripts/index_public.js')
