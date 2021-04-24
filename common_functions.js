@@ -81,49 +81,21 @@ exports.hashPassword = function (password, salt) {
     return hash.digest('hex');
 }
 
-var firstLogin = true;
+
 
 // Middleware to check of user is logged in.
 exports.isAuthed = function (req, res, next) {
-    var loginDisabled = false;
 
-    if (loginDisabled && firstLogin) {
-        passport.authenticate('local', function (err, user, info) {
-            if (err) { return next(err); }
-
-            var user = {
-                id: 4,
-                username: 'Admin',
-                role: 'user'
-            }
-
-            if (!user) {
-                return res.send(JSON.stringify({
-                    status: "failed",
-                    message: info.message
-                }));
-            }
-
-            req.logIn(user, function (err) {
-                if (err) { return next(err); }
-                next();
-                firstLogin = false;
-            });
-        })(req, res, next);
+    if (req.isAuthenticated()) {
+        next();
     } else {
-
-        if (req.isAuthenticated()) {
-            next();
-        } else {
-            if (req.method == "GET") {
-                // Send previous page with redirect
-                res.redirect(`/login?r=${encodeURI(req.url)}`)
-            } else if (req.method == "POST") {
-                res.send({ result: "error", errorCode: "logged_out", errorMsg: "Login to continue." })
-            }
+        if (req.method == "GET") {
+            // Send previous page with redirect
+            res.redirect(`/login?r=${encodeURI(req.url)}`)
+        } else if (req.method == "POST") {
+            res.send({ result: "error", errorCode: "logged_out", errorMsg: "Login to continue." })
         }
     }
-
 }
 
 exports.errorHandler = function (action, error, req = false, res = false) {
