@@ -251,6 +251,23 @@ div.subTitle{
     -webkit-font-smoothing: antialiased;
 }
 .scoreOthers{
+    -moz-column-count: 1;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 1;
+    -webkit-column-gap: 20px;
+    column-count: 1;
+    column-gap: 20px;
+    list-style: none;
+    font-size: 25px;
+    width: 100%;
+}
+
+.scoreOthers li{
+    border-bottom: 1px solid #7c949e;
+    margin-bottom: 5px;
+}
+
+.scoreOthersVideo{
     -moz-column-count: 3;
     -moz-column-gap: 20px;
     -webkit-column-count: 3;
@@ -262,7 +279,7 @@ div.subTitle{
     width: 100%;
     height: 500px;
 }
-.scoreOthers li{
+.scoreOthersVideo li{
     border-bottom: 2px solid #4491b3;
     margin-bottom: 5px;
 }
