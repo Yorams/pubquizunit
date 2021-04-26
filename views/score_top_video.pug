@@ -5,7 +5,7 @@ block content
 
     div.scoreLogo.mt-5
 
-    div.container
+    div.container-fluid
         div.videoTitle Scorebord
         div.scoreMain.video.top
 
@@ -23,14 +23,17 @@ block content
         | {{/each}}
 
         // De rest
-        ul.scoreOthers
-            | {{#each scoreOthers}}
-            li
-                div.row.topRow
-                    div.col-2.text-right
-                        b {{inc @index 3}}
-                    div.col-6 {{{this.name}}}
-                    div.col-4 {{round this.totalScore}}
+        div.scoreSlider
+            | {{#each scorePages}}
+            ul.scoreOthers
+                | {{#each this}}
+                li
+                    div.row.topRow
+                        div.col-1.text-right
+                            b {{inc this.place 3}}
+                        div.col-9 {{{this.name}}}
+                        div.col-2 {{round this.totalScore}}
+                | {{/each}}
             | {{/each}}
 
     script#scoreViewBtn(type="text/x-handlebars-template")
@@ -41,13 +44,12 @@ block content
 block scripts
     script(src='/scripts/tsparticles/tsparticles.min.js')
     script(src='/scripts/jquery-particles/jquery.particles.min.js')
+    script(src='/javascripts/simpleslider.min.js')
     script(src='/javascripts/score_public.js')
     
     script.
         document.title = "Quizunit Topscore video"
         $("body").addClass("videobody");
-        setInterval(function(){
-            loadScore("top");
-        }, 5000)
+        
         // Load score
         loadScore("top");

@@ -116,6 +116,11 @@ function loadScore (view) {
         questionTemplates = data.questionTemplates
 
         if (view == "overview") {
+            // Adjust page width to fit all answers
+            var pageWidth = (Object.keys(data.teams).length * 40) + 100
+            $(".scoreMain").css("width", `${pageWidth}px`)
+            console.log(pageWidth)
+
             $(".scoreMain").html(scoreBoard(data));
             $(".scoreNumber").popover('hide')
 
@@ -155,12 +160,56 @@ function loadScore (view) {
             var scoreStage = [sortedScore[0], sortedScore[1], sortedScore[2]]
             var scoreOthers = sortedScore.splice(3, sortedScore.length);
 
-            $(".scoreMain").html(scoreBoard({ scoreStage: scoreStage, scoreOthers: scoreOthers }));
+            var pageSize = 15;
+
+            // Calculate score pages
+            var pageCount = Math.ceil(scoreOthers.length / pageSize)
+            var scorePages = []
+
+            // Define empty array
+            for (let i = 0; i < pageCount; i++) {
+                scorePages.push([])
+            }
+
+            // Devide score's per page
+            var i = 0;
+            var page = 0;
+            for (key in scoreOthers) {
+                if (i == pageSize) {
+                    page++;
+                    i = 0;
+                }
+                // Add place number
+                scoreOthers[key].place = parseInt(key) + 1
+
+                // Push to score page
+                scorePages[page].push(scoreOthers[key])
+
+                i++;
+            }
+
+            $(".scoreMain").html(scoreBoard({ scoreStage: scoreStage, scoreOthers: scoreOthers, scorePages: scorePages }));
+
+            // Slider init
+            var scoreSlider = simpleslider.getSlider({
+                container: $('.scoreSlider')[0],
+                transitionTime: 2,
+                delay: 5,
+                onChangeEnd: (actualIndex, next) => {
+                    // Refresh data on end slider
+                    if (actualIndex == 0) {
+                        // Dispose current slider
+                        scoreSlider.dispose()
+
+                        // Reload score data
+                        loadScore("top")
+                    }
+                }
+            });
+
         }
     })
 }
-
-
 
 $("#tsparticles")
     .particles()
