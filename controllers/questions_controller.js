@@ -10,6 +10,9 @@ var log = logger.app(path.parse(__filename).name);
 exports.getPageContent = function (req, res) {
     res.render('questions', { username: req.user.username });
 }
+exports.getPrintContent = function (req, res) {
+    res.render('questions_print', { username: req.user.username });
+}
 
 exports.editItem = function (req, res) {
     var knex = req.app.get('knex');
@@ -280,7 +283,10 @@ exports.editItem = function (req, res) {
                     .where({ uuid: questionUuid })
                     .update({ name: questionName, parameters: JSON.stringify(parametersIn) })
                     .then(() => res.send({ result: "success" }))
-                    .catch((error) => { common.errorHandler("Cannot update question", error, req, res) })
+                    .catch((error) => {
+                        log.error(`Cannot update question: ${error} \n ${error.stack}`)
+                        res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot update question` })
+                    })
 
             })
             .catch((error) => { common.errorHandler("Cannot get question", error, req, res) })

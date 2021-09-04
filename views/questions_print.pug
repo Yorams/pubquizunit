@@ -1,0 +1,61 @@
+extends layout
+
+block header
+   
+
+block content
+    div.container.h-100
+        div.roundsMain
+
+
+    // Templates
+    script#roundTemplate(type="text/x-handlebars-template")
+        | {{#each this.questions}}
+        // Rounds
+        div.mb-4.roundMain(style="cursor:pointer;", data-round-uuid="{{this.uuid}}")
+            div.d-flex.w-100.mb-1.justify-content-between.roundToolbar
+                h4.roundName {{inc this.order 0}}. {{this.name}}
+
+            // Questions
+            div.list-group.roundContent(id="list-{{this.uuid}}")
+                | {{#each this.questions}}
+                div.list-group-item.list-group-item-action.questionMain(data-question-uuid="{{this.uuid}}")
+                    div.d-flex.w-100.justify-content-between
+                        div.questionName 
+                            span.font-weight-bolder {{inc this.order 0}}.
+                            span.text-muted  {{getTemplateName this.template}}
+                            div.font-weight-bolder {{this.name}}
+                            div.parameters {{{getQuestionContent ../this.uuid this.uuid}}}
+                        
+                | {{/each}}
+        | {{/each}}
+
+    script#editorTemplate(type="text/x-handlebars-template")
+        div.questionMain(data-question-uuid="{{content.uuid}}", data-round-uuid="{{round.uuid}}", data-template="{{content.template}}")
+            div {{{parameters}}}
+                
+    //** Form Templates **//
+
+    script#radioTemplate(type="text/x-handlebars-template")
+        div {{this.data.correct.[0]}}
+           
+    script#checkboxTemplate(type="text/x-handlebars-template")
+        | {{#each this.data.correct}}
+        div {{this}}
+        | {{/each}}
+        
+
+    script#textTemplate(type="text/x-handlebars-template")
+        div {{this.data.correct}}
+
+    script#numberTemplate(type="text/x-handlebars-template")
+        div {{this.data.correct}}
+    
+    script#messageTemplate(type="text/x-handlebars-template")
+        div {{this.data.content}}
+                
+    script#alertTemplate(type="text/x-handlebars-template")
+        div alert
+
+block scripts
+    script(src='/javascripts/questions_print_public.js')
