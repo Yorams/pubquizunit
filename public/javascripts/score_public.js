@@ -183,7 +183,10 @@ function loadScore (view) {
                 scoreOthers[key].place = parseInt(key) + 1
 
                 // Push to score page
-                scorePages[page].push(scoreOthers[key])
+                if (parseInt(scoreOthers[key].totalScore) != 0) {
+                    scorePages[page].push(scoreOthers[key])
+                }
+                //scorePages[page].push(scoreOthers[key])
 
                 i++;
             }
