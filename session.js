@@ -2,8 +2,6 @@ var session = require('express-session');
 var MemoryStore = require('memorystore')(session)
 
 // Define storage for sessions
-//const store = new KnexSessionStore({ knex });
-
 const store = new MemoryStore({ checkPeriod: 86400000 })
 
 // Define session settings

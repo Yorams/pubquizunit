@@ -119,9 +119,10 @@ $(".btnConfirmDelItem").on("click", function () {
 function getList () {
     sendPost("list", function (responseData) {
         glob_list = responseData.data;
-
+        timeago.cancel();
         if (responseData.data.length != 0) {
             $(".listMain").html(listTemplate({ listData: responseData.data, baseUrl: window.location.origin }));
+            timeago.render(document.querySelectorAll('.timeago'), "nl");
         } else {
             $(".listMain").html(alertTemplate("No teams found, add a team to continue."))
 

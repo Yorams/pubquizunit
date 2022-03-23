@@ -321,3 +321,11 @@ div.controlQuestionsMain{
     overflow-y: scroll;
     scroll-behavior: smooth;
 }
+
+/** Teams **/
+.editItem .active{
+    color: #198754;
+}
+.editItem .inactive{
+    color: #dc3545;
+}

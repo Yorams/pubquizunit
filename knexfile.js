@@ -1,13 +1,18 @@
 var path = require('path');
 
 var databasePath = path.join(__dirname, "database.db")
+
+
 module.exports = {
 
     development: {
-        client: 'sqlite3',
+        client: 'mysql',
         useNullAsDefault: true,
         connection: {
-            filename: databasePath
+            host: '127.0.0.1',
+            user: 'develop',
+            password: 'pD6xvQ582kBF9sNSxXst',
+            database: 'pubquiz_kday'
         }
     },
 
@@ -16,9 +21,9 @@ module.exports = {
         useNullAsDefault: true,
         connection: {
             host: '127.0.0.1',
-            user: 'USERNAME',
-            password: 'PASSWORD',
-            database: 'DATABASE'
+            user: 'develop',
+            password: 'pD6xvQ582kBF9sNSxXst',
+            database: 'pubquiz_kday'
         }
     }
 };

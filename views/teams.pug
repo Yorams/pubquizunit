@@ -33,8 +33,12 @@ block content
                                 input.form-control.editInput#name(type="text", name="name", required)
 
                             div.form-group
-                                label(for="name") GUID
-                                input.form-control.editInput#name(type="text", name="uuid", placeholder="Is automatically filled in")
+                                label(for="guid") GUID
+                                input.form-control.editInput#guid(type="text", name="uuid", placeholder="Is automatically filled in")
+
+                            div.form-group
+                                label(for="email") E-Mail
+                                input.form-control.editInput#email(type="text", name="email",)
 
                             div.form-group
                                 div.errorMsg.text-danger 
@@ -67,6 +71,9 @@ block content
                 tr 
                     th(scope="col") ID
                     th(scope="col") Name
+                    th(scope="col") E-Mail
+                    th(scope="col") Status
+                    th(scope="col") Laatst gezien
                     th(scope="col") GUID
                     th.text-right(scope="col") Tools
             tbody
@@ -74,9 +81,14 @@ block content
                 tr.editItem(data-id="{{this.id}}")
                     td {{this.id}}
                     th(scope="row") {{this.name}}
+                    th(scope="row") {{this.email}}
+                    th(scope="row", class="{{this.status}}") {{this.status}}
+                    th(scope="row")    
+                        div.timeago(datetime="{{this.lastseen}}") {{this.lastseen}}
+
                     td 
                         a.noEdit(href="{{../baseUrl}}/quiz/{{this.uuid}}", target="_blank")
-                            | {{../baseUrl}}/quiz/{{this.uuid}}
+                            | {{this.uuid}}
                             
                     td.text-right(style="padding: 0.25rem;")
                         button.btn.btn-sm.btn-danger.btnDelItem(data-id="{{this.id}}")
@@ -87,4 +99,6 @@ block content
         div.alert.alert-primary {{this}}
 
 block scripts
+    script(src='/scripts/timeago/timeago.full.min.js')
     script(src='/javascripts/teams_public.js')
+    

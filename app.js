@@ -135,6 +135,7 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
     var userRouter = require('./routes/user_routes');
     var indexRouter = require('./routes/index_routes');
     var quizRouter = require('./routes/quiz_routes');
+    var registrationRouter = require('./routes/registration_routes');
     var controlRouter = require('./routes/control_routes');
     var scoreRouter = require('./routes/score_routes');
     var teamsRouter = require('./routes/teams_routes');
@@ -152,6 +153,7 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
     app.use('/scripts/jquery-sortable', express.static(__dirname + '/node_modules/jquery-sortablejs/'));
     app.use('/scripts/tsparticles', express.static(__dirname + '/node_modules/tsparticles/dist/'));
     app.use('/scripts/jquery-particles', express.static(__dirname + '/node_modules/jquery-particles/dist/'));
+    app.use('/scripts/timeago', express.static(__dirname + '/node_modules/timeago.js/dist/'));
 
     app.use('/login', limiter, authRouter);
     app.use('/logout', function (req, res) {
@@ -161,6 +163,7 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
 
     // Main route defenitions
     app.use('/quiz', limiter, quizRouter);
+    app.use('/registration', limiter, registrationRouter);
 
     app.use('/', indexRouter);
     app.use('/user', common.isAuthed, userRouter);

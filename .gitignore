@@ -3,4 +3,3 @@ settings.json
 log/*
 database.db
 ignore/
-knexfile.js

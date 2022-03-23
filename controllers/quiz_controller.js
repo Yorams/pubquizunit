@@ -17,9 +17,19 @@ exports.getPageContent = function (req, res) {
             .first()
             .then((row) => {
                 if (typeof (row) !== "undefined") {
+                    // Team found
                     var currentTeam = row
                     currentTeam.success = true;
+
+                    // Set last seen
+                    knex('teams')
+                        .where({ uuid: uuidIn })
+                        .update({ "lastseen": knex.fn.now(), "status": "active" })
+                        .then(() => log.info(`Quiz page is opened, team: ${uuidIn}`))
+                        .catch((error) => log.warn(`Cannot set lastseen and status from team: ${uuidIn}, data: ${error}`))
+
                 } else {
+                    // Team not found
                     var currentTeam = {
                         success: false
                     }

@@ -1,0 +1,58 @@
+extends layout
+
+block header
+    div.container
+        div.headerTitle Team Registreren
+        
+block content
+    div.container.my-5.pb-5
+        div.p-5.mb-4.bg-light.rounded-3
+            h1.display-4 Registreer je team.
+            p.lead Om mee te kunnen doen moet je jou team eerst registreren. Vul hieronder de gegevens in en klik op verzenden. Je krijgt via e-mail en/of SMS een link toegestuurd waarmee je de registratie van jou team kan bevestigen.
+
+            h3 Hoe werkt het?
+            ul.list-group
+                li.list-group-item 
+                    b.pr-2 1.
+                    span Vul je gegevens in en klik op "Verzenden"
+                li.list-group-item
+                    b.pr-2 2. 
+                    span Je ontvangt van ons een e-mail of sms met een link. Bevestig je registratie door op deze link te klikken.
+                li.list-group-item
+                    b.pr-2 3. 
+                    span Je word automatisch doorgestuurd naar de quiz omgeving.
+                li.list-group-item
+                    b.pr-2 4. 
+                    span Beantwoord de vragen in de quiz omgeving.
+                li.list-group-item
+                    b.pr-2 5. 
+                    span Klik je perongeluk je venster weg? Klik dan nog een keer op de link in je e-mail.
+
+        div.msgContainer.collapse
+            div.alert.alert-success 
+                h4.alert-heading Bedankt voor het registreren.
+                p.mb-0 Kijk in je e-mail of SMS inbox voor de link en volg de instructies.
+
+        div.formContainer.collapse.show
+            h3 Vul je gegevens in
+            form(novalidate).main-form.needs-validation
+                div.mb-3
+                    label.form-label Team naam
+                    input.form-control(type="text", name="teamname" maxlength="255" required)
+                    div.invalid-feedback Vul een teamnaam in.
+                    small.form-text.text-muted Je teamnaam kan je later NIET veranderen.
+                div.mb-3
+                    label.form-label E-mailadres
+                    input.form-control(type="email", name="email" required)
+                    div.invalid-feedback Vul je e-mail adres in.
+                //div.mb-3
+                    label.form-label Mobiel telefoonnummer
+                    input.form-control(type="tel", name="tel" required)
+                    div.invalid-feedback Vul een mobiel telefoonnummer in.
+                div.alert.alert-warning We e-mail adres om de bevestigingslink naar je toe te sturen.
+                button.btn.btn-primary(type="submit") Verzenden
+
+        
+
+block scripts
+    script(src='/javascripts/registration_public.js')

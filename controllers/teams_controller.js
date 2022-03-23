@@ -7,7 +7,7 @@ exports.getPageContent = function (req, res) {
 exports.getList = function (req, res) {
     var knex = req.app.get('knex');
     knex('teams')
-        .select('id', 'name', 'uuid')
+        .select('id', 'name', 'email', 'uuid', "lastseen", "status")
         .then((rows) => res.send({ result: "success", data: rows }))
         .catch((error) => res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get teams: ${error}` }))
 }
@@ -16,7 +16,6 @@ exports.edit = function (req, res) {
     var knex = req.app.get('knex');
     var id = req.body.id;
     var name = req.body.name;
-
 
     var dbData = { name: name }
 
