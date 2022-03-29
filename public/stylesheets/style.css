@@ -329,3 +329,12 @@ div.controlQuestionsMain{
 .editItem .inactive{
     color: #dc3545;
 }
+
+/** Registration **/
+div.loadingIcon{
+    opacity: 0;
+    transition: 0.3s;
+}
+div.loadingIcon.show{
+    opacity: 1;
+}

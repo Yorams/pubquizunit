@@ -9,6 +9,7 @@ const common = require("./common_functions");
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
 const rateLimit = require("express-rate-limit");
+const { RecaptchaEnterpriseServiceClient } = require('@google-cloud/recaptcha-enterprise');
 
 // Get settings
 module.exports = common.getJsonFile("/settings").then(function (appSettings) {
@@ -35,7 +36,14 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
         max: 100 // limit each IP to 100 requests per windowMs
     });
 
+    // Create assesment client
+    const client = new RecaptchaEnterpriseServiceClient();
+    const projectPath = client.projectPath(appSettings.recaptcha.projectId);
 
+    app.set('recaptcha', {
+        client: client,
+        projectPath: projectPath
+    });
 
     // Check if users table is present
     knex("users")
@@ -194,6 +202,6 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
         if (err.message.includes("ENOENT") && err.message.includes("settings")) {
             log.error(`Cannot load settings file: settings.json. You have to rename settings_empty.json to settings.json and alter the settings in de file.`)
         } else {
-            log.error(err.stack)
+            console.log(err.stack)
         }
     })

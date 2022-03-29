@@ -2,12 +2,33 @@
     "app": {
         "port": 80,
         "sslPort": 443,
-        "logLevel": "debug"
+        "logLevel": "debug",
+        "baseUrl": "FILL_IN_COMPLETE_URL"
+    },
+    "recaptcha": {
+        "projectId": "FILL_IN",
+        "id": "FILL_IN",
+        "apiKey": "FILL_IN",
+        "threshold": 0.5
+    },
+    "email": {
+        "host": "mail.example.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+            "user": "Pubquix@example.nl",
+            "pass": "password"
+        },
+        "from": "\"Pubquix\" <Pubquix@example.nl>"
     },
     "database": {
-        "client": "sqlite3",
+        "client": "mysql",
         "connection": {
-            "filename": "database.db"
+            "host": "127.0.0.1",
+            "user": "database-user",
+            "password": "password",
+            "database": "pubquix",
+            "charset": "utf8mb4"
         }
     },
     "certificate": {
@@ -16,6 +37,6 @@
         "chain": "/etc/letsencrypt/live/FILL_IN_HOST/chain.pem"
     },
     "quiz": {
-        "title": "Pubquiz Unit"
+        "title": "Pubquix"
     }
 }

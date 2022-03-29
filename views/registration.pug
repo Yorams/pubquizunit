@@ -1,4 +1,6 @@
 extends layout
+block head 
+    script(src=`https://www.google.com/recaptcha/enterprise.js?render=${recaptcha.id}`)
 
 block header
     div.container
@@ -50,9 +52,14 @@ block content
                     input.form-control(type="tel", name="tel" required)
                     div.invalid-feedback Vul een mobiel telefoonnummer in.
                 div.alert.alert-warning We e-mail adres om de bevestigingslink naar je toe te sturen.
-                button.btn.btn-primary(type="submit") Verzenden
+                div.d-flex.align-items-center.gap-3
+                    button.btn.btn-primary.submitBtn(type="submit") Verzenden
+                    div.loadingIcon
+                        i.mdi.mdi-spin.mdi-loading.mdi-36px
 
         
-
+    script.
+        var recaptchaId = "!{recaptcha.id}";
+        
 block scripts
     script(src='/javascripts/registration_public.js')
