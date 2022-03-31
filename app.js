@@ -172,6 +172,7 @@ module.exports = common.getJsonFile("/settings").then(function (appSettings) {
     // Main route defenitions
     app.use('/quiz', limiter, quizRouter);
     app.use('/registration', limiter, registrationRouter);
+    app.use('/registreren', limiter, registrationRouter);
 
     app.use('/', indexRouter);
     app.use('/user', common.isAuthed, userRouter);
