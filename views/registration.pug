@@ -10,7 +10,7 @@ block content
     div.container.my-5.pb-5
         div.p-5.mb-4.bg-light.rounded-3
             h1.display-4 Registreer je team.
-            p.lead Om mee te kunnen doen moet je jou team eerst registreren. Vul hieronder de gegevens in en klik op verzenden. Je krijgt via e-mail en/of SMS een link toegestuurd waarmee je de registratie van jou team kan bevestigen.
+            p.lead Om mee te kunnen doen moet je jou team eerst registreren. Vul hieronder de gegevens van je team in en klik op verzenden. Je krijgt een e-mail toegestuurd met een link waarmee toegang krijgt tot de quiz.
 
             h3 Hoe werkt het?
             ul.list-group
@@ -19,7 +19,7 @@ block content
                     span Vul je gegevens in en klik op "Verzenden"
                 li.list-group-item
                     b.pr-2 2. 
-                    span Je ontvangt van ons een e-mail of sms met een link. Bevestig je registratie door op deze link te klikken.
+                    span Je ontvangt van ons een e-mail met een link. Klik op de link.
                 li.list-group-item
                     b.pr-2 3. 
                     span Je word automatisch doorgestuurd naar de quiz omgeving.
@@ -51,13 +51,11 @@ block content
                     label.form-label Mobiel telefoonnummer
                     input.form-control(type="tel", name="tel" required)
                     div.invalid-feedback Vul een mobiel telefoonnummer in.
-                div.alert.alert-warning We e-mail adres om de bevestigingslink naar je toe te sturen.
                 div.d-flex.align-items-center.gap-3
                     button.btn.btn-primary.submitBtn(type="submit") Verzenden
                     div.loadingIcon
                         i.mdi.mdi-spin.mdi-loading.mdi-36px
 
-        
     script.
         var recaptchaId = "!{recaptcha.id}";
         

@@ -103,8 +103,8 @@ exports.edit = function (req, res) {
 
                                             // Send mail
                                             mailer.sendMail(appSettings.email, email, {
-                                                subject: "Bedankt voor het registreren",
-                                                text: `Bedankt voor het registreren, klik hier: ${new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)}`,
+                                                subject: "Registratie is voltooid: Dit is je link naar de quiz",
+                                                text: `Bedankt voor het registreren, klik hier om mee te doen aan de quiz: ${new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)}`,
                                                 html: html,
                                             }).then((info => {
                                                 log.info(`Created user and send mail ${dbData.uuid}`);
