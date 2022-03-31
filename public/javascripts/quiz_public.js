@@ -1,4 +1,3 @@
-var glob_currStatus;
 var questionTemplate = Handlebars.compile($('#questionTemplate').html());
 var radioTemplate = Handlebars.compile($('#radioTemplate').html());
 var checkboxTemplate = Handlebars.compile($('#checkboxTemplate').html());
@@ -69,7 +68,7 @@ jQuery(function () {
             var sendData = {
                 teamUuid: glob_data.uuid,
                 answer: JSON.stringify(parameters),
-                questionUuid: glob_currStatus.question.uuid,
+                questionUuid: glob_data.questionUuid,
             }
 
             $.post("submitanswer", sendData, function (data) {
@@ -96,11 +95,19 @@ jQuery(function () {
 function loadQuestion (data) {
     // Clear countdown timer
     clearInterval(countdownTimer);
+    glob_data.quizLive = data.quizLive;
+    glob_data.questionUuid = data.question.uuid
 
+    if (data.quizLive) {
+        $(".quizContainer").addClass("show");
+        $(".messageContainer").removeClass("show");
+    } else {
+        $(".quizContainer").removeClass("show");
+        $(".messageContainer").addClass("show");
+    }
     var welcomeModalState = (!data.quizLive) ? "show" : "hide"
     $(".welcomeModal").modal(welcomeModalState)
 
-    glob_currStatus = data;
     $(".headerSubTitle").html(`Team: ${glob_data.name}`);
     $(".subTitle").html(data.round.name)
 

@@ -7,7 +7,7 @@ block header
 
 block content
     
-    div.container-fluid
+    div.container.quizContainer.collapse
         div.row
             //div.col-lg-6
                 include stream.pug
@@ -19,15 +19,11 @@ block content
                     
                 div.questionMain
 
-    div.modal.welcomeModal(tabindex='-1', data-backdrop="static")
-        div.modal-dialog.modal-lg
-            div.modal-content
-
-                div.modal-body.text-center
-                    h1.display-1 Welkom,
-                    h2 bij de pubquix show.
-                    p De quiz is nog niet begonnen, maar dit kan elk moment gebeuren. 
-                    div.alert.alert-info Nog even geduld, we gaan zo beginnen. Deze melding verdwijnt vanzelf.
+    div.container.messageContainer.collapse
+        h1.display-1 Welkom,
+            h2 bij de #{quizTitle}.
+            p De quiz is nog niet begonnen, maar dit kan elk moment gebeuren. 
+            div.alert.alert-info Nog even geduld, we gaan zo beginnen. Deze melding verdwijnt vanzelf.                  
 
     //include question_templates.html
     include question_templates.pug
