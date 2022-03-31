@@ -21,9 +21,9 @@ script#radioTemplate(type="text/x-handlebars-template")
         label {{this.data.name}}
 
         | {{#each this.data.content}}
-        div.custom-control.custom-radio.mb-1.optionInput(data-id="{{@key}}")
-            | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}"/>
-            label.custom-control-label.w-100(for="answer{{@index}}") {{this}}
+        div.form-check.mb-1.optionInput(data-id="{{@key}}")
+            | <input class="form-check-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}"/>
+            label.form-check-label.w-100(for="answer{{@index}}") {{this}}
         | {{/each}}
 
 
@@ -31,9 +31,9 @@ script#checkboxTemplate(type="text/x-handlebars-template")
     div.form-group.optionInputMain(data-id="{{this.data.id}}")
         label {{this.data.name}}
         | {{#each this.data.content}}
-        div.custom-control.custom-checkbox.mb-1.optionInput(data-id="{{@key}}")
-            | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}"/>
-            label.custom-control-label.w-100(for="answer{{@index}}")  {{this}}
+        div.form-check.mb-1.optionInput(data-id="{{@key}}")
+            | <input class="form-check-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}"/>
+            label.form-check-label.w-100(for="answer{{@index}}")  {{this}}
         | {{/each}}
 
 

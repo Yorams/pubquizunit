@@ -29,7 +29,8 @@ block content
                     p De quiz is nog niet begonnen, maar dit kan elk moment gebeuren. 
                     div.alert.alert-info Nog even geduld, we gaan zo beginnen. Deze melding verdwijnt vanzelf.
 
-    include question_templates.html
+    //include question_templates.html
+    include question_templates.pug
     
     script.
         var glob_data = JSON.parse('!{data}');
