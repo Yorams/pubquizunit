@@ -28,19 +28,19 @@ block content
                     div.modal-body
                         
                             input.editInput(type="hidden", name="id")
-                            div.form-group
-                                label(for="name") Name
+                            div.mb-3
+                                label.form-label(for="name") Name
                                 input.form-control.editInput#name(type="text", name="name", required)
 
-                            div.form-group
-                                label(for="guid") GUID
+                            div.mb-3
+                                label.form-label(for="guid") GUID
                                 input.form-control.editInput#guid(type="text", name="uuid", placeholder="Is automatically filled in")
 
-                            div.form-group
-                                label(for="email") E-Mail
+                            div.mb-3
+                                label.form-label(for="email") E-Mail
                                 input.form-control.editInput#email(type="text", name="email",)
 
-                            div.form-group
+                            div.mb-3
                                 div.errorMsg.text-danger 
 
                     div.modal-footer

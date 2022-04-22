@@ -54,7 +54,7 @@ block content
                 div.dropdown.btn-group.btn-group-sm
                     button.btn.btn-danger.delRoundBtn(data-question-uuid="{{this.uuid}}", title="Delete question")
                         i.mdi.mdi-delete-outline
-                    button.btn.btn-success.dropdown-toggle(data-toggle="dropdown")
+                    button.btn.btn-success.dropdown-toggle(data-bs-toggle="dropdown")
                         i.mdi.mdi-plus-thick
                         |  Question
                     div.dropdown-menu(data-round-uuid="{{this.uuid}}")
@@ -83,7 +83,7 @@ block content
         div.questionMain(data-question-uuid="{{content.uuid}}", data-round-uuid="{{round.uuid}}", data-template="{{content.template}}")
             div.questionTemplate.text-muted.mb-2 Template: {{content.template}}
             form.questionForm
-                div.form-group
+                div.mb-3
                     label Question:
                     textarea.form-control.editorInput.questionNameInput(rows="4" required) {{content.name}}
                 div.mb-2 {{{parameters}}}
@@ -92,18 +92,17 @@ block content
     //** Form Templates **//
 
     script#radioTemplate(type="text/x-handlebars-template")
-        div.form-group.optionInputMain(data-id="{{this.data.id}}")
+        div.mb-3.optionInputMain(data-id="{{this.data.id}}")
             label {{this.data.name}}
 
             | {{#each this.data.content}}
-            div.custom-control.custom-radio.mb-1.optionInput(data-id="{{@key}}")
-                | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
-                label.custom-control-label.w-100(for="answer{{@index}}")
+            div.form-check.mb-1.optionInput(data-id="{{@key}}")
+                | <input class="form-check-input optionCorrect" id="answer{{@index}}" type="radio" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
+                label.form-check-label.w-100(for="answer{{@index}}")
                     div.input-group
                         input.form-control.optionName(type="text", value="{{this}}", data-id="{{@key}}")
-                        div.input-group-append
-                            button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
-                                i.mdi.mdi-delete-outline
+                        button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
+                            i.mdi.mdi-delete-outline
             | {{/each}}
             div.text-center
                 button.btn.btn-sm.btn-primary.addOptionBtn
@@ -111,17 +110,16 @@ block content
                         | Add option
 
     script#checkboxTemplate(type="text/x-handlebars-template")
-        div.form-group.optionInputMain(data-id="{{this.data.id}}")
+        div.mb-3.optionInputMain(data-id="{{this.data.id}}")
             label {{this.data.name}}
             | {{#each this.data.content}}
-            div.custom-control.custom-checkbox.mb-1.optionInput(data-id="{{@key}}")
-                | <input class="custom-control-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
-                label.custom-control-label.w-100(for="answer{{@index}}")
+            div.form-check.mb-1.optionInput(data-id="{{@key}}")
+                | <input class="form-check-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}" {{checkedIf this ../this.data.correct}} />
+                label.form-check-label.w-100(for="answer{{@index}}")
                     div.input-group
                         input.form-control.optionName(type="text", value="{{this}}", data-id="{{@key}}")
-                        div.input-group-append
-                            button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
-                                i.mdi.mdi-delete-outline
+                        button.btn.btn-sm.btn-outline-danger.delOptionBtn(data-id="{{@key}}")
+                            i.mdi.mdi-delete-outline
             | {{/each}}
             div.text-center
                 button.btn.btn-sm.btn-primary.addOptionBtn
@@ -129,17 +127,17 @@ block content
                         | Add option
 
     script#textTemplate(type="text/x-handlebars-template")
-        div.form-group
+        div.mb-3
             label {{this.data.name}}
             input.form-control.editorInput.textInput(type="text", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
 
     script#numberTemplate(type="text/x-handlebars-template")
-        div.form-group
+        div.mb-3
             label {{this.data.name}}
             input.form-control.editorInput.numberInput(type="number", pattern="[0-9]*" inputmode="numeric", name="answer", title="Your Answer" value="{{this.data.correct}}" data-id="{{this.data.id}}" required)
     
     script#messageTemplate(type="text/x-handlebars-template")
-        div.form-group
+        div.mb-3
                 label {{this.data.name}}:
                 textarea.form-control.editorInput.messageInput(rows="4", data-id="{{this.data.id}}", required) {{this.data.content}}
                 

@@ -27,18 +27,18 @@ block content
                 div.modal-body
                     form.userForm
                         input.userInput(type="hidden", name="id")
-                        div.form-group
-                            label(for="username") Username
+                        div.mb-3
+                            label.form-label(for="username") Username
                             input.form-control.userInput#username(type="text", name="username", required)
                             
-                        div.form-group
-                            label(for="password") Password
+                        div.mb-3
+                            label.form-label(for="password") Password
                             input.form-control.userInput#password(type="password", name="password")
-                        div.form-group
-                            label(for="passwordConfirm") Repeat password
+                        div.mb-3
+                            label.form-label(for="passwordConfirm") Repeat password
                             input.form-control.userInput#passwordConfirm(type="password", name="passwordConfirm")
                             small.form-text.text-muted.passwordEditInfo Leave passwords blank to only edit username.
-                        div.form-group
+                        div.mb-3
                             div.errorMsg.text-danger 
                 div.modal-footer
                     button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel

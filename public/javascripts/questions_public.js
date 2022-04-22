@@ -337,7 +337,7 @@ function optionEdit (action, currentElement) {
         itemType: "add_option",
         roundUuid: roundUuid,
         questionUuid: questionUuid,
-        parameterId: $(currentElement).closest(".form-group").data("id")
+        parameterId: $(currentElement).closest(".optionInputMain").data("id")
     }
 
     if (action == "add") {

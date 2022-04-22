@@ -26,7 +26,6 @@ script#radioTemplate(type="text/x-handlebars-template")
             label.form-check-label.w-100(for="answer{{@index}}") {{this}}
         | {{/each}}
 
-
 script#checkboxTemplate(type="text/x-handlebars-template")
     div.form-group.optionInputMain(data-id="{{this.data.id}}")
         label {{this.data.name}}
@@ -35,7 +34,6 @@ script#checkboxTemplate(type="text/x-handlebars-template")
             | <input class="form-check-input optionCorrect" id="answer{{@index}}" type="checkbox" name="answer" value="{{this}}"/>
             label.form-check-label.w-100(for="answer{{@index}}")  {{this}}
         | {{/each}}
-
 
 script#textTemplate(type="text/x-handlebars-template")
     div.form-group

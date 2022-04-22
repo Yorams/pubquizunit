@@ -11,9 +11,8 @@ block content
         div.toolBar.form-inline.my-3
 
             div.input-group.btnAutoRefresh
-                div.input-group-prepend
+                div.input-group
                     span.input-group-text Auto Refresh
-                div.input-group-append
                     button.btn.btn-success.editUser
                         i.mdi.mdi-power-on
             div.mx-3 Hover over a score to view the given answer
@@ -49,7 +48,7 @@ block content
                     div.col.scoreQuestion {{inc @index 0}}
                     // Teams
                     | {{#each this}}
-                    div.col.scoreNumber(data-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.template}}") {{showScore this.score this.template}}
+                    div.col.scoreNumber(data-bs-toggle="tooltip", data-html="true", data-content="{{formatAnswer this.answer this.template}}") {{showScore this.score this.template}}
                     | {{/each}}
             | {{/each}}
 
