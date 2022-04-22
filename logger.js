@@ -3,7 +3,6 @@ var expressWinston = require('express-winston');
 require('winston-daily-rotate-file');
 var fs = require('fs')
 var path = require('path');
-const common = require("./common_functions");
 
 var logDirectory = path.join(__dirname, 'log')
 

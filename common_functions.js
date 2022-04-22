@@ -8,7 +8,7 @@ var path = require('path');
 var logger = require('./logger')
 
 // Init logger
-var log = logger
+var log = logger.app(path.parse(__filename).name);
 
 exports.getJsonFile = function (fileName) {
     return new Promise(function (resolve, reject) {
