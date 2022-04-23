@@ -1,6 +1,8 @@
-html, body{
+html,
+body {
     height: 100%;
 }
+
 body {
     overflow-y: scroll;
 }
@@ -9,13 +11,22 @@ a {
     color: #00B7FF;
 }
 
-.pre{
+.pre {
     display: block;
     font-family: monospace;
     white-space: pre;
     margin: 1em 0;
 }
-.btn-group-xs>.btn, .btn-xs{
+
+.jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-color: #e9ecef;
+    border-radius: .3rem;
+}
+
+.btn-group-xs>.btn,
+.btn-xs {
     padding: 0.0rem .3rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -23,63 +34,70 @@ a {
     height: 28px;
 }
 
-.list-group-item.active .text-muted{
-    color:#d0d0d0 !important;
+.list-group-item.active .text-muted {
+    color: #d0d0d0 !important;
 }
 
 /*** Login form ***/
-div.loginMain{
+div.loginMain {
     width: 30em;
     margin: auto;
 }
 
-div.loginErrorMsg, div.errorMsg{
+div.loginErrorMsg,
+div.errorMsg {
     height: 16px;
 }
 
 /*** Header ***/
-div.headerMain{
-    background-image: repeating-linear-gradient(141deg, rgba(249, 249, 249, 0.13) 0px, rgba(249, 249, 249, 0.13) 28px,rgba(8, 8, 8, 0.13) 28px, rgba(8, 8, 8, 0.13) 39px,rgba(75, 75, 75, 0.13) 39px, rgba(75, 75, 75, 0.13) 75px,rgba(78, 78, 78, 0.13) 75px, rgba(78, 78, 78, 0.13) 104px,rgba(91, 91, 91, 0.13) 104px, rgba(91, 91, 91, 0.13) 133px,rgba(6, 6, 6, 0.13) 133px, rgba(6, 6, 6, 0.13) 163px,rgba(17, 17, 17, 0.13) 163px, rgba(17, 17, 17, 0.13) 176px),repeating-linear-gradient(141deg, rgba(212, 212, 212, 0.13) 0px, rgba(212, 212, 212, 0.13) 36px,rgba(239, 239, 239, 0.13) 36px, rgba(239, 239, 239, 0.13) 84px,rgba(144, 144, 144, 0.13) 84px, rgba(144, 144, 144, 0.13) 132px,rgba(123, 123, 123, 0.13) 132px, rgba(123, 123, 123, 0.13) 173px,rgba(132, 132, 132, 0.13) 173px, rgba(132, 132, 132, 0.13) 194px,rgba(155, 155, 155, 0.13) 194px, rgba(155, 155, 155, 0.13) 235px,rgba(204, 204, 204, 0.13) 235px, rgba(204, 204, 204, 0.13) 261px),repeating-linear-gradient(141deg, rgba(156, 156, 156, 0.1) 0px, rgba(156, 156, 156, 0.1) 64px,rgba(160, 160, 160, 0.1) 64px, rgba(160, 160, 160, 0.1) 126px,rgba(151, 151, 151, 0.1) 126px, rgba(151, 151, 151, 0.1) 248px,rgba(199, 199, 199, 0.1) 248px, rgba(199, 199, 199, 0.1) 318px,rgba(80, 80, 80, 0.1) 318px, rgba(80, 80, 80, 0.1) 453px,rgba(134, 134, 134, 0.1) 453px, rgba(134, 134, 134, 0.1) 587px,rgba(88, 88, 88, 0.1) 587px, rgba(88, 88, 88, 0.1) 686px),linear-gradient(186deg, var(--headerColorA), var(--headerColorB));
+div.headerMain {
+    background-image: repeating-linear-gradient(141deg, rgba(249, 249, 249, 0.13) 0px, rgba(249, 249, 249, 0.13) 28px, rgba(8, 8, 8, 0.13) 28px, rgba(8, 8, 8, 0.13) 39px, rgba(75, 75, 75, 0.13) 39px, rgba(75, 75, 75, 0.13) 75px, rgba(78, 78, 78, 0.13) 75px, rgba(78, 78, 78, 0.13) 104px, rgba(91, 91, 91, 0.13) 104px, rgba(91, 91, 91, 0.13) 133px, rgba(6, 6, 6, 0.13) 133px, rgba(6, 6, 6, 0.13) 163px, rgba(17, 17, 17, 0.13) 163px, rgba(17, 17, 17, 0.13) 176px), repeating-linear-gradient(141deg, rgba(212, 212, 212, 0.13) 0px, rgba(212, 212, 212, 0.13) 36px, rgba(239, 239, 239, 0.13) 36px, rgba(239, 239, 239, 0.13) 84px, rgba(144, 144, 144, 0.13) 84px, rgba(144, 144, 144, 0.13) 132px, rgba(123, 123, 123, 0.13) 132px, rgba(123, 123, 123, 0.13) 173px, rgba(132, 132, 132, 0.13) 173px, rgba(132, 132, 132, 0.13) 194px, rgba(155, 155, 155, 0.13) 194px, rgba(155, 155, 155, 0.13) 235px, rgba(204, 204, 204, 0.13) 235px, rgba(204, 204, 204, 0.13) 261px), repeating-linear-gradient(141deg, rgba(156, 156, 156, 0.1) 0px, rgba(156, 156, 156, 0.1) 64px, rgba(160, 160, 160, 0.1) 64px, rgba(160, 160, 160, 0.1) 126px, rgba(151, 151, 151, 0.1) 126px, rgba(151, 151, 151, 0.1) 248px, rgba(199, 199, 199, 0.1) 248px, rgba(199, 199, 199, 0.1) 318px, rgba(80, 80, 80, 0.1) 318px, rgba(80, 80, 80, 0.1) 453px, rgba(134, 134, 134, 0.1) 453px, rgba(134, 134, 134, 0.1) 587px, rgba(88, 88, 88, 0.1) 587px, rgba(88, 88, 88, 0.1) 686px), linear-gradient(186deg, var(--headerColorA), var(--headerColorB));
     box-shadow: 0px 5px 8px #dbdbdb;
     text-align: center;
 
 }
-div.headerTitle{
+
+div.headerTitle {
     font-family: "Pacifico", Arial, Helvetica, sans-serif;
     font-size: 60px;
     color: #FFF;
     padding-bottom: 1.1rem;
 }
+
 @media (max-width: 768px) {
-    div.headerTitle{
+    div.headerTitle {
         font-size: 35px;
     }
 }
-div.headerSubTitle{
+
+div.headerSubTitle {
     font-family: "Pacifico", Arial, Helvetica, sans-serif;
     font-size: 30px;
     color: #FFF;
     margin-top: -1.1rem;
 }
-div.subTitle{
+
+div.subTitle {
     font-family: "Pacifico", Arial, Helvetica, sans-serif;
     font-size: 30px;
 }
 
 .videoWrapper {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  height: 0;
-}
-.videoWrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    height: 0;
 }
 
-.countdownMain{
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.countdownMain {
     color: #533f03;
     background-color: #f5d3a1;
     position: relative;
@@ -87,7 +105,7 @@ div.subTitle{
     margin-bottom: 1rem;
     border: 1px solid #ffeeba;
     border-radius: .25rem;
-    background: linear-gradient(90deg,#f5d3a1 100%,  #fff 100%);
+    background: linear-gradient(90deg, #f5d3a1 100%, #fff 100%);
     font-weight: 600;
     margin-top: 15px;
 }
@@ -96,32 +114,38 @@ div.subTitle{
 .controlsMain {
     text-align: center;
 }
-.controlsMain button{
+
+.controlsMain button {
     font-size: 28px;
     padding: 0.8rem 1rem 0.5rem 1rem;
     line-height: 18px;
 }
-.controlsMain .btnText{
+
+.controlsMain .btnText {
     font-size: 14px;
 }
 
-.timeInputMain{
+.timeInputMain {
     display: inline-block;
     vertical-align: bottom;
 }
-.timeInputMain .input-group-text{
+
+.timeInputMain .input-group-text {
     padding: 5px 12px;
 }
+
 /**** Score ****/
 .row {
     margin-left: 0px !important;
     margin-right: 0px !important;
 }
-.hidefirst{
+
+.hidefirst {
     background-color: #FFF !important;
     border: none !important;
 }
-.teamNames .col{
+
+.teamNames .col {
     transform: rotate(230deg);
     transform-origin: 63px;
     writing-mode: vertical-rl;
@@ -139,12 +163,14 @@ div.subTitle{
     border-radius: 0px 0px 5px 5px;
 
 }
+
 .teamNamesConnector .col:nth-child(odd),
 .teamTotalScore .col:nth-child(odd),
-.teamNames .col:nth-child(odd){
+.teamNames .col:nth-child(odd) {
     background-color: #FFF;
 }
-.teamNamesConnector .col{
+
+.teamNamesConnector .col {
     background-color: #efefef;
     padding: 0px;
     margin-top: -16px;
@@ -153,7 +179,8 @@ div.subTitle{
 
     border-radius: 5px 5px 0px 0px;
 }
-.teamTotalScore .col{
+
+.teamTotalScore .col {
     background-color: #efefef;
     margin-top: -14px;
     text-align: center;
@@ -164,32 +191,34 @@ div.subTitle{
     border-left: 1px solid #999;
 }
 
-.totalScoreBottom{
+.totalScoreBottom {
     margin: 15px 0;
     border-bottom: 1px solid #999;
     border-top: 1px solid #999;
 }
-.totalScoreBottom .col{
+
+.totalScoreBottom .col {
     margin-top: 0px;
 }
 
 .totalScoreBottom .col,
 .teamNamesConnector .col,
 .teamTotalScore .col,
-.scoreRow .col{
+.scoreRow .col {
     width: 40px;
     flex-grow: initial;
     flex-basis: initial;
 }
 
-.scoreRound{
+.scoreRound {
     font-size: 1.25rem;
     font-weight: 600;
     padding: 10px 0px 3px 0px;
     border-bottom: 1px solid #999;
     border-top: 1px solid #999;
 }
-.scoreQuestion{
+
+.scoreQuestion {
     background-color: #efefef;
     border-right: 1px solid #999;
     border-left: 1px solid #999;
@@ -198,35 +227,40 @@ div.subTitle{
     font-weight: 600;
 }
 
-.scoreMain .scoreNumber{
+.scoreMain .scoreNumber {
     border-left: 1px solid #999;
     text-align: left;
     padding: 0px 4px;
 }
-.hasAnswer{
+
+.hasAnswer {
     background-color: rgb(90 252 0 / 23%);
 }
-.scoreRowContainer:nth-child(2n){
+
+.scoreRowContainer:nth-child(2n) {
     background-color: #efefef;
-    
-}
-.scoreRow{
-    margin-left: 0px !important;
-    
+
 }
 
-.topFirst{
+.scoreRow {
+    margin-left: 0px !important;
+
+}
+
+.topFirst {
     font-size: 50px;
 }
-.topSecond{
+
+.topSecond {
     font-size: 45px;
 }
-.topThird{
+
+.topThird {
     font-size: 42px;
     margin-bottom: 15px;
 }
 
-.scoreLogo{
+.scoreLogo {
     background-image: url(/images/score_header.png);
     background-size: contain;
     background-repeat: no-repeat;
@@ -235,22 +269,23 @@ div.subTitle{
     margin: 0px 50px -190px 40px;
 }
 
-.videoTitle{
+.videoTitle {
     font-family: "Pacifico", Arial, Helvetica, sans-serif;
     font-size: 100px;
     padding-bottom: 1.1rem;
     text-align: center;
 }
 
-.videobody{
-    background: rgb(0,105,170);
+.videobody {
+    background: rgb(0, 105, 170);
     background: linear-gradient(356deg, rgb(0 83 134) 0%, #128fc3 100%);
     color: #FFF;
     overflow: hidden;
     text-shadow: 3px 6px 7px #2d2d2db5;
     -webkit-font-smoothing: antialiased;
 }
-.scoreOthers{
+
+.scoreOthers {
     -moz-column-count: 1;
     -moz-column-gap: 20px;
     -webkit-column-count: 1;
@@ -262,12 +297,12 @@ div.subTitle{
     width: 100%;
 }
 
-.scoreOthers li{
+.scoreOthers li {
     border-bottom: 1px solid #7c949e;
     margin-bottom: 5px;
 }
 
-.scoreOthersVideo{
+.scoreOthersVideo {
     -moz-column-count: 3;
     -moz-column-gap: 20px;
     -webkit-column-count: 3;
@@ -279,18 +314,21 @@ div.subTitle{
     width: 100%;
     height: 500px;
 }
-.scoreOthersVideo li{
+
+.scoreOthersVideo li {
     border-bottom: 2px solid #4491b3;
     margin-bottom: 5px;
 }
-.scoreSlider{
+
+.scoreSlider {
     overflow: visible !important;
 }
-.top{
+
+.top {
     font-size: 20px;
 }
 
-#tsparticles{
+#tsparticles {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -298,16 +336,18 @@ div.subTitle{
 }
 
 /** Questions **/
-div.roundMain{
+div.roundMain {
     padding: 5px;
 }
-div.roundMain.active{
+
+div.roundMain.active {
     background-color: #007bff;
     color: #fff;
     border-radius: 5px;
 }
+
 div.controlQuestionsContainer,
-div.questionsContainer{
+div.questionsContainer {
     border-radius: 5px;
     background-color: #f8f9fa;
     height: 100%;
@@ -316,25 +356,27 @@ div.questionsContainer{
 }
 
 div.questionsMain,
-div.controlQuestionsMain{
+div.controlQuestionsMain {
     height: 100%;
     overflow-y: scroll;
     scroll-behavior: smooth;
 }
 
 /** Teams **/
-.editItem .active{
+.editItem .active {
     color: #198754;
 }
-.editItem .inactive{
+
+.editItem .inactive {
     color: #dc3545;
 }
 
 /** Registration **/
-div.loadingIcon{
+div.loadingIcon {
     opacity: 0;
     transition: 0.3s;
 }
-div.loadingIcon.show{
+
+div.loadingIcon.show {
     opacity: 1;
 }
