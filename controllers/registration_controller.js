@@ -34,130 +34,132 @@ exports.edit = function (req, res) {
         },
         parent: recaptcha.projectPath,
     });
+    /*
+        recaptcha.client.createAssessment(request).then((response) => {
+            response = response[0]
+            //console.log(response)
+    
+            // Check if the token is valid
+            if (!response.tokenProperties.valid) {
+                log.error("The CreateAssessment call failed because the token was: " + response.tokenProperties.invalidReason);
+                return res.send({ result: "error", errorCode: "generic", errorMsg: `invalid token` });
+            }
+    
+            // Check if the expected action was executed.
+            if (response.tokenProperties.action === "registration") {
+    
+                // Get the risk score and the reason(s).
+                if (response.riskAnalysis.score > appSettings.recaptcha.threshold) {
+                    // Recaptha is valid, proceed.
+    */
+    let unvalidProp = [];
 
-    recaptcha.client.createAssessment(request).then((response) => {
-        response = response[0]
-        //console.log(response)
+    // Validate input
+    let inputError = {
+        teamname: (teamname.length > 2) && (teamname.length < 255),
+        email: validator.isEmail(email),
+        //tel: validator.isMobilePhone(tel, 'nl-NL'),
+    }
 
-        // Check if the token is valid
-        if (!response.tokenProperties.valid) {
-            log.error("The CreateAssessment call failed because the token was: " + response.tokenProperties.invalidReason);
-            return res.send({ result: "error", errorCode: "generic", errorMsg: `invalid token` });
+    for (key in inputError) {
+        if (!inputError[key]) {
+            unvalidProp.push(key)
         }
+    }
 
-        // Check if the expected action was executed.
-        if (response.tokenProperties.action === "registration") {
+    var dbData = {
+        name: teamname,
+        email: email,
+        status: "inactive"
+        //tel: tel
+    }
 
-            // Get the risk score and the reason(s).
-            if (response.riskAnalysis.score > appSettings.recaptcha.threshold) {
-                // Recaptha is valid, proceed.
+    // Handle possible errors
+    if (unvalidProp.length != 0) {
+        return res.send({ result: "error", errorCode: "input_invalid", errorMsg: unvalidProp })
+    } else {
+        // No errors, continue
 
-                let unvalidProp = [];
+        // Check if team name exists
+        knex('teams')
+            .where({ name: teamname }).orWhere({ email: email })
+            .then((rows) => {
 
-                // Validate input
-                let inputError = {
-                    teamname: (teamname.length > 2) && (teamname.length < 255),
-                    email: validator.isEmail(email),
-                    //tel: validator.isMobilePhone(tel, 'nl-NL'),
-                }
+                if (rows.length == 0) {
+                    // name doesn't exist
+                    // Add team
 
-                for (key in inputError) {
-                    if (!inputError[key]) {
-                        unvalidProp.push(key)
-                    }
-                }
+                    // Generate uuid
+                    dbData.uuid = uuidv4();
 
-                var dbData = {
-                    name: teamname,
-                    email: email,
-                    status: "inactive"
-                    //tel: tel
-                }
-
-                // Handle possible errors
-                if (unvalidProp.length != 0) {
-                    return res.send({ result: "error", errorCode: "input_invalid", errorMsg: unvalidProp })
-                } else {
-                    // No errors, continue
-
-                    // Check if team name exists
+                    // Save to database
                     knex('teams')
-                        .where({ name: teamname }).orWhere({ email: email })
-                        .then((rows) => {
+                        .insert(dbData)
+                        .then(() => {
+                            // Prepare template
+                            mailer.parseTemplate("registration_confirm", {
+                                "registration_link": new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)
+                            }).then((html) => {
 
-                            if (rows.length == 0) {
-                                // name doesn't exist
-                                // Add team
+                                // Send mail
+                                mailer.sendMail(appSettings.email, email, {
+                                    subject: "Registratie is voltooid: Dit is je link naar de quiz",
+                                    text: `Bedankt voor het registreren, klik hier om mee te doen aan de quiz: ${new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)}`,
+                                    html: html,
+                                }).then((info => {
+                                    log.info(`Created user and send mail ${dbData.uuid}`);
+                                    return res.send({ result: "success" })
+                                })).catch((error) => {
+                                    return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot send email` })
+                                })
 
-                                // Generate uuid
-                                dbData.uuid = uuidv4();
+                            }).catch((error) => {
+                                return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot parse template` })
+                            })
 
-                                // Save to database
-                                knex('teams')
-                                    .insert(dbData)
-                                    .then(() => {
-                                        // Prepare template
-                                        mailer.parseTemplate("registration_confirm", {
-                                            "registration_link": new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)
-                                        }).then((html) => {
-
-                                            // Send mail
-                                            mailer.sendMail(appSettings.email, email, {
-                                                subject: "Registratie is voltooid: Dit is je link naar de quiz",
-                                                text: `Bedankt voor het registreren, klik hier om mee te doen aan de quiz: ${new URL(`quiz/${dbData.uuid}`, appSettings.app.baseUrl)}`,
-                                                html: html,
-                                            }).then((info => {
-                                                log.info(`Created user and send mail ${dbData.uuid}`);
-                                                return res.send({ result: "success" })
-                                            })).catch((error) => {
-                                                return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot send email` })
-                                            })
-
-                                        }).catch((error) => {
-                                            return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot parse template` })
-                                        })
-
-                                    })
-                                    .catch((error) => {
-                                        log.error(`Cannot create team ${error}`);
-                                        return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot create team: ${error}` })
-                                    })
-                            } else {
-                                let takenProp = [];
-
-                                // There is existing data.
-                                for (key in rows) {
-
-                                    if (rows[key].name == teamname) {
-                                        takenProp.push("teamname");
-                                    }
-
-                                    if (rows[key].email == email) {
-                                        takenProp.push("email");
-                                    }
-                                }
-                                if (takenProp.length > 0) {
-                                    return res.send({ result: "error", errorCode: "item_exists", errorMsg: takenProp })
-                                } else {
-                                    return res.send({ result: "error", errorCode: "generic", errorMsg: `Existing data found but no matching properties` })
-                                }
-                            }
                         })
                         .catch((error) => {
-                            log.error(`Cannot get team ${error}`);
-                            return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` })
+                            log.error(`Cannot create team ${error}`);
+                            return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot create team: ${error}` })
                         })
+                } else {
+                    let takenProp = [];
+
+                    // There is existing data.
+                    for (key in rows) {
+
+                        if (rows[key].name == teamname) {
+                            takenProp.push("teamname");
+                        }
+
+                        if (rows[key].email == email) {
+                            takenProp.push("email");
+                        }
+                    }
+                    if (takenProp.length > 0) {
+                        return res.send({ result: "error", errorCode: "item_exists", errorMsg: takenProp })
+                    } else {
+                        return res.send({ result: "error", errorCode: "generic", errorMsg: `Existing data found but no matching properties` })
+                    }
                 }
-            } else {
-                log.error("Probably a bot found");
-                return res.send({ result: "error", errorCode: "invalid_recaptcha", errorMsg: `You're a bot...` });
-            }
-        } else {
-            log.error("The action attribute in your reCAPTCHA tag does not match the action you are expecting to score");
-            return res.send({ result: "error", errorCode: "generic", errorMsg: `Recaptcha error with tag` });
-        }
-    }).catch((error) => {
-        log.error(`iets recaptcha error: ${error.stack}`);
-        return res.send({ result: "error", errorCode: "generic", errorMsg: `iets recaptcha error` })
-    })
+            })
+            .catch((error) => {
+                log.error(`Cannot get team ${error}`);
+                return res.send({ result: "error", errorCode: "generic", errorMsg: `Cannot get team: ${error}` })
+            })
+    }
+    /*
+} else {
+    log.error("Probably a bot found");
+    return res.send({ result: "error", errorCode: "invalid_recaptcha", errorMsg: `You're a bot...` });
+}
+} else {
+log.error("The action attribute in your reCAPTCHA tag does not match the action you are expecting to score");
+return res.send({ result: "error", errorCode: "generic", errorMsg: `Recaptcha error with tag` });
+}
+}).catch((error) => {
+log.error(`iets recaptcha error: ${error.stack}`);
+return res.send({ result: "error", errorCode: "generic", errorMsg: `iets recaptcha error` })
+})
+*/
 };
